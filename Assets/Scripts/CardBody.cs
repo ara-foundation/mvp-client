@@ -6,6 +6,7 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 public class CardBody : MonoBehaviour
 {
+    [SerializeField] private Outline _outline;
     [SerializeField]
     private GameObject[] Fixed = { };
     [SerializeField]
@@ -15,6 +16,7 @@ public class CardBody : MonoBehaviour
 
     private void OnEnable()
     {
+        _outline = GetComponent<Outline>();
         _image = GetComponent<Image>();
     }
 
@@ -56,7 +58,10 @@ public class CardBody : MonoBehaviour
 
     public void SetImageColor(Color color)
     {
-        _image.color = color;
+        if (_image != null )
+        {
+            _image.color = color;
+        }
     }
 
     public void ShowContent(bool onlyHeader)
@@ -66,6 +71,8 @@ public class CardBody : MonoBehaviour
             Debug.LogError("Expected 2 fixed elements (Header, and Divider)");
             return;
         }
+
+        _outline.enabled = onlyHeader;
 
         for (int i = 2; i<Fixed.Length; i++)
         {

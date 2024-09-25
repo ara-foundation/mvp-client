@@ -1,3 +1,4 @@
+using Lean.Gui;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,6 +8,7 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class Card : MonoBehaviour
 {
+    private LeanDrag Drag;
     [SerializeField] private CardBody Body;
     public bool onlyHeader;
     private bool _onlyHeader;
@@ -22,6 +24,10 @@ public class Card : MonoBehaviour
 
     private void OnEnable()
     {
+        var found = gameObject.TryGetComponent<LeanDrag>(out Drag);
+        if (!found) {
+            throw new System.Exception("Card has no LeanDrag component");
+        }
         _bodyTransform = Body.gameObject.GetComponent<RectTransform>();
         _transform = gameObject.GetComponent<RectTransform>();
 
@@ -31,6 +37,11 @@ public class Card : MonoBehaviour
     public void CalculateView(int newIndex = 0)
     {
         _index = newIndex;
+        if (_index > 0)
+        {
+            if (Drag != null) 
+                Drag.interactable = false;
+        }
         applyBodyHeight();
         Body.SetImageColor(CardColor.level[_index]);
 
