@@ -14,8 +14,27 @@ public class Logos : MonoBehaviour
     private string currentUrl = default;
     private Dictionary<string, AraIdeas> cache = new ();
 
+    private static Logos _instance;
+
+    public static Logos Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<Logos>();
+            }
+            return _instance;
+        }
+    }
+
     // Start is called before the first frame update
     async void Start()
+    {
+        await LoadIdeas();
+    }
+
+    public async Task LoadIdeas()
     {
         ClearContent();
         var result = await FetchIdeas();
@@ -28,16 +47,11 @@ public class Logos : MonoBehaviour
                 CardLogos cardLogos = res.GetComponent<CardLogos>();
                 cardLogos.Show(data);
             }
-        } else
+        }
+        else
         {
             Debug.LogWarning("Failed to fetch ideas from Ara Server");
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     private void ClearContent()

@@ -122,6 +122,22 @@ public class AraAuth : MonoBehaviour
     [SerializeField] private TMP_InputField ProfileAddress;
     [SerializeField] private TMP_InputField ProfilePrivateKey;
 
+    private static AraAuth _instance;
+
+    public static AraAuth Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<AraAuth>();
+            }
+            return _instance;
+        }
+    }
+
+
+
     // Start is called before the first frame update
     async void Start()
     {
@@ -136,7 +152,7 @@ public class AraAuth : MonoBehaviour
         }
     }
 
-    private bool IsLoggedIn(UserParams userParams)
+    public bool IsLoggedIn(UserParams userParams)
     {
         return userParams != null &&
             userParams.loginParams != null &&
@@ -217,7 +233,7 @@ public class AraAuth : MonoBehaviour
         if (userParams != null)
         {
             UserParams = userParams;
-            LoadWallet();
+            await LoadWallet();
             UserParams.Save(userParams);
             LoginText.text = UserParams.loginParams.username;
 
@@ -255,7 +271,7 @@ public class AraAuth : MonoBehaviour
         if (userParams != null)
         {
             UserParams = userParams;
-            LoadWallet();
+            await LoadWallet();
             UserParams.Save(userParams);
             LoginText.text = UserParams.loginParams.username;
 
@@ -376,12 +392,12 @@ public class AraAuth : MonoBehaviour
         userParams = await Login(userParams);
         UserParams.Save(userParams);
 
-        LoadWallet();
+        await LoadWallet();
 
         return userParams;
     }
 
-    private async void LoadWallet()
+    private async Task LoadWallet()
     {
         PrivateKeyWallet wallet;
 

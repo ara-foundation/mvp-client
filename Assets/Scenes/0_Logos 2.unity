@@ -26980,10 +26980,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: 'Card: New Post'
       objectReference: {fileID: 0}
-    - target: {fileID: 9197326913787786416, guid: 737533b7968c7514f99ec6812bc8f5e5, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
