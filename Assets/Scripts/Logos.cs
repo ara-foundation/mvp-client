@@ -30,7 +30,7 @@ public class Logos : MonoBehaviour
             }
         } else
         {
-            Debug.LogWarning("Null? " + result.links == null);
+            Debug.LogWarning("Failed to fetch ideas from Ara Server");
         }
     }
 
@@ -65,8 +65,6 @@ public class Logos : MonoBehaviour
             return incorrectResult;
         }
 
-        Debug.Log("res: " + res);
-
         AraIdeas result;
         try
         {
@@ -77,9 +75,6 @@ public class Logos : MonoBehaviour
             Debug.LogError(e + " for " + res);
             return incorrectResult;
         }
-        Debug.Log("result: " + (result.data == null));
-        Debug.Log(result.links);
-        Debug.Log((result.data != null) + " and " + (result.data == null));
         return result;
     }
 }
