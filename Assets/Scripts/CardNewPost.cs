@@ -19,12 +19,19 @@ public class CardNewPost : MonoBehaviour
     [SerializeField] private TMP_InputField IdeaTitle;
     [SerializeField] private TMP_InputField IdeaContent;
     [SerializeField] private LeanButton PostButton;
+    private bool _switchToAurora;
 
     // Start is called before the first frame update
     void Start()
     {
+        _switchToAurora = false;
         IdeaTitle.text = "";
         IdeaContent.text = "";
+    }
+
+    public void SwitchToAurora(bool flag)
+    {
+        _switchToAurora = flag;
     }
 
     // Update is called once per frame
