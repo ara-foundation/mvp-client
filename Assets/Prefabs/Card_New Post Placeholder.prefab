@@ -2370,6 +2370,7 @@ GameObject:
   - component: {fileID: 894311327594274498}
   - component: {fileID: 7195219008446932271}
   - component: {fileID: 3668712814030061836}
+  - component: {fileID: 6920956493839706872}
   m_Layer: 5
   m_Name: Card_New Post Placeholder
   m_TagString: Untagged
@@ -2459,13 +2460,19 @@ MonoBehaviour:
     roots: []
     aliases: []
     targets: []
-    entries: []
+    entries:
+    - root: {fileID: 0}
+      speed: -1
+      aliases: []
   nonInteractableTransitions:
     speed: -1
     roots: []
     aliases: []
     targets: []
-    entries: []
+    entries:
+    - root: {fileID: 0}
+      speed: -1
+      aliases: []
   onInteractable:
     m_PersistentCalls:
       m_Calls: []
@@ -2481,19 +2488,37 @@ MonoBehaviour:
     roots: []
     aliases: []
     targets: []
-    entries: []
+    entries:
+    - root: {fileID: 0}
+      speed: -1
+      aliases: []
   endTransitions:
     speed: -1
     roots: []
     aliases: []
     targets: []
-    entries: []
+    entries:
+    - root: {fileID: 0}
+      speed: -1
+      aliases: []
   onBegin:
     m_PersistentCalls:
       m_Calls: []
   onEnd:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &6920956493839706872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9197326913787786416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07ec06eb7783d74a99ce670663035ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2464028933160015624
 PrefabInstance:
   m_ObjectHideFlags: 0

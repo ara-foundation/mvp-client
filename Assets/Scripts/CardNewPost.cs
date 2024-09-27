@@ -14,7 +14,6 @@ public class IdeaCreate {
     public string content;
 }
 
-
 public class CardNewPost : MonoBehaviour
 {
     [SerializeField] private TMP_InputField IdeaTitle;
@@ -94,4 +93,5 @@ public class CardNewPost : MonoBehaviour
             Notification.Instance.Show($"Error: deserialization exception {e.Message}");
         }
     }
+
 }
