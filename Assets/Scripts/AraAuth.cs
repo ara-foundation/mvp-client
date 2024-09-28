@@ -180,7 +180,8 @@ public class AraAuth : MonoBehaviour
             ProfileAddress.text = UserParams.address;
             ProfilePrivateKey.text = UserParams.privateKey;
 
-            ProfileModal.TurnOffOthersNow();
+            LoginModal.TurnOff();
+            SignupModal.TurnOff();
             ProfileModal.TurnOn();
         }
     }
@@ -189,7 +190,8 @@ public class AraAuth : MonoBehaviour
     {
         if ( SignupModal != null )
         {
-            SignupModal.TurnOffOthersNow();
+            LoginModal.TurnOff();
+            ProfileModal.TurnOff();
             SignupModal.TurnOn();
         }
     }
@@ -198,7 +200,8 @@ public class AraAuth : MonoBehaviour
     {
         if (LoginModal != null)
         {
-            LoginModal.TurnOffOthersNow();
+            SignupModal.TurnOff();
+            ProfileModal.TurnOff();
             LoginModal.TurnOn();
         }
     }
