@@ -3,9 +3,41 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class CardLogos : MonoBehaviour
+public class FlowStep {
+    public int step;
+    public string action;
+    public string description;
+}
+
+public class UserScenarioContext
 {
+    public string user;
+    public string background;
+    public string[] steps;
+}
+
+public class UserScenarioProblem
+{
+    public string description;
+    public string[] obstacles;
+}
+
+public class UserScenario {
+    public string title;
+    public UserScenarioContext context;
+    public string[] goals;
+    public UserScenarioProblem[] problems;
+    public string[] user_motivations;
+    public string[] personal_traits;
+    public string[] relevant_habits_hobbies_beliefs;
+    public FlowStep[] user_scenario_flow;
+}
+
+public class CardAurora : MonoBehaviour
+{
+
     [SerializeField] private TextMeshProUGUI Title;
+
     public CardAvatar Avatar;
     
     [SerializeField] private TextMeshProUGUI DisplayName;
@@ -19,12 +51,8 @@ public class CardLogos : MonoBehaviour
     [SerializeField] private TextMeshProUGUI LikesAmount;
     [SerializeField] private TextMeshProUGUI ViewsAmount;
 
-    // Ara Idea represented in the Ara Server
-    private AraDiscussion serverContent;
-
     public void Show(AraDiscussion araDiscussion)
     {
-        serverContent = araDiscussion;
         var content = araDiscussion.relationships.firstPost.attributes.contentHtml; 
         if (content != null && content.Length > 300) {
             content = content.Substring(0, 300);
@@ -50,18 +78,5 @@ public class CardLogos : MonoBehaviour
         }
         DisplayName.text = araDiscussion.relationships.user.attributes.displayName;
         UserName.text = araDiscussion.relationships.user.attributes.username;
-    }
-
-    /** When a user wants to start new User Scenario
-     */
-    public void OnStart()
-    {
-        if (!AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
-        {
-            Notification.Instance.Show("Please Login First");
-            return;
-        }
-
-        Aurora.Instance.NewScenario(serverContent);
     }
 }

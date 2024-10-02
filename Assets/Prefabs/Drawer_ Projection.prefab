@@ -459,7 +459,7 @@ GameObject:
   - component: {fileID: 8353091289760181224}
   - component: {fileID: 2945900294428388037}
   m_Layer: 5
-  m_Name: Card_ Projection
+  m_Name: Drawer_ Projection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -34,7 +34,6 @@ public class CardNewPost : MonoBehaviour
         _switchToAurora = flag;
     }
 
-    // Update is called once per frame
     public async void OnPost()
     {
         if (!AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
@@ -62,17 +61,27 @@ public class CardNewPost : MonoBehaviour
             content = IdeaContent.text
         };
         PostButton.interactable = false;
-        await Post(ideaParams);
+        var createdLogos = await Post(ideaParams);
         PostButton.interactable = true;
         
-        Notification.Instance.Show("Idea was posted. Refreshing ideas to see result");
+        if (createdLogos == null) {
+            return;
+        }
         IdeaTitle.text = "";
         IdeaContent.text = "";
 
-        await Logos.Instance.LoadIdeas();
+        if (!_switchToAurora)
+        {
+            _switchToAurora = false;
+            Notification.Instance.Show("Idea was posted. Refreshing ideas to see result");
+            await Logos.Instance.LoadIdeas();
+        } else
+        {
+            Aurora.Instance.NewScenario(createdLogos);
+        }
     }
 
-    private async Task Post(IdeaCreate ideaParams)
+    private async Task<AraDiscussion> Post(IdeaCreate ideaParams)
     {
         var body = JsonUtility.ToJson(ideaParams);
         string url = NetworkParams.AraActUrl + "/logos/idea";
@@ -86,19 +95,23 @@ public class CardNewPost : MonoBehaviour
         {
             Notification.Instance.Show($"Error: web client exception {ex.Message}");
             Debug.LogError(ex);
-            return;
+            return null;
         }
 
-        CreateSessionToken result;
+        AraDiscussion result;
         try
         {
-            result = JsonConvert.DeserializeObject<CreateSessionToken>(res);
+            result = JsonConvert.DeserializeObject<AraDiscussion>(res);
         }
         catch (Exception e)
         {
             Debug.LogError(e);
             Notification.Instance.Show($"Error: deserialization exception {e.Message}");
+            return null;
+
         }
+
+        return result;
     }
 
 }
