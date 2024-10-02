@@ -16,7 +16,7 @@ public class InputList : MonoBehaviour
         ClearContent();
     }
 
-    private void ClearContent()
+    public void ClearContent()
     {
         foreach (Transform child in AddedContent)
         {

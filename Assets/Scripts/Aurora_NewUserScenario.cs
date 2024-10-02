@@ -1,9 +1,27 @@
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
+
+[Serializable]
+public class SenseverScenarioRequest
+{
+    public string requester;
+    public int id;
+    public string content;
+}
+
+public class SenseverScenarioResponse
+{
+    public bool correct;
+    public UserScenario? answer;
+}
 
 public class Aurora_NewUserScenario : MonoBehaviour
 {
+    public bool SkipTutorial = false;
     [SerializeField] private Drawer_UserScenario Drawer;
     [SerializeField] private SenseverDialogue Dialogue;
     [SerializeField] private CardLogos PinnedLogos;
@@ -49,17 +67,74 @@ public class Aurora_NewUserScenario : MonoBehaviour
         }
     }
 
-    public void Show(AraDiscussion logos)
+    public async void Show(AraDiscussion logos)
     {
-        Drawer.gameObject.SetActive(false);
-        Dialogue.gameObject.SetActive(true);
-        Dialogue.StartTutorial(OnDialogueEnd, OnDialogueStart);
+        if (!SkipTutorial)
+        {
+            Drawer.gameObject.SetActive(false);
+            Dialogue.gameObject.SetActive(true);
+            Dialogue.StartTutorial(OnDialogueEnd, OnDialogueStart);
+        } else
+        {
+            Drawer.gameObject.SetActive(true);
+        }
         PinnedLogos.Show(logos);
 
-        // show the tutorial
-        // highlight
         // load user scenario
-        // edit scenario
+        var userScenario = await GenerateScenarioDraft(logos);
+        if (userScenario != null)
+        {
+            Drawer.Show(logos, userScenario);
+            Drawer.SetReady(true);
+        } else
+        {
+            Drawer.SetReady(false);
+            Drawer.gameObject.SetActive(false);
+        }
         // post scenario
+    }
+
+    async Task<UserScenario> GenerateScenarioDraft(AraDiscussion logos)
+    {
+        var reqBody = new SenseverScenarioRequest()
+        {
+            requester = "ahmetson",
+            id = logos.id,
+            content = logos.relationships.firstPost.attributes.contentHtml
+        };
+
+        var url = NetworkParams.SenseverUrl + "/scenario-draft";
+        var body = JsonUtility.ToJson(reqBody);
+
+        string res;
+        try
+        {
+            res = await WebClient.Post(url, body);
+        }
+        catch (Exception ex)
+        {
+            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Debug.LogError(ex);
+            return null;
+        }
+
+        SenseverScenarioResponse result;
+        try
+        {
+            result = JsonConvert.DeserializeObject<SenseverScenarioResponse>(res);
+            if (!result.correct)
+            {
+                Notification.Instance.Show("Sensever server returned unrecognized data. So sorry for my mistake");
+                return null;
+            }
+
+            return result.answer as UserScenario;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            Notification.Instance.Show($"Error: deserialization exception {e.Message}");
+            return null;
+        }
     }
 }
