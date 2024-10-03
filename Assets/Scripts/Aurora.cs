@@ -7,6 +7,7 @@ public class Aurora : MonoBehaviour
 {
     private static Aurora _instance;
     private Aurora_NewUserScenario AuroraNewUserScenario;
+    [SerializeField] private GameObject[] AuroraBackgrounds;
 
     public static Aurora Instance
     {
@@ -35,8 +36,32 @@ public class Aurora : MonoBehaviour
         TestLogos();
     }
 
+    public void ShowUserScenarios()
+    {
+        if (AuroraBackgrounds != null && AuroraBackgrounds.Length > 0)
+        {
+            for (int i = 0; i < AuroraBackgrounds.Length; i++)
+            {
+                AuroraBackgrounds[i].gameObject.SetActive(true);
+            }
+        }
+        Debug.Log("Load the scenarios list");
+    }
+
+    public void HideUserScenarios()
+    {
+        if (AuroraBackgrounds != null && AuroraBackgrounds.Length > 0)
+        {
+            for (int i = 0; i < AuroraBackgrounds.Length; i++)
+            {
+                AuroraBackgrounds[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
     public void TestLogos()
     {
+        HideUserScenarios();
         Debug.LogWarning("The Logos idea must come from the server... for testing we use local version");
         var logos = new AraDiscussion()
         {

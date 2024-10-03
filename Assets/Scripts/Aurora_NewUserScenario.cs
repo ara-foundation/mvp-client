@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public class SenseverScenarioRequest
@@ -14,10 +15,19 @@ public class SenseverScenarioRequest
     public string token;
 }
 
+[Serializable]
 public class SenseverScenarioResponse
 {
     public bool correct;
     public UserScenario? answer;
+}
+
+[Serializable]
+public class UserScenarioCreate
+{
+    public string token;    // authorization toke
+    public int id; // logos id
+    public UserScenario content;
 }
 
 public class Aurora_NewUserScenario : MonoBehaviour
@@ -27,6 +37,9 @@ public class Aurora_NewUserScenario : MonoBehaviour
     [SerializeField] private SenseverDialogue Dialogue;
     [SerializeField] private CardLogos PinnedLogos;
     [SerializeField] private Auroa_Tutorial Tutorial;
+    [SerializeField] private Button PostButton;
+
+    [SerializeField] private GameObject[] NewScenarioBackgrounds;
 
     private AraDiscussion logos;
 
@@ -37,10 +50,10 @@ public class Aurora_NewUserScenario : MonoBehaviour
         Drawer.gameObject.SetActive(false);
     }
 
+
     private void OnDisable()
     {
-        Dialogue.gameObject.SetActive(false);
-        Drawer.gameObject.SetActive(false);
+        Hide();
     }
 
     private void OnDialogueEnd(Auroa_Tutorial.TutorialStep showed)
@@ -51,7 +64,20 @@ public class Aurora_NewUserScenario : MonoBehaviour
         }
     }
 
-    public void OnPost()
+    public void Hide()
+    {
+        Dialogue.gameObject.SetActive(false);
+        Drawer.gameObject.SetActive(false);
+        if (NewScenarioBackgrounds != null && NewScenarioBackgrounds.Length > 0)
+        {
+            for (int i = 0; i < NewScenarioBackgrounds.Length; i++)
+            {
+                NewScenarioBackgrounds[i].gameObject.SetActive(false);
+            }
+        }
+    } 
+
+    public async void OnPost()
     {
         var error = Drawer.Validate();
         if (!string.IsNullOrEmpty(error))
@@ -65,8 +91,39 @@ public class Aurora_NewUserScenario : MonoBehaviour
             return;
         }
 
-        var content = Drawer.Content();
-        var body = JsonUtility.ToJson(content);
+        var data = new UserScenarioCreate()
+        {
+            id = logos.id,
+            token = AraAuth.Instance.UserParams.token,
+            content = Drawer.Content(),
+        };
+        var body = JsonUtility.ToJson(data);
+        PostButton.interactable = false;
+
+        var url = NetworkParams.AraActUrl + "/aurora/user-scenario";
+
+        Tuple<long, string> res;
+        try
+        {
+            res = await WebClient.Post(url, body);
+        }
+        catch (Exception ex)
+        {
+            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Debug.LogError(ex);
+            PostButton.interactable = true;
+            return;
+        }
+        if (res.Item1 != 200)
+        {
+            Notification.Instance.Show($"Error: {res.Item2}");
+            PostButton.interactable = true;
+            return;
+        }
+        PostButton.interactable = true;
+        Notification.Instance.Show("User Scenario was added, wait until someone starts a plan");
+        Hide();
+        Aurora.Instance.ShowUserScenarios();
     }
 
     private void OnDialogueStart(Auroa_Tutorial.TutorialStep started)
@@ -90,6 +147,14 @@ public class Aurora_NewUserScenario : MonoBehaviour
 
     public void Show(AraDiscussion logos)
     {
+        if (NewScenarioBackgrounds != null && NewScenarioBackgrounds.Length > 0)
+        {
+            for (int i = 0; i < NewScenarioBackgrounds.Length; i++)
+            {
+                NewScenarioBackgrounds[i].gameObject.SetActive(true);
+            }
+        }
+
         if (!SkipTutorial)
         {
             Drawer.gameObject.SetActive(false);
