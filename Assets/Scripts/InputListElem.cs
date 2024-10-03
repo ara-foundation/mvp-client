@@ -12,6 +12,11 @@ public class InputListElem : MonoBehaviour
     private InputList InputList = null;
     public bool IsAdd { get; private set; }
 
+    public override string ToString()
+    {
+        return InputContent.text;
+    }
+
     public string Content() {  return InputContent.text; }
     public void SetMode(InputList inputList, bool isAdd)
     {

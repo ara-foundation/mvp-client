@@ -29,7 +29,7 @@ public class Logos : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    async void Start()
+    async void OnEnable()
     {
         await LoadIdeas();
     }

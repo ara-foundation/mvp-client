@@ -48,6 +48,24 @@ public class Aurora_NewUserScenario : MonoBehaviour
         }
     }
 
+    public void OnPost()
+    {
+        var error = Drawer.Validate();
+        if (!string.IsNullOrEmpty(error))
+        {
+            Notification.Instance.Show("Error: " + error);
+            return;
+        }
+        if (!AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
+        {
+            Notification.Instance.Show("Login first");
+            return;
+        }
+
+        var content = Drawer.Content();
+        var body = JsonUtility.ToJson(content);
+    }
+
     private void OnDialogueStart(Auroa_Tutorial.TutorialStep started)
     {
         if (started == Auroa_Tutorial.TutorialStep.Idea)

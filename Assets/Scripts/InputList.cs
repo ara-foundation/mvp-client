@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class InputList : MonoBehaviour
@@ -24,6 +25,27 @@ public class InputList : MonoBehaviour
         };
     }
 
+    public string[] Elements()
+    {
+        return AddedListElems.ConvertAll<string>(elem => elem.ToString()).ToArray();
+    }
+
+    public bool IsEmpty()
+    {
+        if (AddedListElems == null || AddedListElems.Count == 0)
+        {
+            return true;
+        }
+        var elements = Elements();
+        foreach (var elem in elements)
+        {
+            if (string.IsNullOrEmpty(elem))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public bool Remove(InputListElem inputListElem)
     {

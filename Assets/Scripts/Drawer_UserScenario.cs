@@ -60,6 +60,7 @@ public class Drawer_UserScenario : MonoBehaviour
             Habits.Add(draft.relevant_habits_hobbies_beliefs[i]);
         }
         // Problems
+        Debug.LogWarning("There is no UserScenarioProblem management such as on the InputList to add or remove problems");
         ClearContent(ProblemsContent);
         Problems = new List<UserScenario_Problem>();
         for (int i = 0; i < draft.problems.Length; i++)
@@ -137,5 +138,130 @@ public class Drawer_UserScenario : MonoBehaviour
     public void OnReady()
     {
         Title.text = "Here is the user scenario";
+    }
+
+    /// <summary>
+    /// Returns an error message if there is any
+    /// </summary>
+    /// <returns></returns>
+    public string Validate()
+    {
+        if (logos == null)
+        {
+            return "No binded Logos";
+        }
+
+        if (string.IsNullOrEmpty(Title.text))
+        {
+            return "Title is empty";
+        }
+        if (string.IsNullOrEmpty(UserName.text))
+        {
+            return "Username is empty";
+        }
+        if (string.IsNullOrEmpty(UserBackground.text))
+        {
+            return "User background is empty";
+        }
+        if (Steps.IsEmpty())
+        {
+            return "No user steps";
+        }
+        if (Goals.IsEmpty())
+        {
+            return "No user goals";
+        }
+        if (Habits.IsEmpty())
+        {
+            return "Empty user habits";
+        }
+        if (Problems.Count == 0)
+        {
+            return "No user's problems defined";
+        }
+        for (int i = 0; i < Problems.Count; i++)
+        {
+            var problem = Problems[i];
+            if (problem.IsEmpty())
+            {
+                return $"Problem {i+1} has empty field";
+            }
+        }
+        if (Motivations.IsEmpty())
+        {
+            return "No motivation defined";
+        }
+        if (Flow.IsEmpty())
+        {
+            return "User Flow is not defined";
+        }
+        var flow = Flow.Elements();
+        for (int i = 0; i < flow.Length; i++)
+        {
+            var flowParts = flow[i].Split(":");
+            if (flowParts.Length != 2)
+            {
+                return $"Flow format error for {i+1}. Flow format must have action and description separation by ':'";
+            }
+        }
+
+        return null;
+    }
+
+    public UserScenario Content()
+    {
+        draft.title = Title.text;
+        // Context
+        draft.context.user = UserName.text;
+        draft.context.background = UserBackground.text;
+        var steps = Steps.Elements();
+        draft.context.steps = new string[steps.Length];
+        for (int i = 0; i < steps.Length; i++)
+        {
+            draft.context.steps[i] = steps[i];
+        }
+        var goals = Goals.Elements();
+        draft.goals = new string[goals.Length];
+
+        for (int i = 0; i < goals.Length; i++)
+        {
+            draft.goals[i] = goals[i];
+        }
+        var habits = Habits.Elements();
+        draft.relevant_habits_hobbies_beliefs = new string[habits.Length];
+        for (int i = 0; i < habits.Length; i++)
+        {
+            draft.relevant_habits_hobbies_beliefs[i] = habits[i];
+        }
+        // Problems
+        draft.problems = new UserScenarioProblem[Problems.Count];
+        for (int i = 0; i < Problems.Count; i++)
+        {
+            draft.problems[i] = Problems[i].Content();
+        }
+        // Motivation
+        var motivations = Motivations.Elements();
+        draft.user_motivations= new string[motivations.Length];
+        for (int i = 0; i < motivations.Length; i++)
+        {
+            draft.user_motivations[i] = motivations[i];
+        }
+        // Flow
+        var flow = Flow.Elements();
+        draft.user_scenario_flow = new FlowStep[flow.Length];
+        for (int i = 0; i < flow.Length; i++)
+        {
+            var flowParts = flow[i].Split(":");
+
+            var flowStep = new FlowStep()
+            {
+                    step = 1,
+                    action = flowParts[0],
+                    description = flowParts[1],
+            };
+            draft.user_scenario_flow[i] = flowStep;
+        }
+
+        return draft;
     }
 }
