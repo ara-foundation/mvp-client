@@ -11,6 +11,7 @@ public class SenseverScenarioRequest
     public string requester;
     public int id;
     public string content;
+    public string token;
 }
 
 public class SenseverScenarioResponse
@@ -26,6 +27,8 @@ public class Aurora_NewUserScenario : MonoBehaviour
     [SerializeField] private SenseverDialogue Dialogue;
     [SerializeField] private CardLogos PinnedLogos;
     [SerializeField] private Auroa_Tutorial Tutorial;
+
+    private AraDiscussion logos;
 
     // Start is called before the first frame update
     void Start()
@@ -85,40 +88,64 @@ public class Aurora_NewUserScenario : MonoBehaviour
         }
     }
 
-    public async void Show(AraDiscussion logos)
+    public void Show(AraDiscussion logos)
     {
         if (!SkipTutorial)
         {
             Drawer.gameObject.SetActive(false);
             Dialogue.gameObject.SetActive(true);
             Dialogue.StartTutorial(OnDialogueEnd, OnDialogueStart);
-        } else
+        }
+        else
         {
             Drawer.gameObject.SetActive(true);
         }
         PinnedLogos.Show(logos);
 
         // load user scenario
+        this.logos = logos;
+        Drawer.SetReady(false);
+        if (!AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
+        {
+            Drawer.SetTitle("Log in first");
+            AraAuth.Instance.OnStatusChange += LoadScenario;
+        }
+        else
+        {
+            LoadScenario(true);
+        }
+    }
+
+    async void LoadScenario(bool loggedIn)
+    {
+        if (!loggedIn)
+        {
+            return;
+        }
+        AraAuth.Instance.OnStatusChange -= LoadScenario;
+        Drawer.SetTitle();
+
         var userScenario = await GenerateScenarioDraft(logos);
         if (userScenario != null)
         {
             Drawer.Show(logos, userScenario);
             Drawer.SetReady(true);
-        } else
+        }
+        else
         {
-            Drawer.SetReady(false);
             Drawer.gameObject.SetActive(false);
         }
-        // post scenario
     }
 
     async Task<UserScenario> GenerateScenarioDraft(AraDiscussion logos)
     {
+
         var reqBody = new SenseverScenarioRequest()
         {
             requester = "ahmetson",
             id = logos.id,
-            content = logos.relationships.firstPost.attributes.contentHtml
+            content = logos.relationships.firstPost.attributes.contentHtml,
+            token = AraAuth.Instance.UserParams.token,
         };
 
         var url = NetworkParams.SenseverUrl + "/scenario-draft";

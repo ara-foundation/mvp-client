@@ -89,7 +89,6 @@ public class Drawer_UserScenario : MonoBehaviour
         this.logos = null;
         this.draft = null;
 
-        Title.text = DefaultTitle;
         // Context
         UserName.text = "";
         UserBackground.text = "";
@@ -124,6 +123,7 @@ public class Drawer_UserScenario : MonoBehaviour
 
     private void OnDisable()
     {
+        SetTitle();
         Hide();
         contentReady.Set(false);
         AraAuth.Instance.OnStatusChange -= OnAuthStatusChange;
@@ -147,7 +147,6 @@ public class Drawer_UserScenario : MonoBehaviour
 
     public void OnLoading()
     {
-        Title.text = DefaultTitle;
         if (AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
         {
             Author.text = "@" + AraAuth.Instance.UserParams.loginParams.username;
@@ -159,6 +158,16 @@ public class Drawer_UserScenario : MonoBehaviour
 
     public void OnReady()
     {
+    }
+
+    public void SetTitle(string title)
+    {
+        Title.text = title;
+    }
+
+    public void SetTitle()
+    {
+        Title.text = DefaultTitle;
     }
 
     /// <summary>
