@@ -159,7 +159,6 @@ public class Drawer_UserScenario : MonoBehaviour
 
     public void OnReady()
     {
-        Title.text = "Here is the user scenario";
     }
 
     /// <summary>
