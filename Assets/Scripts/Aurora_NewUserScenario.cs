@@ -72,7 +72,10 @@ public class Aurora_NewUserScenario : MonoBehaviour
         {
             for (int i = 0; i < NewScenarioBackgrounds.Length; i++)
             {
-                NewScenarioBackgrounds[i].gameObject.SetActive(false);
+                if (NewScenarioBackgrounds[i].gameObject)
+                {
+                    NewScenarioBackgrounds[i].gameObject.SetActive(false);
+                }
             }
         }
     } 
