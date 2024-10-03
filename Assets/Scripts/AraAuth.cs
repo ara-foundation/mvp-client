@@ -122,6 +122,10 @@ public class AraAuth : MonoBehaviour
     [SerializeField] private TMP_InputField ProfileAddress;
     [SerializeField] private TMP_InputField ProfilePrivateKey;
 
+    public delegate void AuthStatusChange(bool loggedIn);
+
+    public event AuthStatusChange OnStatusChange;
+
     private static AraAuth _instance;
 
     public static AraAuth Instance
@@ -143,12 +147,17 @@ public class AraAuth : MonoBehaviour
     {
         UserParams = await AutoLogin();
         Debug.Log("Auto Logged in? " + UserParams != null);
-        if (IsLoggedIn(UserParams))
+        var loggedIn = IsLoggedIn(UserParams);
+        if (loggedIn)
         {
             LoginText.text = UserParams.loginParams.username;
         } else
         {
             LoginText.text = DefaultLoginText;
+        }
+        if (OnStatusChange != null)
+        {
+            OnStatusChange(loggedIn);
         }
     }
 
@@ -160,6 +169,9 @@ public class AraAuth : MonoBehaviour
             userParams.loginParams.username.Length > 0;
     }
 
+    /// <summary>
+    /// Click on the User Avatar on right top
+    /// </summary>
     public void OnClick()
     {
         if (IsLoggedIn(UserParams))
@@ -282,9 +294,13 @@ public class AraAuth : MonoBehaviour
 
             SignupModal.TurnOffSiblingsNow();
             SignupModal.TurnOff();
+
+            if (OnStatusChange != null)
+            {
+                OnStatusChange(true);
+            }
         }
     }
-
 
     public void OnLogout()
     {
@@ -295,6 +311,11 @@ public class AraAuth : MonoBehaviour
 
         SignupModal.TurnOffSiblingsNow();
         SignupModal.TurnOff();
+
+        if (OnStatusChange != null)
+        {
+            OnStatusChange(false);
+        }
     }
 
     private async Task<UserParams> Login(UserParams userParams)
@@ -369,6 +390,11 @@ public class AraAuth : MonoBehaviour
 
         userParams.token = result.token;
         userParams.tokenExpiry = (int)expiry;
+
+        if (OnStatusChange != null)
+        {
+            OnStatusChange(true);
+        }
 
         return userParams;
     }
