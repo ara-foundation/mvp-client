@@ -110,6 +110,10 @@ public class Aurora_NewUserScenario : MonoBehaviour
         try
         {
             res = await WebClient.Post(url, body);
+            if (string.IsNullOrEmpty(res))
+            {
+                throw new Exception("No data from the server");
+            }
         }
         catch (Exception ex)
         {
