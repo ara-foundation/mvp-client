@@ -1,14 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+[Serializable]
 public class FlowStep {
     public int step;
     public string action;
     public string description;
 }
 
+[Serializable]
 public class UserScenarioContext
 {
     public string user;
@@ -16,13 +19,16 @@ public class UserScenarioContext
     public string[] steps;
 }
 
+[Serializable]
 public class UserScenarioProblem
 {
     public string description;
     public string[] obstacles;
 }
 
-public class UserScenario {
+[Serializable]
+public class UserScenario
+{
     public string title;
     public UserScenarioContext context;
     public string[] goals;
