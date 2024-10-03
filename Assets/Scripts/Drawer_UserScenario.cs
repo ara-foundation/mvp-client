@@ -117,10 +117,32 @@ public class Drawer_UserScenario : MonoBehaviour
         contentReady.Set(false);
     }
 
+    private void OnEnable()
+    {
+        AraAuth.Instance.OnStatusChange += OnAuthStatusChange;
+    }
+
     private void OnDisable()
     {
         Hide();
         contentReady.Set(false);
+        AraAuth.Instance.OnStatusChange -= OnAuthStatusChange;
+    }
+
+    private void OnAuthStatusChange(bool loggedIn)
+    {
+        if (!contentReady.On)
+        {
+            return;
+        }
+        if (loggedIn)
+        {
+            Author.text = "@" + AraAuth.Instance.UserParams.loginParams.username;
+        }
+        else
+        {
+            Author.text = "Anonymous";
+        }
     }
 
     public void OnLoading()
