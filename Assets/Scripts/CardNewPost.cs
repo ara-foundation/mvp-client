@@ -38,7 +38,7 @@ public class CardNewPost : MonoBehaviour
     {
         if (!AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
         {
-            Notification.Instance.Show("Please Login First");
+            AraAuth.Instance.RequireLogin();
             return;
         }
 

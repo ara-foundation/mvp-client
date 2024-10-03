@@ -1,3 +1,4 @@
+using Highlighter;
 using Lean.Gui;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Security;
@@ -122,6 +123,10 @@ public class AraAuth : MonoBehaviour
     [SerializeField] private TMP_InputField ProfileAddress;
     [SerializeField] private TMP_InputField ProfilePrivateKey;
 
+    private Coroutine highlting;
+    [SerializeField] private StandardPostProcessingCamera Fog;
+    [SerializeField] private RadialWaveEffect AvatarHighlight;
+
     public delegate void AuthStatusChange(bool loggedIn);
 
     public event AuthStatusChange OnStatusChange;
@@ -140,11 +145,39 @@ public class AraAuth : MonoBehaviour
         }
     }
 
+    public void RequireLogin()
+    {
+        Notification.Instance.Show("Please Login First");
+        HighlightAvatar();
+    }
+
+    public void HighlightAvatar()
+    {
+        Fog.enabled = true;
+        AvatarHighlight.enabled = true;
+        highlting = StartCoroutine(AvatarHighlightTimer());
+    }
+
+    IEnumerator AvatarHighlightTimer()
+    {
+        //yield on a new YieldInstruction that waits for 5 seconds.
+        yield return new WaitForSeconds(5);
+
+        highlting = null;
+        CancelHighlight();
+    }
+
+    private void CancelHighlight()
+    {
+        Fog.enabled = false;
+        AvatarHighlight.enabled = false;
+    }
 
 
     // Start is called before the first frame update
     async void Start()
     {
+        highlting = null;
         UserParams = await AutoLogin();
         Debug.Log("Auto Logged in? " + UserParams != null);
         var loggedIn = IsLoggedIn(UserParams);
@@ -174,6 +207,12 @@ public class AraAuth : MonoBehaviour
     /// </summary>
     public void OnClick()
     {
+        if (highlting != null)
+        {
+            StopCoroutine(highlting);
+            highlting = null;
+            CancelHighlight();
+        }
         if (IsLoggedIn(UserParams))
         {
             ShowProfileModal();

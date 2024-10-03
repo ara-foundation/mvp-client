@@ -58,7 +58,7 @@ public class Aurora_NewUserScenario : MonoBehaviour
         }
         if (!AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
         {
-            Notification.Instance.Show("Login first");
+            AraAuth.Instance.RequireLogin();
             return;
         }
 
