@@ -362,7 +362,7 @@ public class AraAuth : MonoBehaviour
         var body = JsonUtility.ToJson(userParams.loginParams);
         string url = NetworkParams.AraActUrl + "/users/login";
 
-        string res;
+        Tuple<long, string> res;
         try
         {
             res = await WebClient.Post(url, body);
@@ -373,11 +373,15 @@ public class AraAuth : MonoBehaviour
             Debug.LogError(ex);
             return null;
         }
+        if (res.Item1 != 200)
+        {
+            Notification.Instance.Show($"Error: {res.Item2}");
+        }
 
         CreateSessionToken result;
         try
         {
-            result = JsonConvert.DeserializeObject<CreateSessionToken>(res);
+            result = JsonConvert.DeserializeObject<CreateSessionToken>(res.Item2);
         }
         catch (Exception e)
         {
@@ -400,7 +404,7 @@ public class AraAuth : MonoBehaviour
         var body = JsonUtility.ToJson(userParams.loginParams);
         string url = NetworkParams.AraActUrl + "/users";
 
-        string res;
+        Tuple<long, string> res;
         try
         {
             res = await WebClient.Post(url, body);
@@ -411,11 +415,15 @@ public class AraAuth : MonoBehaviour
             Debug.LogError(ex);
             return null;
         }
+        if (res.Item1 != 200)
+        {
+            Notification.Instance.Show($"Error: {res.Item2}");
+        }
 
         CreateSessionToken result;
         try
         {
-            result = JsonConvert.DeserializeObject<CreateSessionToken>(res);
+            result = JsonConvert.DeserializeObject<CreateSessionToken>(res.Item2);
         }
         catch (Exception e)
         {

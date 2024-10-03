@@ -124,14 +124,10 @@ public class Aurora_NewUserScenario : MonoBehaviour
         var url = NetworkParams.SenseverUrl + "/scenario-draft";
         var body = JsonUtility.ToJson(reqBody);
 
-        string res;
+        Tuple<long, string> res;
         try
         {
             res = await WebClient.Post(url, body);
-            if (string.IsNullOrEmpty(res))
-            {
-                throw new Exception("No data from the server");
-            }
         }
         catch (Exception ex)
         {
@@ -139,11 +135,16 @@ public class Aurora_NewUserScenario : MonoBehaviour
             Debug.LogError(ex);
             return null;
         }
+        if (res.Item1 != 200)
+        {
+            Notification.Instance.Show($"Error: {res.Item2}");
+            return null;
+        }
 
         SenseverScenarioResponse result;
         try
         {
-            result = JsonConvert.DeserializeObject<SenseverScenarioResponse>(res);
+            result = JsonConvert.DeserializeObject<SenseverScenarioResponse>(res.Item2);
             if (!result.correct)
             {
                 Notification.Instance.Show("Sensever server returned unrecognized data. So sorry for my mistake");

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
@@ -18,17 +19,16 @@ public class WebClient
         return tcs.Task;
     }
 
-    public static async Task<string> Post(string url, string jsonBody)
+    public static async Task<Tuple<long, string>> Post(string url, string jsonBody)
     {
         UnityWebRequest request = UnityWebRequest.Post(url, jsonBody, "application/json");
         await request.SendWebRequest();
         if (request.result == UnityWebRequest.Result.ConnectionError)
         {
             Debug.Log(request.error);
-            return "";
+            return Tuple.Create((long)418, request.error );
         }
-
-        return request.downloadHandler.text;
+        return Tuple.Create(request.responseCode, request.downloadHandler.text);
     }
 
     public static async Task<string> Get(string url, int timeout)

@@ -86,7 +86,7 @@ public class CardNewPost : MonoBehaviour
         var body = JsonUtility.ToJson(ideaParams);
         string url = NetworkParams.AraActUrl + "/logos/idea";
 
-        string res;
+        Tuple<long, string> res;
         try
         {
             res = await WebClient.Post(url, body);
@@ -97,11 +97,16 @@ public class CardNewPost : MonoBehaviour
             Debug.LogError(ex);
             return null;
         }
+        if (res.Item1 != 200)
+        {
+            Notification.Instance.Show($"Error: {res.Item2}");
+            return null;
+        }
 
         AraDiscussion result;
         try
         {
-            result = JsonConvert.DeserializeObject<AraDiscussion>(res);
+            result = JsonConvert.DeserializeObject<AraDiscussion>(res.Item2);
         }
         catch (Exception e)
         {
