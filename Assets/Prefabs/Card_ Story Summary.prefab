@@ -289,7 +289,7 @@ MonoBehaviour:
   Data:
     Duration: 0.1
     Target: {fileID: 6884054424773633098}
-    Value: {r: 0.9647059, g: 0.99215686, b: 0.20784314, a: 1}
+    Value: {r: 0.58431375, g: 0.8235294, b: 0.99215686, a: 1}
     Ease: 250
 --- !u!114 &326398207430061950
 MonoBehaviour:
@@ -1456,7 +1456,7 @@ MonoBehaviour:
   onNonInteractable:
     m_PersistentCalls:
       m_Calls: []
-  expectedInteractable: 1
+  expectedInteractable: 0
   requiredButtons: -1
   multiDown: 0
   dragThreshold: 10
@@ -2189,7 +2189,7 @@ MonoBehaviour:
   Data:
     Duration: 0.2
     Target: {fileID: 6884054424773633098}
-    Value: {r: 0.77447784, g: 0.79622644, b: 0.172766, a: 1}
+    Value: {r: 0.27845496, g: 0.6883888, b: 0.97735846, a: 1}
     Ease: 250
 --- !u!114 &3802172164258520399
 MonoBehaviour:
@@ -2539,8 +2539,8 @@ MonoBehaviour:
   onClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: CardLogos, Assembly-CSharp
+      - m_Target: {fileID: 2864084229822606237}
+        m_TargetAssemblyTypeName: CardAurora, Assembly-CSharp
         m_MethodName: OnStart
         m_Mode: 1
         m_Arguments:
@@ -4219,7 +4219,7 @@ MonoBehaviour:
   onNonInteractable:
     m_PersistentCalls:
       m_Calls: []
-  expectedInteractable: 1
+  expectedInteractable: 0
   target: {fileID: 0}
   horizontal: 1
   vertical: 1
@@ -5453,7 +5453,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3404931657543633417, guid: 5220d94f9ed46af4f8e0ef0db5104f75, type: 3}
       propertyPath: expectedInteractable
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3407650303199807143, guid: 5220d94f9ed46af4f8e0ef0db5104f75, type: 3}
       propertyPath: m_AnchorMax.y
