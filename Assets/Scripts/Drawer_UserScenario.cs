@@ -106,7 +106,10 @@ public class Drawer_UserScenario : MonoBehaviour
     {
         foreach (Transform child in trans)
         {
-            Destroy(child.gameObject);
+            if (child.gameObject)
+            {
+                Destroy(child.gameObject);
+            }
         };
     }
 

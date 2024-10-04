@@ -51,11 +51,6 @@ public class Aurora_NewUserScenario : MonoBehaviour
     }
 
 
-    private void OnDisable()
-    {
-        Hide();
-    }
-
     private void OnDialogueEnd(Auroa_Tutorial.TutorialStep showed)
     {
         if (showed == Auroa_Tutorial.TutorialStep.Exit) 
@@ -126,7 +121,7 @@ public class Aurora_NewUserScenario : MonoBehaviour
         PostButton.interactable = true;
         Notification.Instance.Show("User Scenario was added, wait until someone starts a plan");
         Hide();
-        Aurora.Instance.ShowUserScenarios();
+        await Aurora.Instance.ShowUserScenarios();
     }
 
     private void OnDialogueStart(Auroa_Tutorial.TutorialStep started)
