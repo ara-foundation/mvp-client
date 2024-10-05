@@ -376,6 +376,7 @@ public class AraAuth : MonoBehaviour
         if (res.Item1 != 200)
         {
             Notification.Instance.Show($"Error: {res.Item2}");
+            return null;
         }
 
         CreateSessionToken result;
@@ -466,6 +467,10 @@ public class AraAuth : MonoBehaviour
 
         Notification.Instance.Show("Session expired, auto log in...");
         userParams = await Login(userParams);
+        if (userParams == null)
+        {
+            return null;
+        }
         UserParams.Save(userParams);
 
         await LoadWallet();
