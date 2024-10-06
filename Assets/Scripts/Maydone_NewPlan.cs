@@ -176,8 +176,6 @@ public class Maydone_NewPlan : MonoBehaviour
         WelcomeLogos.Show(logos);
         FormLogos.Show(logos);
 
-        Debug.Log("Logos id " + logos.id);
-
         Plan = new Plan
         {
             user_scenario_id = userScenarioId,

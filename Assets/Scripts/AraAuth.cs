@@ -16,6 +16,7 @@ using WalletConnectSharp.Core.Controllers;
 /*Defined in act-server/src/handlers/users.ts*/
 [Serializable]
 public class UserCreate {
+    public int user_id;
     public string username;
     public string password;
     public string email;
@@ -24,6 +25,7 @@ public class UserCreate {
 /* Defined in npm://@ara-foundation/flarum-js-client/types */
 [Serializable]
 public class CreateSessionToken {
+    public int user_id;
     public string token;
 }
 
@@ -33,6 +35,7 @@ public class ErrorResponse
 {
     public string message;
 }
+
 
 [Serializable]
 public class UserParams
@@ -395,6 +398,7 @@ public class AraAuth : MonoBehaviour
         LoginButton.interactable = true;
 
         userParams.token = result.token;
+        userParams.loginParams.user_id = result.user_id;
         userParams.tokenExpiry = (int)expiry;
 
         return userParams;
@@ -437,6 +441,7 @@ public class AraAuth : MonoBehaviour
         SignupButton.interactable = true;
 
         userParams.token = result.token;
+        userParams.loginParams.user_id = result.user_id;
         userParams.tokenExpiry = (int)expiry;
 
         if (OnStatusChange != null)
