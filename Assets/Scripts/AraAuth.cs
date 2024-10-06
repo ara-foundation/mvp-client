@@ -62,15 +62,15 @@ public class UserParams
      */
     public static void Save(UserParams userParams)
     {
-        PlayerPrefs.SetString(LatestUsernameKey, userParams.loginParams.username);
+        PlayerPrefs.SetString(LatestUsernameKey, userParams.loginParams.username.Replace("-", "_"));
         var value = JsonConvert.SerializeObject(userParams);
-        var key = UserKeyPrefix + userParams.loginParams.username;
+        var key = UserKeyPrefix + userParams.loginParams.username.Replace("-", "_");
         PlayerPrefs.SetString(key, value);
     }
 
     public static UserParams Load(string username)
     {
-        var userKey = UserKeyPrefix + username;
+        var userKey = UserKeyPrefix + username.Replace("-", "_");
         if (!PlayerPrefs.HasKey(userKey))
         {
             return null;
@@ -148,6 +148,11 @@ public class AraAuth : MonoBehaviour
         }
     }
 
+    private void OnLogStatusChange(bool loggedIn)
+    {
+        WalletIcon.SetActive(loggedIn);
+    }
+
     public void RequireLogin()
     {
         Notification.Instance.Show("Please Login First");
@@ -176,10 +181,21 @@ public class AraAuth : MonoBehaviour
         AvatarHighlight.enabled = false;
     }
 
+    private void Awake()
+    {
+        OnStatusChange += OnLogStatusChange;
+    }
+
+    private void OnDestroy()
+    {
+        OnStatusChange -= OnLogStatusChange;
+    }
+
 
     // Start is called before the first frame update
     async void Start()
     {
+        WalletIcon.SetActive(false);
         highlting = null;
         UserParams = await AutoLogin();
         var loggedIn = IsLoggedIn(UserParams);
@@ -346,7 +362,6 @@ public class AraAuth : MonoBehaviour
     {
         if (Wallet != null)
         {
-            Debug.Log("Disconnect the wallet");
             await Wallet.Disconnect();
         }
         UserParams = null;
@@ -457,11 +472,6 @@ public class AraAuth : MonoBehaviour
         return userParams;
     }
 
-    void OnDisable()
-    {
-        if (IsLoggedIn(UserParams)) { OnLogout(); }
-    }
-
     private async Task<UserParams> AutoLogin()
     {
         var userParams = UserParams.Load();
@@ -470,17 +480,15 @@ public class AraAuth : MonoBehaviour
             return null;
         }
 
-        if (userParams.IsTokenActive()) {
-            return userParams;
+        if (!userParams.IsTokenActive()) {
+            Notification.Instance.Show("Session expired, auto log in...");
+            userParams = await Login(userParams);
+            if (userParams == null)
+            {
+                return null;
+            }
+            UserParams.Save(userParams);
         }
-
-        Notification.Instance.Show("Session expired, auto log in...");
-        userParams = await Login(userParams);
-        if (userParams == null)
-        {
-            return null;
-        }
-        UserParams.Save(userParams);
 
         await LoadWallet();
 
@@ -499,8 +507,8 @@ public class AraAuth : MonoBehaviour
             chainId: 11155111,
             inAppWalletOptions: inAppWalletOptions
         );
+
         Wallet = await ThirdwebManager.Instance.ConnectWallet(options);
-        Debug.Log("The connected wallet is ");
         var addr = await Wallet.GetAddress();
     }
 }
