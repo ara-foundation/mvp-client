@@ -47,8 +47,6 @@ public class UserParams
     public UserCreate loginParams;
     public string token;
     public int tokenExpiry;
-    public string privateKey;
-    public string address;
 
     public static UserParams Load()
     {
@@ -107,7 +105,7 @@ public class AraAuth : MonoBehaviour
     private LeanWindow LoginModal;
     [SerializeField] private LeanWindow SignupModal;
     [SerializeField] private LeanWindow ProfileModal;
-    private static IThirdwebWallet Wallet;
+    private IThirdwebWallet Wallet;
     private static readonly string DefaultLoginText = "Login";
 
     [HideInInspector]
@@ -124,7 +122,9 @@ public class AraAuth : MonoBehaviour
     [SerializeField] private TMP_InputField ProfileEmail;
     [SerializeField] private TMP_InputField ProfilePassword;
     [SerializeField] private TMP_InputField ProfileAddress;
-    [SerializeField] private TMP_InputField ProfilePrivateKey;
+
+    [SerializeField]
+    private GameObject WalletIcon;
 
     private Coroutine highlting;
     [SerializeField] private StandardPostProcessingCamera Fog;
@@ -182,7 +182,6 @@ public class AraAuth : MonoBehaviour
     {
         highlting = null;
         UserParams = await AutoLogin();
-        Debug.Log("Auto Logged in? " + UserParams != null);
         var loggedIn = IsLoggedIn(UserParams);
         if (loggedIn)
         {
@@ -224,15 +223,14 @@ public class AraAuth : MonoBehaviour
             ShowLoginModal();
         }
     }
-    public void ShowProfileModal()
+    public async void ShowProfileModal()
     {
         if (ProfileModal != null)
         {
             ProfileUsername.text = UserParams.loginParams.username;
             ProfileEmail.text = UserParams.loginParams.email;
             ProfilePassword.text = UserParams.loginParams.password;
-            ProfileAddress.text = UserParams.address;
-            ProfilePrivateKey.text = UserParams.privateKey;
+            ProfileAddress.text = await Wallet.GetAddress();
 
             LoginModal.TurnOff();
             SignupModal.TurnOff();
@@ -344,15 +342,22 @@ public class AraAuth : MonoBehaviour
         }
     }
 
-    public void OnLogout()
+    public async void OnLogout()
     {
-        ThirdwebManager.Instance.RemoveWallet(UserParams.address);
+        if (Wallet != null)
+        {
+            Debug.Log("Disconnect the wallet");
+            await Wallet.Disconnect();
+        }
         UserParams = null;
         LoginText.text = DefaultLoginText;
         PlayerPrefs.DeleteKey(UserParams.LatestUsernameKey);
 
-        SignupModal.TurnOffSiblingsNow();
-        SignupModal.TurnOff();
+        if (SignupModal)
+        {
+            SignupModal.TurnOffSiblingsNow();
+            SignupModal.TurnOff();
+        }
 
         if (OnStatusChange != null)
         {
@@ -454,8 +459,7 @@ public class AraAuth : MonoBehaviour
 
     void OnDisable()
     {
-        if (IsLoggedIn(UserParams)) 
-            ThirdwebManager.Instance.RemoveWallet(UserParams.address);
+        if (IsLoggedIn(UserParams)) { OnLogout(); }
     }
 
     private async Task<UserParams> AutoLogin()
@@ -485,21 +489,18 @@ public class AraAuth : MonoBehaviour
 
     private async Task LoadWallet()
     {
-        PrivateKeyWallet wallet;
-
-        if (UserParams.privateKey == null || UserParams.privateKey.Length == 0)
-        {
-            wallet = await PrivateKeyWallet.Generate(ThirdwebManager.Instance.Client);
-            UserParams.privateKey = await wallet.Export();
-
-            Wallet = await ThirdwebManager.Instance.AddWallet(wallet);
-            UserParams.address = await Wallet.GetAddress();
-
-            UserParams.Save(UserParams);
-        } else
-        {
-            wallet = await PrivateKeyWallet.Create(ThirdwebManager.Instance.Client, UserParams.privateKey);
-            Wallet = await ThirdwebManager.Instance.AddWallet(wallet);
-        }
+        var inAppWalletOptions = new InAppWalletOptions(
+            authprovider: AuthProvider.AuthEndpoint,
+            jwtOrPayload: UserParams.token,
+            encryptionKey: UserParams.loginParams.password
+        );
+        var options = new WalletOptions(
+            provider: WalletProvider.InAppWallet,
+            chainId: 11155111,
+            inAppWalletOptions: inAppWalletOptions
+        );
+        Wallet = await ThirdwebManager.Instance.ConnectWallet(options);
+        Debug.Log("The connected wallet is ");
+        var addr = await Wallet.GetAddress();
     }
 }
