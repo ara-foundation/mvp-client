@@ -504,7 +504,7 @@ public class AraAuth : MonoBehaviour
         );
         var options = new WalletOptions(
             provider: WalletProvider.InAppWallet,
-            chainId: 11155111,
+            chainId: NetworkParams.networkId,
             inAppWalletOptions: inAppWalletOptions
         );
 
