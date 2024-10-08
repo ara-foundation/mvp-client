@@ -121,6 +121,7 @@ public class Aurora_NewUserScenario : MonoBehaviour
         PostButton.interactable = true;
         Notification.Instance.Show("User Scenario was added, wait until someone starts a plan");
         Hide();
+        Aurora.Instance.ResetNewScenarioMode();
         await Aurora.Instance.ShowUserScenarios();
     }
 
@@ -162,6 +163,7 @@ public class Aurora_NewUserScenario : MonoBehaviour
         else
         {
             Drawer.gameObject.SetActive(true);
+            Dialogue.gameObject.SetActive(false);
         }
         PinnedLogos.Show(logos);
 
