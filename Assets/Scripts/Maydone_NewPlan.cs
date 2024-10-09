@@ -16,7 +16,6 @@ using Thirdweb;
 using Thirdweb.AccountAbstraction;
 using Thirdweb.Unity;
 using TMPro;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 
