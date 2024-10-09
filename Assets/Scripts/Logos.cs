@@ -91,4 +91,34 @@ public class Logos : MonoBehaviour
         }
         return result;
     }
+
+    public async Task<AraDiscussion> FetchIdea(int id)
+    {
+        AraDiscussion incorrectResult = new();
+
+        string url = NetworkParams.AraActUrl + $"/logos/idea/{id}";
+
+        string res;
+        try
+        {
+            res = await WebClient.Get(url);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex);
+            return incorrectResult;
+        }
+
+        AraDiscussion result;
+        try
+        {
+            result = JsonConvert.DeserializeObject<AraDiscussion>(res);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e + " for " + res);
+            return incorrectResult;
+        }
+        return result;
+    }
 }

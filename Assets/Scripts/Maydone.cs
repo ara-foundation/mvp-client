@@ -27,7 +27,7 @@ public class Plan: ForumParams
     [SerializeField] public int leader_user_id; // the main maintainer
     [SerializeField] public string project_name; // how the project is named
     [SerializeField] public int logos_id; // the id of the logos
-    [SerializeField] public int user_scenario_id; // the matching user scenario
+    [SerializeField] public string user_scenario_id; // the matching user scenario
 
     // 
     // Tech stack
@@ -92,7 +92,7 @@ public class Plan: ForumParams
         {
             return "No logos that it plans to realize";
         }
-        if (user_scenario_id <= 0)
+        if (string.IsNullOrEmpty(user_scenario_id))
         {
             return "No user scenario that it follows";
         }
@@ -165,7 +165,9 @@ public class Maydone : MonoBehaviour
         NewPlanContent.SetActive(false);
         ResetNewPlanMode();
         ClearContent();
-        
+
+        Debug.Log("Todo load the plans...");
+        return;
         var result = await FetchUserScenarios();
         if (result != null && result.Count > 0)
         {
@@ -221,12 +223,11 @@ public class Maydone : MonoBehaviour
     private void OnEnable()
     {
         Debug.LogWarning("Todo: Add to Maydone.LeanWindow.On the Maydone.Show()");
-        TestLogos();
+        //TestLogos();
     }
 
     public void TestLogos()
     {
-        HidePlans();
         Debug.LogWarning("The Logos idea must come from the server... for testing we use local version");
         var logos = new AraDiscussion()
         {
@@ -258,10 +259,10 @@ public class Maydone : MonoBehaviour
             }
             }
 };
-        NewPlan(logos, 88);
+        NewPlan(logos, null);
     }
 
-    public void NewPlan(AraDiscussion logos, int userScenarioId)
+    public void NewPlan(AraDiscussion logos, UserScenarioInServer userScenario)
     {
         newPlanMode = true;
         NewPlanContent.SetActive(true);
@@ -271,9 +272,10 @@ public class Maydone : MonoBehaviour
         if (MaydoneNewPlan == null)
         {
             Notification.Instance.Show("Internal Error: Stupid Medet forgive him for his mistake, he is a human after all");
+            return;
         }
 
-        MaydoneNewPlan.Show(logos, userScenarioId);
+        MaydoneNewPlan.Show(logos, userScenario);
     }
 
 }

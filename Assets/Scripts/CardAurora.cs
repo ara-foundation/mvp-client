@@ -42,6 +42,7 @@ public class UserScenario
 [Serializable]
 public class UserScenarioInServer: UserScenario
 {
+    public string _id;
     public int forum_discussion_id;
     public string forum_username;
     public int forum_user_id;
@@ -66,6 +67,8 @@ public class CardAurora : MonoBehaviour
     [SerializeField] private TextMeshProUGUI MaydoneAmount;
     [SerializeField] private TextMeshProUGUI LikesAmount;
     [SerializeField] private TextMeshProUGUI ViewsAmount;
+
+    private UserScenarioInServer userScenario;
 
     public void Show(UserScenarioInServer userScenario)
     {
@@ -102,10 +105,21 @@ public class CardAurora : MonoBehaviour
         DisplayName.text = araDiscussion.relationships.user.attributes.displayName;*/
         Debug.Log("Todo: Load the user's avatar by its id");
         UserName.text = userScenario.forum_username;
+
+        this.userScenario = userScenario;
     }
 
-    public void OnStart()
+    public async void OnStart()
     {
-        Debug.Log("Todo: switch to the Maydone scene now");
+        Debug.Log($"Scenario for {userScenario.logos_id} idea. Fetching...");
+        var logos = await Logos.Instance.FetchIdea(userScenario.logos_id);
+        if (logos == null)
+        {
+            Notification.Instance.Show("Error: failed to get logos idea from the server");
+            return;
+        }
+        Debug.Log("Idea was fetched, open the new plan.");
+
+        Maydone.Instance.NewPlan(logos, userScenario);
     }
 }

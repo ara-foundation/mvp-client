@@ -1,9 +1,22 @@
+using MaydoneV1;
+using NBitcoin;
+using Nethereum.ABI.FunctionEncoding.Attributes;
+using Nethereum.Contracts;
+using Nethereum.Contracts.ContractHandlers;
+using Nethereum.Hex.HexTypes;
+using Nethereum.Web3;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
+using Thirdweb;
+using Thirdweb.AccountAbstraction;
+using Thirdweb.Unity;
 using TMPro;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +25,50 @@ public class PlanCreate
 {
     public string token;    // authorization toke
     public Plan content;
+}
+
+[Serializable]
+public class Sangha
+{
+    public string ownership_minted;
+    public string ownership_max_suppl;
+    public string ownership; // DAO token
+    public string maintainer;
+    public string check;
+    public string ownershipSymbol;
+    public string maintainerSymbol;
+    public string checkSymbol;
+}
+
+[Serializable]
+public class Lungta
+{
+    public string aurora_id;
+    public int logos_id;
+    public string maydone_id;
+    public string act_id;
+}
+
+[Serializable]
+public class Leader
+{
+    public string _id;
+    public int userId;
+    public int nonce;
+    public string username;
+    public string walletAddress;
+}
+
+[Serializable]
+public class Project
+{
+    public string _id; // "67056baf24372ef24a58420c",
+    public int projectId;
+    public int networkId;
+    public Sangha sangha;
+    public Lungta lungta;
+    public string project_name;
+    public Leader leader;
 }
 
 public class Maydone_NewPlan : MonoBehaviour
@@ -28,6 +85,39 @@ public class Maydone_NewPlan : MonoBehaviour
     [SerializeField] private Button LastReturnButton;
 
     private AraDiscussion logos;
+    private UserScenarioInServer userScenario;
+    private bool runCoroutine = false;
+
+    private int nextProjectId;
+    private string leader;
+
+    IEnumerator CheckProjectStatus()
+    {
+        while (runCoroutine)
+        {
+            var planTask = FetchProject(nextProjectId);
+            yield return new WaitUntil(() => planTask.IsCompleted);
+            var plan = planTask.Result;
+            Debug.Log(plan);
+
+            if (plan != null && plan.leader != null && leader.ToLower().Equals(plan.leader.walletAddress.ToLower()))
+            {
+                runCoroutine = false;
+                break;
+            }
+            else
+            {
+                Debug.Log($"Project {nextProjectId} not registered on server, waiting a second and trying again");
+                yield return new WaitForSeconds(1f);
+            }
+        }
+
+        Notification.Instance.Show("Project was added. Ask investors to join");
+        EnableDeploy();
+        Hide();
+        Maydone.Instance.ResetNewPlanMode();
+        Maydone.Instance.Show();
+    }
 
     public void OnChangeProjectName(string value)
     {
@@ -121,66 +211,313 @@ public class Maydone_NewPlan : MonoBehaviour
         logos = null;
     } 
 
+    private void DisableDeploy()
+    {
+        DeployButton.interactable = false;
+        DeployingSpinner.SetActive(true);
+    }
+
+    private void EnableDeploy()
+    {
+        DeployButton.interactable = true;
+        DeployingSpinner.SetActive(false);
+    }
+
+    public async Task<Project> FetchProject(int id)
+    {
+        Project incorrectResult = new();
+
+        string url = NetworkParams.AraActUrl + $"/project/{id}/{NetworkParams.networkId}";
+
+        string res;
+        try
+        {
+            res = await WebClient.Get(url);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex);
+            return incorrectResult;
+        }
+
+        Project result;
+        try
+        {
+            result = JsonConvert.DeserializeObject<Project>(res);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e + " for " + res);
+            return incorrectResult;
+        }
+        return result;
+    }
+
     public async void OnDeploy()
     {
+        
+        DisableDeploy();
+        var lastProjectId = await ThirdwebContract.Read<BigInteger>(AraAuth.Instance.ProjectContract, "lastProjectId", new object[] { });
+        Debug.Log($"last project id {lastProjectId}");
+        nextProjectId = (int)lastProjectId + 1;
+        this.leader = await AraAuth.Instance.GetAddress();
+
+        var balance = await AraAuth.Instance.GetBalance();
+        if (balance <= 0)
+        {
+            Notification.Instance.Show($"No native token to pay for transaction. Top up your address {this.leader}");
+            EnableDeploy();
+            return;
+        }
+        Debug.Log($"user balance: {balance}");
+
         var error = Plan.Validate();
         if (!string.IsNullOrEmpty(error))
         {
             Notification.Instance.Show("Error: " + error);
+            EnableDeploy();
             return;
         }
         if (!AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
         {
             AraAuth.Instance.RequireLogin();
+            EnableDeploy();
             return;
         }
 
-        Notification.Instance.Show("Todo send to the server our maydone addition");
-        return;
 
-        var data = new PlanCreate()
+        var tokenArgs = new object[] { Web3.Convert.ToWei(Plan.token_max_supply), Plan.token_symbol, Plan.token_name };
+        var projectArgs = new object[]
         {
-            content = Plan,
-            token = AraAuth.Instance.UserParams.token,
+            false, // if the project is cancelled
+            //
+            // Data
+            //    
+            Plan.project_name, // project name
+            JsonConvert.SerializeObject(logos),   // the hardcoded logos snapshotted.
+            JsonConvert.SerializeObject(userScenario),  // the hardcoded aurora snapshotted.
+            Plan.tech_stack,
+            Web3.Convert.ToWei(Plan.cost_usd),
+            Plan.duration * 86400, // An ACT stage duration
+            Plan.source_code_url,
+            Plan.test_url,
+            // Dynamic data set by Maydone
+            0 // Start Time An ACT stage start time
         };
-        var body = JsonUtility.ToJson(data);
 
-        var url = NetworkParams.AraActUrl + "/maydone/plan";
+        for (var i = 0; i < tokenArgs.Length; i++)
+        {
+            Debug.Log($"{i+1}: {tokenArgs[i]}");
+        }
+        for (var i = 0; i < projectArgs.Length; i++)
+        {
+            Debug.Log($"{i + 1}: {projectArgs[i]}");
+        }
 
-        Tuple<long, string> res;
+        var token = new Token()
+        {
+            MaxSupply = Web3.Convert.ToWei(Plan.token_max_supply),
+            Symbol = Plan.token_symbol,
+            Name = Plan.token_name,
+        };
+        var projectData = new MaydoneV1.Project()
+        {
+            Active = false,
+            Name = Plan.project_name,
+            Logos = JsonConvert.SerializeObject(logos),
+            Aurora = JsonConvert.SerializeObject(userScenario),
+            TechStack = Plan.tech_stack,
+            CostUsd = Web3.Convert.ToWei(Plan.cost_usd),
+            Duration = Web3.Convert.ToWei(Plan.duration * 86400),
+            SourceCodeUrl = Plan.source_code_url,
+            TestUrl = Plan.test_url,
+            StartTime = BigInteger.Zero
+        };
+
+        await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(2f));
+
+        // Executing the transfer
         try
         {
-            res = await WebClient.Post(url, body);
-        }
-        catch (Exception ex)
+            ThirdwebTransaction transaction = await ThirdwebContract.Prepare(AraAuth.Instance.Wallet, AraAuth.Instance.MaydoneContract, "launch", BigInteger.Zero, token, projectData);
+            var limit = await Maydone_NewPlan.EstimateGasLimit(transaction);
+            if (limit <= 0)
+            {
+                throw new Exception("failed to estimate a gas limit");
+            }
+
+
+            Debug.Log("Wallet type: " + AraAuth.Instance.Wallet.AccountType);
+
+            var receipt = await Maydone_NewPlan.Send(transaction);
+            //var receipt = await ThirdwebContract.Write(AraAuth.Instance.Wallet, AraAuth.Instance.MaydoneContract, "launch", BigInteger.Zero, token, projectData);
+            //var receipt = await ThirdwebContract.Write(AraAuth.Instance.Wallet, AraAuth.Instance.MaydoneContract, "launch", BigInteger.Zero, new object[] { tokenArgs, projectArgs });
+            /*var receipt = await ThirdwebContract.Write(AraAuth.Instance.Wallet, AraAuth.Instance.MaydoneContract, "launch", BigInteger.Zero, 
+                new object[] {
+                    Web3.Convert.ToWei(Plan.token_max_supply), Plan.token_symbol, Plan.token_name,
+                    false, // if the project is cancelled
+                    //
+                    // Data
+                    //    
+                    Plan.project_name, // project name
+                    JsonConvert.SerializeObject(logos),   // the hardcoded logos snapshotted.
+                    JsonConvert.SerializeObject(userScenario),  // the hardcoded aurora snapshotted.
+                    Plan.tech_stack,
+                    Web3.Convert.ToWei(Plan.cost_usd),
+                    Plan.duration * 86400, // An ACT stage duration
+                    Plan.source_code_url,
+                    Plan.test_url,
+                    // Dynamic data set by Maydone
+                    0 // Start Time An ACT stage start time
+                }
+             );*/
+            Notification.Instance.Show($"Transaction: {receipt} deployed, waiting for a result");
+            Notification.Instance.Show($"Don't close the client please!");
+        } catch (Exception ex)
         {
-            Notification.Instance.Show($"Error: web client exception {ex.Message}");
             Debug.LogError(ex);
+            Notification.Instance.Show($"Failed to send transaction: {ex}");
+            EnableDeploy();
             return;
         }
-        if (res.Item1 != 200)
+
+        runCoroutine = true;
+        StartCoroutine(CheckProjectStatus());
+    }
+
+    public static async Task<ThirdwebTransaction> Prepare(ThirdwebTransaction transaction)
+    {
+        if (transaction.Input.To == null)
         {
-            Notification.Instance.Show($"Error: {res.Item2}");
-            return;
+            throw new InvalidOperationException("Transaction recipient (to) must be provided");
         }
-        Notification.Instance.Show("Plan was added, wait until someone starts investing. :)");
-        Hide();
-        await Maydone.Instance.ShowPlans();
+
+        if (transaction.Input.GasPrice != null && (transaction.Input.MaxFeePerGas != null || transaction.Input.MaxPriorityFeePerGas != null))
+        {
+            throw new InvalidOperationException("Transaction GasPrice and MaxFeePerGas/MaxPriorityFeePerGas cannot be set at the same time");
+        }
+
+        ThirdwebTransactionInput input = transaction.Input;
+        if ((object)input.Nonce == null)
+        {
+            ThirdwebTransactionInput thirdwebTransactionInput = input;
+            thirdwebTransactionInput.Nonce = new HexBigInteger(await ThirdwebTransaction.GetNonce(transaction).ConfigureAwait(continueOnCapturedContext: false));
+        }
+
+        input = transaction.Input;
+        if ((object)input.Value == null)
+        {
+            input.Value = new HexBigInteger(0);
+        }
+
+        input = transaction.Input;
+        if (input.Data == null)
+        {
+            input.Data = "0x";
+        }
+
+        input = transaction.Input;
+        if ((object)input.Gas == null)
+        {
+            ThirdwebTransactionInput thirdwebTransactionInput = input;
+            thirdwebTransactionInput.Gas = new HexBigInteger(await EstimateGasLimit(transaction).ConfigureAwait(continueOnCapturedContext: false));
+        }
+
+        if (Thirdweb.Utils.IsEip1559Supported(NetworkParams.networkId.ToString()))
+        {
+            if (transaction.Input.GasPrice == null)
+            {
+                (BigInteger, BigInteger) obj = await ThirdwebTransaction.EstimateGasFees(transaction).ConfigureAwait(continueOnCapturedContext: false);
+                BigInteger item = obj.Item1;
+                BigInteger item2 = obj.Item2;
+                input = transaction.Input;
+                if ((object)input.MaxFeePerGas == null)
+                {
+                    input.MaxFeePerGas = new HexBigInteger(item);
+                }
+
+                input = transaction.Input;
+                if ((object)input.MaxPriorityFeePerGas == null)
+                {
+                    input.MaxPriorityFeePerGas = new HexBigInteger(item2);
+                }
+            }
+        }
+        else if (transaction.Input.MaxFeePerGas == null && transaction.Input.MaxPriorityFeePerGas == null)
+        {
+            input = transaction.Input;
+            if ((object)input.GasPrice == null)
+            {
+                ThirdwebTransactionInput thirdwebTransactionInput = input;
+                thirdwebTransactionInput.GasPrice = new HexBigInteger(await ThirdwebTransaction.EstimateGasPrice(transaction).ConfigureAwait(continueOnCapturedContext: false));
+            }
+        }
+
+        return transaction;
     }
 
 
-    public void Show(AraDiscussion logos, int userScenarioId)
+    public static async Task<BigInteger> EstimateGasLimit(ThirdwebTransaction transaction)
     {
+        ThirdwebRPC rpcInstance = ThirdwebRPC.GetRpcInstance(AraAuth.Instance.Wallet.Client, NetworkParams.networkId);
+        return new HexBigInteger(await rpcInstance.SendRequestAsync<string>("eth_estimateGas", new object[1] { transaction.Input }).ConfigureAwait(continueOnCapturedContext: false)).Value * 10 / 7;
+    }
+
+    public static async Task<string> Send(ThirdwebTransaction transaction)
+    {
+        transaction = await Prepare(transaction).ConfigureAwait(continueOnCapturedContext: false);
+        ThirdwebRPC rpc = ThirdwebRPC.GetRpcInstance(AraAuth.Instance.Wallet.Client, NetworkParams.networkId);
+        string result;
+            switch (AraAuth.Instance.Wallet.AccountType)
+            {
+                case ThirdwebAccountType.PrivateKeyAccount:
+                    {
+                    Debug.Log("Private key account: ");
+                        string text2 = await ThirdwebTransaction.Sign(transaction);
+                        result = await rpc.SendRequestAsync<string>("eth_sendRawTransaction", new object[1] { text2 }).ConfigureAwait(continueOnCapturedContext: false);
+                        break;
+                    }
+                case ThirdwebAccountType.SmartAccount:
+                case ThirdwebAccountType.ExternalAccount:
+                {
+                    Debug.Log("Extermal account");
+                    result = await AraAuth.Instance.Wallet.SendTransaction(transaction.Input).ConfigureAwait(continueOnCapturedContext: false);
+                    break;
+                }
+                default:
+                    throw new NotImplementedException("Account type not supported");
+            }
+
+        return result;
+    }
+
+    public void Show(AraDiscussion logos, UserScenarioInServer userScenario)
+    {
+        if (runCoroutine)
+        {
+            runCoroutine = false;
+            StopAllCoroutines();
+        }
         // First, show the Warning
         // Then, show the Welcome:
         WelcomeLogos.Show(logos);
         FormLogos.Show(logos);
+        DeployingSpinner.SetActive(false);
 
-        Plan = new Plan
+        this.logos = logos;
+        this.userScenario = userScenario;
+
+        Debug.Log("Attach leader...");
+
+        Plan = new Plan();
+        if (userScenario != null)
         {
-            user_scenario_id = userScenarioId,
-            logos_id = logos.id
-        };
+            Plan.user_scenario_id = userScenario._id;
+        }
+        if (logos != null)
+        {
+            Plan.logos_id = logos.id;
+        }
         if (AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
         {
             AttachLeader(true);
@@ -196,11 +533,9 @@ public class Maydone_NewPlan : MonoBehaviour
         {
             return;
         }
+        Debug.Log($"Attaching {AraAuth.Instance.UserParams.loginParams.user_id} and {AraAuth.Instance.UserParams.loginParams.username}");
         AraAuth.Instance.OnStatusChange -= AttachLeader;
         Plan.leader_username = AraAuth.Instance.UserParams.loginParams.username;
         Plan.leader_user_id = AraAuth.Instance.UserParams.loginParams.user_id;
     }
-
-
-
 }

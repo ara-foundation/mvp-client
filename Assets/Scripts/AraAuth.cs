@@ -1,10 +1,12 @@
 using Highlighter;
 using Lean.Gui;
+using Nethereum.Web3;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Security;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Threading.Tasks;
 using Thirdweb;
 using Thirdweb.Unity;
@@ -105,7 +107,7 @@ public class AraAuth : MonoBehaviour
     private LeanWindow LoginModal;
     [SerializeField] private LeanWindow SignupModal;
     [SerializeField] private LeanWindow ProfileModal;
-    private IThirdwebWallet Wallet;
+    public IThirdwebWallet Wallet;
     private static readonly string DefaultLoginText = "Login";
 
     [HideInInspector]
@@ -129,6 +131,9 @@ public class AraAuth : MonoBehaviour
     private Coroutine highlting;
     [SerializeField] private StandardPostProcessingCamera Fog;
     [SerializeField] private RadialWaveEffect AvatarHighlight;
+
+    public ThirdwebContract ProjectContract = null;
+    public ThirdwebContract MaydoneContract = null;
 
     public delegate void AuthStatusChange(bool loggedIn);
 
@@ -495,6 +500,29 @@ public class AraAuth : MonoBehaviour
         return userParams;
     }
 
+    public async Task<string> GetAddress()
+    {
+        if (Wallet == null)
+        {
+            return "";
+        }
+
+        return await Wallet.GetAddress();
+    }
+
+    public async Task<decimal> GetBalance()
+    {
+
+        if (Wallet == null)
+        {
+            Debug.Log("Balance is 0");
+            return 0;
+        }
+
+        var balance = await Wallet.GetBalance(NetworkParams.networkId);
+        return Web3.Convert.FromWei(balance);
+    }
+
     private async Task LoadWallet()
     {
         var inAppWalletOptions = new InAppWalletOptions(
@@ -509,6 +537,9 @@ public class AraAuth : MonoBehaviour
         );
 
         Wallet = await ThirdwebManager.Instance.ConnectWallet(options);
-        var addr = await Wallet.GetAddress();
+
+        ProjectContract = await ThirdwebManager.Instance.GetContract(NetworkParams.ProjectAddress(NetworkParams.networkId), NetworkParams.networkId, NetworkParams.ProjectAbi);
+        MaydoneContract = await ThirdwebManager.Instance.GetContract(NetworkParams.MaydoneAddress(NetworkParams.networkId), NetworkParams.networkId, NetworkParams.MaydoneAbi);
+
     }
 }
