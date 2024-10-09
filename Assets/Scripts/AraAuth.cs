@@ -31,6 +31,21 @@ public class CreateSessionToken {
     public string token;
 }
 
+[Serializable]
+public class LinkWallet: CreateSessionToken{
+    public string walletAddress;
+    public int userId;
+}
+
+[Serializable]
+public class LinkedWalletModel : CreateSessionToken
+{
+    public string walletAddress;
+    public string username;
+    public int userId;
+    public int nonce;
+}
+
 /* Not defined anywhere but I use this format */
 [Serializable]
 public class ErrorResponse
@@ -313,6 +328,8 @@ public class AraAuth : MonoBehaviour
             UserParams.Save(userParams);
             LoginText.text = UserParams.loginParams.username;
 
+            await LinkWallet();
+
             Notification.Instance.Show("Successfully signed up!");
 
             SignupModal.TurnOffSiblingsNow();
@@ -368,6 +385,7 @@ public class AraAuth : MonoBehaviour
         if (Wallet != null)
         {
             await Wallet.Disconnect();
+            Wallet = null;
         }
         UserParams = null;
         LoginText.text = DefaultLoginText;
@@ -475,6 +493,50 @@ public class AraAuth : MonoBehaviour
         }
 
         return userParams;
+    }
+
+    private async Task<LinkedWalletModel> LinkWallet()
+    {
+        var data = new LinkWallet()
+        {
+            userId = UserParams.loginParams.user_id,
+            user_id = UserParams.loginParams.user_id,
+            token = UserParams.token,
+            walletAddress = await Wallet.GetAddress()
+        };
+        var body = JsonUtility.ToJson(data);
+        string url = $"{NetworkParams.AraActUrl}/users/wallet/{UserParams.loginParams.username}";
+
+        Tuple<long, string> res;
+        try
+        {
+            res = await WebClient.Post(url, body);
+        }
+        catch (Exception ex)
+        {
+            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Debug.LogError(ex);
+            return null;
+        }
+        if (res.Item1 != 200)
+        {
+            Notification.Instance.Show($"Error: {res.Item2}");
+            return null;
+        }
+
+        LinkedWalletModel result;
+        try
+        {
+            result = JsonConvert.DeserializeObject<LinkedWalletModel>(res.Item2);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            Notification.Instance.Show($"Error: deserialization exception {e.Message}");
+            return null;
+        }
+
+        return result;
     }
 
     private async Task<UserParams> AutoLogin()

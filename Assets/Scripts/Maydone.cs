@@ -100,13 +100,24 @@ public class Plan: ForumParams
     }
 }
 
+[Serializable]
+public class PlanWithProject: ForumParams
+{
+    public string _id;
+    public string project_id;
+    public string cost_usd;
+    public string sangha_welcome;
+    [SerializeField] public Project[] project_v1;
+}
+
+
 public class Maydone : MonoBehaviour
 {
     private static Maydone _instance;
     private Maydone_NewPlan MaydoneNewPlan;
     [SerializeField] private GameObject Content;
     [SerializeField] private GameObject NewPlanContent;
-    [SerializeField] private GameObject UserScenarioCard;
+    [SerializeField] private GameObject MaydoneCard;
     [SerializeField] private LeanToggle TopBarMaydone;
     private bool newPlanMode = false;
 
@@ -166,16 +177,14 @@ public class Maydone : MonoBehaviour
         ResetNewPlanMode();
         ClearContent();
 
-        Debug.Log("Todo load the plans...");
-        return;
-        var result = await FetchUserScenarios();
+        var result = await FetchPlansWithProjects();
         if (result != null && result.Count > 0)
         {
             foreach (var data in result)
             {
-                var res = Instantiate(UserScenarioCard, Content.transform);
-                var cardAurora = res.GetComponent<CardAurora>();
-                cardAurora.Show(data);
+                var res = Instantiate(MaydoneCard, Content.transform);
+                var cardMaydone = res.GetComponent<CardMaydone>();
+                cardMaydone.Show(data);
             }
         }
         else
@@ -184,12 +193,11 @@ public class Maydone : MonoBehaviour
         }
     }
 
-    private async Task<List<UserScenarioInServer>> FetchUserScenarios()
+    private async Task<List<PlanWithProject>> FetchPlansWithProjects()
     {
-        return new List<UserScenarioInServer>();
-        List<UserScenarioInServer> incorrectResult = new();
+        List<PlanWithProject> incorrectResult = new();
 
-        string url = NetworkParams.AraActUrl + "/aurora/user-scenarios";
+        string url = NetworkParams.AraActUrl + "/maydone/plans";
 
         string res;
         try
@@ -202,10 +210,10 @@ public class Maydone : MonoBehaviour
             return incorrectResult;
         }
 
-        List<UserScenarioInServer> result;
+        List<PlanWithProject> result;
         try
         {
-            result = JsonConvert.DeserializeObject<List<UserScenarioInServer>>(res);
+            result = JsonConvert.DeserializeObject<List<PlanWithProject>>(res);
         }
         catch (Exception e)
         {

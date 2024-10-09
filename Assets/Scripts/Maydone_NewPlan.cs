@@ -21,17 +21,18 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [Serializable]
-public class PlanCreate
-{
-    public string token;    // authorization toke
-    public Plan content;
+public class AddWelcomePage {
+    public string token;
+    public int projectId;
+    public int networkId;
+    public string content;
 }
 
 [Serializable]
 public class Sangha
 {
     public string ownership_minted;
-    public string ownership_max_suppl;
+    public string ownership_max_supply;
     public string ownership; // DAO token
     public string maintainer;
     public string check;
@@ -65,9 +66,12 @@ public class Project
     public string _id; // "67056baf24372ef24a58420c",
     public int projectId;
     public int networkId;
+    [SerializeField]
     public Sangha sangha;
+    [SerializeField]
     public Lungta lungta;
     public string project_name;
+    [SerializeField]
     public Leader leader;
 }
 
@@ -95,12 +99,11 @@ public class Maydone_NewPlan : MonoBehaviour
     {
         while (runCoroutine)
         {
-            var planTask = FetchProject(nextProjectId);
-            yield return new WaitUntil(() => planTask.IsCompleted);
-            var plan = planTask.Result;
-            Debug.Log(plan);
+            var postTask = PostSanghaWelcome(nextProjectId);
+            yield return new WaitUntil(() => postTask.IsCompleted);
+            var posted = postTask.Result;
 
-            if (plan != null && plan.leader != null && leader.ToLower().Equals(plan.leader.walletAddress.ToLower()))
+            if (posted)
             {
                 runCoroutine = false;
                 break;
@@ -223,34 +226,35 @@ public class Maydone_NewPlan : MonoBehaviour
         DeployingSpinner.SetActive(false);
     }
 
-    public async Task<Project> FetchProject(int id)
+    public async Task<bool> PostSanghaWelcome(int id)
     {
-        Project incorrectResult = new();
+        string url = NetworkParams.AraActUrl + $"/maydone/plan/welcome";
 
-        string url = NetworkParams.AraActUrl + $"/project/{id}/{NetworkParams.networkId}";
+        var data = new AddWelcomePage()
+        {
+            token = AraAuth.Instance.UserParams.token,
+            projectId = id,
+            networkId = NetworkParams.networkId,
+            content = Plan.sangha_welcome,
+        };
+        var body = JsonConvert.SerializeObject(data);
 
-        string res;
+        Tuple<long, string> res;
         try
         {
-            res = await WebClient.Get(url);
+            res = await WebClient.Post(url, body);
         }
         catch (Exception ex)
         {
             Debug.LogError(ex);
-            return incorrectResult;
+            return false;
+        }
+        if (res.Item1 != 200)
+        {
+            return false;
         }
 
-        Project result;
-        try
-        {
-            result = JsonConvert.DeserializeObject<Project>(res);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e + " for " + res);
-            return incorrectResult;
-        }
-        return result;
+        return true;
     }
 
     public async void OnDeploy()
@@ -269,7 +273,7 @@ public class Maydone_NewPlan : MonoBehaviour
             EnableDeploy();
             return;
         }
-        Debug.Log($"user balance: {balance}");
+        Notification.Instance.Show($"Balance: {balance}");
 
         var error = Plan.Validate();
         if (!string.IsNullOrEmpty(error))
@@ -346,31 +350,8 @@ public class Maydone_NewPlan : MonoBehaviour
                 throw new Exception("failed to estimate a gas limit");
             }
 
-
-            Debug.Log("Wallet type: " + AraAuth.Instance.Wallet.AccountType);
-
             var receipt = await Maydone_NewPlan.Send(transaction);
-            //var receipt = await ThirdwebContract.Write(AraAuth.Instance.Wallet, AraAuth.Instance.MaydoneContract, "launch", BigInteger.Zero, token, projectData);
-            //var receipt = await ThirdwebContract.Write(AraAuth.Instance.Wallet, AraAuth.Instance.MaydoneContract, "launch", BigInteger.Zero, new object[] { tokenArgs, projectArgs });
-            /*var receipt = await ThirdwebContract.Write(AraAuth.Instance.Wallet, AraAuth.Instance.MaydoneContract, "launch", BigInteger.Zero, 
-                new object[] {
-                    Web3.Convert.ToWei(Plan.token_max_supply), Plan.token_symbol, Plan.token_name,
-                    false, // if the project is cancelled
-                    //
-                    // Data
-                    //    
-                    Plan.project_name, // project name
-                    JsonConvert.SerializeObject(logos),   // the hardcoded logos snapshotted.
-                    JsonConvert.SerializeObject(userScenario),  // the hardcoded aurora snapshotted.
-                    Plan.tech_stack,
-                    Web3.Convert.ToWei(Plan.cost_usd),
-                    Plan.duration * 86400, // An ACT stage duration
-                    Plan.source_code_url,
-                    Plan.test_url,
-                    // Dynamic data set by Maydone
-                    0 // Start Time An ACT stage start time
-                }
-             );*/
+        
             Notification.Instance.Show($"Transaction: {receipt} deployed, waiting for a result");
             Notification.Instance.Show($"Don't close the client please!");
         } catch (Exception ex)
@@ -472,7 +453,6 @@ public class Maydone_NewPlan : MonoBehaviour
             {
                 case ThirdwebAccountType.PrivateKeyAccount:
                     {
-                    Debug.Log("Private key account: ");
                         string text2 = await ThirdwebTransaction.Sign(transaction);
                         result = await rpc.SendRequestAsync<string>("eth_sendRawTransaction", new object[1] { text2 }).ConfigureAwait(continueOnCapturedContext: false);
                         break;
@@ -480,7 +460,6 @@ public class Maydone_NewPlan : MonoBehaviour
                 case ThirdwebAccountType.SmartAccount:
                 case ThirdwebAccountType.ExternalAccount:
                 {
-                    Debug.Log("Extermal account");
                     result = await AraAuth.Instance.Wallet.SendTransaction(transaction.Input).ConfigureAwait(continueOnCapturedContext: false);
                     break;
                 }
