@@ -119,6 +119,7 @@ public class CardMaydone: MonoBehaviour
             return;
         }
 
+        var myAddress = await AraAuth.Instance.GetAddress();
         var stableAddress = NetworkParams.StableCollateralAddress(NetworkParams.networkId);
         var treasuryAddress = NetworkParams.TreasuryAddress(NetworkParams.networkId);
         var amount = Web3.Convert.ToWei(InvestSlider.value, NetworkParams.StableCollateralDecimals);
@@ -129,30 +130,35 @@ public class CardMaydone: MonoBehaviour
 
         DisableAction();
 
-        Notification.Instance.Show($"Getting a permission to spend {InvestSlider.value} from your wallet.");
+        var allowance = await ThirdwebContract.Read<BigInteger>(StableCoin, "allowance", myAddress, treasuryAddress);
 
-        try
+        if (allowance < amount)
         {
-            ThirdwebTransaction transaction = await ThirdwebContract.Prepare(AraAuth.Instance.Wallet, StableCoin, "approve", BigInteger.Zero, treasuryAddress, amount);
-            var limit = await Maydone_NewPlan.EstimateGasLimit(transaction);
-            if (limit <= 0)
+            Notification.Instance.Show($"Getting a permission to spend {InvestSlider.value} from your wallet.");
+            var approveAmount = Web3.Convert.ToWei(100000000, NetworkParams.StableCollateralDecimals);
+
+            try
             {
-                throw new Exception("failed to estimate a gas limit");
-            }
+                ThirdwebTransaction transaction = await ThirdwebContract.Prepare(AraAuth.Instance.Wallet, StableCoin, "approve", BigInteger.Zero, treasuryAddress, approveAmount);
+                var limit = await Maydone_NewPlan.EstimateGasLimit(transaction);
+                if (limit <= 0)
+                {
+                    throw new Exception("failed to estimate a gas limit");
+                }
 
-            var receipt = await Maydone_NewPlan.Send(transaction);
-            Notification.Instance.Show($"Approval tx: ${receipt}; Now minting your ownership tokens...");
-        } catch (Exception ex)
-        {
-            Notification.Instance.Show(ex.Message);
-            EnableAction();
-            return;
+                var receipt = await Maydone_NewPlan.Send(transaction);
+                Notification.Instance.Show($"Approval tx: ${receipt}; Now minting your ownership tokens...");
+            } catch (Exception ex)
+            {
+                Notification.Instance.Show(ex.Message);
+                EnableAction();
+                return;
+            }
         }
 
         var Treasury = await ThirdwebManager.Instance.GetContract(treasuryAddress, NetworkParams.networkId, NetworkParams.TreasuryAbi);
 
-
-        Debug.Log($"mintByUsd(uint256 projectId_ {planWithProject.project_v1[0].projectId}, address to_ {await AraAuth.Instance.GetAddress()}, uint256 usdAmount_ {amountInWei}, address collateral_ {stableAddress})");
+        Debug.Log($"mintByUsd(uint256 projectId_ {planWithProject.project_v1[0].projectId}, address to_ {myAddress}, uint256 usdAmount_ {amountInWei}, address collateral_ {stableAddress})");
           
         // Executing the transfer
         try
