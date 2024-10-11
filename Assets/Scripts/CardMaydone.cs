@@ -59,7 +59,7 @@ public class CardMaydone: MonoBehaviour
         costUsd = Web3.Convert.FromWei(BigInteger.Parse(planWithProject.cost_usd));
         ownershipMinted = Web3.Convert.FromWei(BigInteger.Parse(planWithProject.project_v1[0].sangha.ownership_minted));
         ownershipSupply = Web3.Convert.FromWei(BigInteger.Parse(planWithProject.project_v1[0].sangha.ownership_max_supply));
-        leftPercentage = 100 - (ownershipSupply / 100 * ownershipMinted);
+        leftPercentage = 100 - (ownershipMinted / (ownershipSupply / 100));
 
         MintedPercentageText.text = $"{leftPercentage}% left";
         InvestSlider.maxValue = (float)((costUsd / 100) * leftPercentage);
