@@ -43,6 +43,7 @@ public class CardMaydone: MonoBehaviour
         Title.text = $"Join to {planWithProject.project_v1[0].sangha.ownershipSymbol} Sangha";
         DisplayName.text = planWithProject.project_v1[0].leader.walletAddress;
         UserName.text = planWithProject.project_v1[0].leader.username;
+        ProjectName.text = planWithProject.project_v1[0].project_name;
 
         // Fetch the logos
         logosCard.gameObject.SetActive(false);
