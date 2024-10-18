@@ -4,12 +4,10 @@ using UnityEngine;
 
 public class ActivityGroup : MonoBehaviour
 {
-    [SerializeField]
     private List<ActivityState> activityStates = new();
 
     public void SetActivityState(ActivityState activityState)
     {
-        Debug.Log($"ACT Project is setting the activity state {activityState.GetInstanceID()}");
         activityStates.Add(activityState);
     }
 
