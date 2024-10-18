@@ -1711,6 +1711,7 @@ MonoBehaviour:
   ActivityGroup: {fileID: 0}
   reactors:
   - {fileID: 1821695868736911788}
+  - {fileID: 6580269267400789583}
 --- !u!114 &6689618351493035508
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1724,6 +1725,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ActivityState: {fileID: 1122778443125413791}
+  Menu: {fileID: 1858703179407411224}
 --- !u!1 &6868548071541604298
 GameObject:
   m_ObjectHideFlags: 0
