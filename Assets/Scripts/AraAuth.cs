@@ -217,7 +217,7 @@ public class AraAuth : MonoBehaviour
     {
         WalletIcon.SetActive(false);
         highlting = null;
-        UserParams = await AutoLogin();
+        await AutoLogin();
         var loggedIn = IsLoggedIn(UserParams);
         if (loggedIn)
         {
@@ -539,27 +539,25 @@ public class AraAuth : MonoBehaviour
         return result;
     }
 
-    private async Task<UserParams> AutoLogin()
+    private async Task AutoLogin()
     {
-        var userParams = UserParams.Load();
-        if (!IsLoggedIn(userParams))
+        UserParams = UserParams.Load();
+        if (!IsLoggedIn(UserParams))
         {
-            return null;
+            return;
         }
 
-        if (!userParams.IsTokenActive()) {
+        if (!UserParams.IsTokenActive()) {
             Notification.Instance.Show("Session expired, auto log in...");
-            userParams = await Login(userParams);
-            if (userParams == null)
+            UserParams = await Login(UserParams);
+            if (UserParams == null)
             {
-                return null;
+                return;
             }
-            UserParams.Save(userParams);
+            UserParams.Save(UserParams);
         }
 
         await LoadWallet();
-
-        return userParams;
     }
 
     public async Task<string> GetAddress()
