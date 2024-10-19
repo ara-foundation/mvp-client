@@ -23,14 +23,14 @@ public class MouseInput : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
         int clickCount = eventData.clickCount;
 
         if (clickCount == 2)
-            OnDoubleClick();
-        if (clickCount == 1 && EnableSingleClick)
+            OnDoubleClick(); 
+        else if (clickCount == 1 && EnableSingleClick)
             OnSingleClick();
     }
 
     void OnSingleClick()
     {
-        ActivityState.ChangeMode(StateMode.Selected);
+        ActivityState.Select();
     }
 
     void OnDoubleClick()
@@ -41,7 +41,6 @@ public class MouseInput : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
     //Detect if the Cursor starts to pass over the GameObject
     public void OnPointerEnter(PointerEventData pointerEventData)
     {
-        Debug.Log("Entered");
         ActivityState.ChangeMode(StateMode.Highlighted);
     }
 

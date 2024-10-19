@@ -76,6 +76,8 @@ public class ActivityState : MonoBehaviour
         lateChangeMode = to;
     }
 
+    // If you want to change the mode to Selected from other scripts, then
+    // call the Selected
     public void ChangeMode(StateMode to)
     {
         bool change = false;
@@ -192,22 +194,24 @@ public class ActivityState : MonoBehaviour
             }
         }
 
-        if (ActivityGroup != null)
-        {
-            ActivityGroup.ChangeActivity(this, updatedTo);
-        }
-
         mode = updatedTo;
     }
 
-    public void Select(bool enabled)
+    public void Select()
     {
-        if (enabled)
+        // If already selected, then simply deselect
+        var toggleOn = mode != StateMode.Selected;
+        if (toggleOn)
         {
             ChangeMode(StateMode.Selected);
         } else
         {
             ChangeMode(StateMode.None);
+        }
+
+        if (ActivityGroup != null)
+        {
+            ActivityGroup.Select(this, toggleOn);
         }
     }
 

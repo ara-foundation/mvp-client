@@ -5,6 +5,7 @@ using UnityEngine;
 public class ActivityGroup : MonoBehaviour
 {
     private List<ActivityState> activityStates = new();
+    [SerializeField] private CameraFocus CameraFocus;
 
     public void SetActivityState(ActivityState activityState)
     {
@@ -17,23 +18,25 @@ public class ActivityGroup : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    public void ChangeActivity(ActivityState from, StateMode mode)
+    public void Select(ActivityState from, bool enabled)
     {
         if (!activityStates.Contains(from))
         {
             return;
         }
 
-        if (mode != StateMode.Selected)
-        {
-            return;
-        }
+        CameraFocus.SelectTarget(from.gameObject.transform, enabled);
 
+        UnselectAllOthers(from);
+    }
+
+    private void UnselectAllOthers(ActivityState from)
+    {
         foreach (var activtyState in activityStates)
         {
-            if (activtyState == from) 
+            if (activtyState == from)
             {
-                continue;   
+                continue;
             }
 
             activtyState.ChangeMode(StateMode.None);
