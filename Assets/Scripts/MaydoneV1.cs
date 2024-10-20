@@ -14,20 +14,20 @@ namespace MaydoneV1
 {
     public class MaydoneV1Console
     {
-        public static async Task Main()
+        public static void Main()
         {
             var url = "http://testchain.nethereum.com:8545";
             //var url = "https://mainnet.infura.io";
             var privateKey = "0x7580e7fb49df1c861f0050fae31c2224c6aba908e116b8da44ee8cd927b990b0";
             var account = new Nethereum.Web3.Accounts.Account(privateKey);
             var web3 = new Web3(account, url);
-            
-             /* Deployment 
-            var maydoneV1Deployment = new MaydoneV1Deployment();
 
-            var transactionReceiptDeployment = await web3.Eth.GetContractDeploymentHandler<MaydoneV1Deployment>().SendRequestAndWaitForReceiptAsync(maydoneV1Deployment);
-            var contractAddress = transactionReceiptDeployment.ContractAddress;
-             */ 
+            /* Deployment 
+           var maydoneV1Deployment = new MaydoneV1Deployment();
+
+           var transactionReceiptDeployment = await web3.Eth.GetContractDeploymentHandler<MaydoneV1Deployment>().SendRequestAndWaitForReceiptAsync(maydoneV1Deployment);
+           var contractAddress = transactionReceiptDeployment.ContractAddress;
+            */
             //var contractHandler = web3.Eth.GetContractHandler(contractAddress);
 
             /** Function: act**/
