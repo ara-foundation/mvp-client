@@ -9,11 +9,9 @@ public class CameraFocus : MonoBehaviour
     [SerializeField]
     private RTS_Camera cam;
 
-    public string targetsTag; // objects must have this element
-
     public void SelectTarget(Transform from, bool enabled)
     {
-        if (from.CompareTag(targetsTag) && enabled)
+        if (from.CompareTag(ACTProjects.Instance.targetsTag) && enabled)
         {
             cam.SetTarget(from);
         } else

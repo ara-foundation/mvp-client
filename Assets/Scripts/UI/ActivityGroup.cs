@@ -6,6 +6,7 @@ public class ActivityGroup : MonoBehaviour
 {
     private List<ActivityState> activityStates = new();
     [SerializeField] private CameraFocus CameraFocus;
+    [SerializeField] private TransformSelection TransformSelection;
 
     public void SetActivityState(ActivityState activityState)
     {
@@ -26,6 +27,7 @@ public class ActivityGroup : MonoBehaviour
         }
 
         CameraFocus.SelectTarget(from.gameObject.transform, enabled);
+        TransformSelection.SelectTarget(from.gameObject.transform, enabled);
 
         UnselectAllOthers(from);
     }
