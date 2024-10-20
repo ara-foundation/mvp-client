@@ -1,3 +1,4 @@
+using Ara.RuntimeEditor;
 using UnityEngine;
 
 namespace Rundo.RuntimeEditor.Behaviours
@@ -15,7 +16,7 @@ namespace Rundo.RuntimeEditor.Behaviours
         {
             _addTab.OnClick(() =>
             {
-                RuntimeEditor.AddTab();
+                AraRuntimeEditor_manager.Instance.AddTab();
             });
 
             RegisterUiEvent<RuntimeEditorBehaviour.OnTabAddedEvent>(Redraw);
@@ -29,7 +30,7 @@ namespace Rundo.RuntimeEditor.Behaviours
             foreach (Transform child in _content)
                 Destroy(child.gameObject);
 
-            foreach (var it in RuntimeEditor.InstantiatedTabs)
+            foreach (var it in AraRuntimeEditor_manager.Instance.InstantiatedTabs)
             {
                 var btn = Instantiate(_tabButton, _content);
                 btn.SetData(it.TabGuid);

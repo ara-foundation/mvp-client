@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Ara.RuntimeEditor;
 using Newtonsoft.Json;
 using Rundo.Core.Commands;
 using Rundo.Core.Events;
@@ -20,7 +21,8 @@ namespace Rundo.RuntimeEditor.Behaviours
         {
             get
             {
-                _baseDataProvider ??= GetComponentInParent<IBaseDataProviderBehaviour>();
+                var activeTab = AraRuntimeEditor_manager.Instance.GetActiveTab();
+                _baseDataProvider ??= activeTab;
                 return _baseDataProvider;
             }
         }

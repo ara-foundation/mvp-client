@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ara.RuntimeEditor;
 using Rundo.Core.Commands;
 using Rundo.Core.Data;
 using Rundo.Core.Events;
@@ -123,7 +124,7 @@ namespace Rundo.RuntimeEditor.Behaviours
         {
             _isLazyLoad = true;
             _dataSceneMetaData = dataSceneMetaData;
-            RuntimeEditor.DispatchUiEventToAllSceneControllers(new RuntimeEditorBehaviour.OnSceneSetToTabEvent());
+            AraRuntimeEditor_manager.Instance.DispatchUiEventToAllSceneControllers(new RuntimeEditorBehaviour.OnSceneSetToTabEvent());
         }
 
         public void LoadScene(TGuid<DataScene.TDataSceneId> sceneId)
@@ -220,7 +221,7 @@ namespace Rundo.RuntimeEditor.Behaviours
             _dataScene?.SetCommandProcessor(CommandProcessor);
             
             DispatchUiEvent(new OnSceneLoadedEvent());
-            RuntimeEditor.DispatchUiEventToAllSceneControllers(new RuntimeEditorBehaviour.OnSceneSetToTabEvent());
+            AraRuntimeEditor_manager.Instance.DispatchUiEventToAllSceneControllers(new RuntimeEditorBehaviour.OnSceneSetToTabEvent());
             
             CreateWorld();
         }
@@ -233,7 +234,7 @@ namespace Rundo.RuntimeEditor.Behaviours
         public async Task<PrefabIdBehaviour> LoadPrefab(TGuid<TPrefabId> prefabId)
         {
             await Task.Yield();
-            return RuntimeEditor.GetPrefab(prefabId);
+            return AraRuntimeEditor_manager.Instance.GetPrefab(prefabId);
         }
 
         public void PostprocessGameObject(GameObject gameObject)

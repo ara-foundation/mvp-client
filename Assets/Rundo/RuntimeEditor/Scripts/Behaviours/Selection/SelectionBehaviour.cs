@@ -4,6 +4,7 @@ using Rundo.RuntimeEditor.Commands;
 using Rundo.RuntimeEditor.Data;
 using RuntimeHandle;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Rundo.RuntimeEditor.Behaviours
 {
@@ -117,6 +118,10 @@ namespace Rundo.RuntimeEditor.Behaviours
                     _transformableSelection.Remove(behaviour.gameObject);
                 }
             }
+            else if (obj is GameObject gameObj)
+            {
+                _transformableSelection.Remove(gameObj);
+            }
 
             _selection.Remove(obj);
             DispatchUiEvent(new UnselectObjectEvent());
@@ -160,6 +165,9 @@ namespace Rundo.RuntimeEditor.Behaviours
                         _transformableSelection.Add(behaviour.gameObject);
                     }
                 }
+            } else if (obj is GameObject gameObj)
+            {
+                _transformableSelection.Add(gameObj);
             }
 
             DispatchUiEvent(new SelectObjectEvent());

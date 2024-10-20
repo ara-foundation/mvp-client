@@ -8,6 +8,7 @@ using UnityEngine;
 using Rundo;
 using Rundo.RuntimeEditor.Behaviours;
 using static Rundo.RuntimeEditor.Behaviours.RuntimeEditorBehaviour;
+using Rundo.RuntimeEditor.Commands;
 
 namespace Ara.RuntimeEditor
 {
@@ -21,7 +22,7 @@ namespace Ara.RuntimeEditor
         
         [SerializeField] private AraRuntimeEditor_root RuntimeEditorRoot;
         [SerializeField] private Transform _tabsContent;
-        [SerializeField] private List<string> _prefabsResourcesPaths = new List<string>();
+        [SerializeField] private List<string> _prefabsResourcesPaths = new();
         [SerializeField] private PrefabScreenshoterBehaviour _prefabScreenshoterBehaviour;
         
         public TGuid<TRuntimeEditorTab> SelectedTab { get; private set; }
@@ -36,6 +37,20 @@ namespace Ara.RuntimeEditor
         private List<PrefabIdBehaviour> _prefabs;
         
         public readonly List<AraRuntimeEditorScene_controller> InstantiatedTabs = new();
+
+        private static AraRuntimeEditor_manager _instance;
+
+        public static AraRuntimeEditor_manager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = FindObjectOfType<AraRuntimeEditor_manager>();
+                }
+                return _instance;
+            }
+        }
 
         [Header("Customize to adjust into the Ara client. Each scene will be a one tab")]
         public bool showOneTab = false;
@@ -83,7 +98,16 @@ namespace Ara.RuntimeEditor
             
             DispatchUiEventToAllSceneControllers(new OnTabSelectedEvent());
         }
-        
+
+        public AraRuntimeEditorScene_controller GetActiveTab()
+        {
+            foreach (var tab in InstantiatedTabs)
+            {
+                if (tab.gameObject.activeSelf) return tab;
+            }
+            return null;
+        }
+
         /// <summary>
         /// Adds an empty tab
         /// </summary>

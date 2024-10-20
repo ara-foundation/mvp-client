@@ -1,3 +1,4 @@
+using Ara.RuntimeEditor;
 using Rundo.Core.Data;
 using Rundo.RuntimeEditor.Data;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace Rundo.RuntimeEditor.Behaviours
             _button.OnClick(OnClick);
             _close.onClick.AddListener(() =>
             {
-                RuntimeEditor.CloseTab(_tabGuid);
+                AraRuntimeEditor_manager.Instance.CloseTab(_tabGuid);
             });
             RegisterCommandListener<DataScene>(OnDataScene);
             RegisterUiEvent<RuntimeEditorBehaviour.OnTabSelectedEvent>(Redraw);
@@ -28,7 +29,7 @@ namespace Rundo.RuntimeEditor.Behaviours
 
         private void OnDataScene(DataScene dataScene)
         {
-            if (dataScene.DataSceneMetaData.Guid == RuntimeEditor.GetSceneId(_tabGuid))
+            if (dataScene.DataSceneMetaData.Guid == AraRuntimeEditor_manager.Instance.GetSceneId(_tabGuid))
                 Redraw();
         }
         
@@ -37,7 +38,7 @@ namespace Rundo.RuntimeEditor.Behaviours
             _button.Label = "(empty)";
             _button.Unselect();
             
-            foreach (var it in RuntimeEditor.InstantiatedTabs)
+            foreach (var it in AraRuntimeEditor_manager.Instance.InstantiatedTabs)
                 if (it.TabGuid == _tabGuid)
                 {
                     if (it.IsSceneLoaded)
@@ -45,7 +46,7 @@ namespace Rundo.RuntimeEditor.Behaviours
                     break;
                 }
             
-            if (RuntimeEditor.SelectedTab == _tabGuid)
+            if (AraRuntimeEditor_manager.Instance.SelectedTab == _tabGuid)
                 _button.Select();
         }
 
@@ -57,7 +58,7 @@ namespace Rundo.RuntimeEditor.Behaviours
 
         private void OnClick()
         {
-            RuntimeEditor.SelectTab(_tabGuid);
+            AraRuntimeEditor_manager.Instance.SelectTab(_tabGuid);
         }
 
     }

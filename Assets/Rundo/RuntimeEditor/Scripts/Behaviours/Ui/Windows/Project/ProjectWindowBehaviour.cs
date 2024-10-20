@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Ara.RuntimeEditor;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -72,7 +73,7 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
                         else
                         {
                             var instance = Instantiate(go, null);
-                            screenshot = RuntimeEditor.PrefabScreenshoterBehaviour.Screenshot(instance);
+                            screenshot = AraRuntimeEditor_manager.Instance.PrefabScreenshoterBehaviour.Screenshot(instance);
                             Destroy(instance);
                             _screenshotsCache[go] = screenshot;
                             item.UpdateScreenshot(screenshot);
