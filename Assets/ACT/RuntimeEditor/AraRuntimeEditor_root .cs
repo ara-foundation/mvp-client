@@ -19,13 +19,6 @@ namespace Ara.RuntimeEditor
     {
         [SerializeField] private GameObject RuntimeEditorController;
         
-        public TGuid<TRuntimeEditorTab> SelectedTab { get; private set; }
-        
-        /// <summary>
-        /// Is true when the input is over the world, is false when the input is over the UI
-        /// </summary>
-        public static bool IsInputOverWorld { get; set; }
-        
         /// <summary>
         /// Load the Given Scene on the List
         /// </summary>
