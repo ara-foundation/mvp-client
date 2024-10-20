@@ -8,6 +8,7 @@ public class ACTProjects : MonoBehaviour
     private static ACTProjects _instance;
 
     public Camera Camera;
+    public string targetsTag; // objects must have this element
 
     public static ACTProjects Instance
     {
