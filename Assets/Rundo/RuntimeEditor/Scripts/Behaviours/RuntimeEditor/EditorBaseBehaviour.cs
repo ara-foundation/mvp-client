@@ -1,3 +1,5 @@
+using Ara.RuntimeEditor;
+
 namespace Rundo.RuntimeEditor.Behaviours
 {
     /// <summary>
@@ -6,26 +8,29 @@ namespace Rundo.RuntimeEditor.Behaviours
     public class EditorBaseBehaviour : BaseBehaviour
     {
         private RuntimeEditorBehaviour _runtimeEditor;
-    
-        protected RuntimeEditorBehaviour RuntimeEditor
+
+        private static AraRuntimeEditor_manager _instance;
+
+        public static AraRuntimeEditor_manager RuntimeEditor
         {
             get
             {
-                if (_runtimeEditor == null)
-                    _runtimeEditor = GetComponentInParent<RuntimeEditorBehaviour>();
-                return _runtimeEditor;
+                if (_instance == null)
+                {
+                    _instance = FindObjectOfType<AraRuntimeEditor_manager>();
+                }
+                return _instance;
             }
         }
 
-        
-        private RuntimeEditorSceneControllerBehaviour _runtimeEditorController;
+        private AraRuntimeEditorScene_controller _runtimeEditorController;
 
-        protected RuntimeEditorSceneControllerBehaviour RuntimeEditorController
+        protected AraRuntimeEditorScene_controller RuntimeEditorController
         {
             get
             {
                 if (_runtimeEditorController == null)
-                    _runtimeEditorController = GetComponentInParent<RuntimeEditorSceneControllerBehaviour>();
+                    _runtimeEditorController = GetComponentInParent<AraRuntimeEditorScene_controller>();
                 return _runtimeEditorController;
             }
         }

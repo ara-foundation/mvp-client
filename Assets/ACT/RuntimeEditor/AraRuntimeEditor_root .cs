@@ -25,10 +25,10 @@ namespace Ara.RuntimeEditor
         /// <param name="sceneMetaData"></param>
         /// <param name="_tabsContent"></param>
         /// <returns></returns>
-        public RuntimeEditorSceneControllerBehaviour Load(DataSceneMetaData sceneMetaData, Transform _tabsContent)
+        public AraRuntimeEditorScene_controller Load(DataSceneMetaData sceneMetaData, Transform _tabsContent)
         {
             var obj = Instantiate(RuntimeEditorController, _tabsContent);
-            var instance = obj.GetComponent<RuntimeEditorSceneControllerBehaviour>();
+            var instance = obj.GetComponent<AraRuntimeEditorScene_controller>();
             instance.LazyLoadScene(sceneMetaData);
             return instance;
         }
@@ -37,10 +37,10 @@ namespace Ara.RuntimeEditor
         /// Load the empty scene
         /// </summary>
         /// <param name="_tabsContent"></param>
-        public RuntimeEditorSceneControllerBehaviour Load(Transform _tabsContent)
+        public AraRuntimeEditorScene_controller Load(Transform _tabsContent)
         {
             var obj = Instantiate(RuntimeEditorController, _tabsContent);
-            var instance = obj.GetComponent<RuntimeEditorSceneControllerBehaviour>();
+            var instance = obj.GetComponent<AraRuntimeEditorScene_controller>();
             return instance;
         }
     }

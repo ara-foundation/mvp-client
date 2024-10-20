@@ -35,7 +35,7 @@ namespace Ara.RuntimeEditor
         
         private List<PrefabIdBehaviour> _prefabs;
         
-        public readonly List<RuntimeEditorSceneControllerBehaviour> InstantiatedTabs = new List<RuntimeEditorSceneControllerBehaviour>();
+        public readonly List<AraRuntimeEditorScene_controller> InstantiatedTabs = new();
 
         [Header("Customize to adjust into the Ara client. Each scene will be a one tab")]
         public bool showOneTab = false;
@@ -147,7 +147,7 @@ namespace Ara.RuntimeEditor
         public void DispatchUiEventToAllSceneControllers(IUiEvent data)
         {
             foreach (var it in InstantiatedTabs)
-                it.GetComponentInChildren<RuntimeEditorSceneControllerBehaviour>().UiEvents.Dispatch(data);
+                it.GetComponentInChildren<AraRuntimeEditorScene_controller>().UiEvents.Dispatch(data);
         }
 
         public TGuid<DataScene.TDataSceneId> GetSceneId(TGuid<TRuntimeEditorTab> tabId)
