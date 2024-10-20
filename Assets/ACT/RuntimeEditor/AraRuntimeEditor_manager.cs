@@ -12,7 +12,7 @@ using static Rundo.RuntimeEditor.Behaviours.RuntimeEditorBehaviour;
 namespace Ara.RuntimeEditor
 {
     /// <summary>
-    /// The runtime editor that handles multiple events
+    /// Manage multiple scenes. It must be one across all ara scenes. Load and unload the level scenes
     /// </summary>
     public class AraRuntimeEditor_manager : MonoBehaviour
     {
@@ -43,8 +43,6 @@ namespace Ara.RuntimeEditor
 
             var sceneMetaDatas = PersistentDataScenes.LoadData();
 
-            Debug.Log($"There are {PersistentEditorPrefs.LoadData().OpenedScenes.Count} scenes");
-            
             // load scenes
             foreach (var it in PersistentEditorPrefs.LoadData().OpenedScenes)
             {
@@ -65,12 +63,6 @@ namespace Ara.RuntimeEditor
             SelectTab(InstantiatedTabs[0].TabGuid);
         }
 
-        private RuntimeEditorSceneControllerBehaviour InstantiateSceneController(Transform parent)
-        {
-            var prefab = Resources.Load<RuntimeEditorSceneControllerBehaviour>("Rundo/RuntimeEditor/RuntimeEditorSceneController");
-            return Instantiate(prefab, parent);
-        }
-
         public void SelectTab(TGuid<TRuntimeEditorTab> tabGuid)
         {
             SelectedTab = tabGuid;
@@ -86,7 +78,7 @@ namespace Ara.RuntimeEditor
         /// </summary>
         public void AddTab()
         {
-            var tabInstance = InstantiateSceneController(_tabsContent);
+            var tabInstance = RuntimeEditorRoot.Load(_tabsContent);
             InstantiatedTabs.Add(tabInstance);
             SelectTab(tabInstance.TabGuid);
             DispatchUiEventToAllSceneControllers(new OnTabAddedEvent());

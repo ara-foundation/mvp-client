@@ -39,6 +39,17 @@ namespace Ara.RuntimeEditor
             instance.LazyLoadScene(sceneMetaData);
             return instance;
         }
+
+        /// <summary>
+        /// Load the empty scene
+        /// </summary>
+        /// <param name="_tabsContent"></param>
+        public RuntimeEditorSceneControllerBehaviour Load(Transform _tabsContent)
+        {
+            var obj = Instantiate(RuntimeEditorController, _tabsContent);
+            var instance = obj.GetComponent<RuntimeEditorSceneControllerBehaviour>();
+            return instance;
+        }
     }
 }
 
