@@ -14,8 +14,6 @@ namespace Rundo.RuntimeEditor.Behaviours
     /// </summary>
     public class AraRuntimeEditorScene_controller : EditorBaseBehaviour, IBaseDataProviderBehaviour
     {
-        [SerializeField] private FreeCameraController _freeCamera;
-        [SerializeField] private TopDownCameraController _topDownCamera;
         [SerializeField] private GameObject _editorMode;
         [SerializeField] private RuntimeEditorPlayModeControllerBehaviour _playMode;
         
@@ -147,25 +145,9 @@ namespace Rundo.RuntimeEditor.Behaviours
 
         private void SetMainCamera()
         {
-            _freeCamera.gameObject.SetActive(false);
-            _topDownCamera.gameObject.SetActive(false);
-            ActiveCamera = Camera.main;
+            ActiveCamera = ACTProjects.Instance.Camera;
         }
 
-        private void SetTopDownCamera()
-        {
-            _freeCamera.gameObject.SetActive(false);
-            _topDownCamera.gameObject.SetActive(true);
-            ActiveCamera = _topDownCamera.GetComponent<Camera>();
-        }
-
-        public void SetFreeCamera()
-        {
-            _freeCamera.gameObject.SetActive(true);
-            _topDownCamera.gameObject.SetActive(false);
-            ActiveCamera = _freeCamera.GetComponent<Camera>();
-        }
-    
         public T SetMode<T>() where T : EditorModeBaseBehaviour
         {
             if (_currentMode != null)

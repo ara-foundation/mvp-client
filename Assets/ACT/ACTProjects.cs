@@ -7,6 +7,8 @@ public class ACTProjects : MonoBehaviour
     public ActivityGroup ActivityGroup;
     private static ACTProjects _instance;
 
+    public Camera Camera;
+
     public static ACTProjects Instance
     {
         get
@@ -22,7 +24,8 @@ public class ACTProjects : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        // Don't destroy it since, it references to all other Objects
+        DontDestroyOnLoad(this);       
     }
 
     // Update is called once per frame
