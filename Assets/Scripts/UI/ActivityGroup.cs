@@ -26,8 +26,14 @@ public class ActivityGroup : MonoBehaviour
             return;
         }
 
-        CameraFocus.SelectTarget(from.gameObject.transform, enabled);
-        TransformSelection.SelectTarget(from.gameObject.transform, enabled);
+        if (CameraFocus != null)
+        {
+            CameraFocus.SelectTarget(from.gameObject.transform, enabled);
+        }
+        if (TransformSelection != null)
+        {
+            TransformSelection.SelectTarget(from.gameObject.transform, enabled);
+        }
 
         UnselectAllOthers(from);
     }
