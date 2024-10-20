@@ -37,6 +37,9 @@ namespace Ara.RuntimeEditor
         
         public readonly List<RuntimeEditorSceneControllerBehaviour> InstantiatedTabs = new List<RuntimeEditorSceneControllerBehaviour>();
 
+        [Header("Customize to adjust into the Ara client. Each scene will be a one tab")]
+        public bool showOneTab = false;
+
         private void Start()
         {
             RundoEngine.DataSerializer.AddDefaultReadConverter(new DataComponentReadJsonConverter());
@@ -46,13 +49,21 @@ namespace Ara.RuntimeEditor
             // load scenes
             foreach (var it in PersistentEditorPrefs.LoadData().OpenedScenes)
             {
-                Debug.Log($"Pref scene guid: {it}");
+                if (showOneTab && InstantiatedTabs.Count == 1)
+                {
+                    break;
+                }
                 foreach (var sceneMetaData in sceneMetaDatas)
                 {
+                    if (showOneTab && InstantiatedTabs.Count == 1)
+                    {
+                        break;
+                    }
                     if (sceneMetaData.Guid.ToStringRawValue() == it)
                     {
                         var instance = RuntimeEditorRoot.Load(sceneMetaData, _tabsContent);
                         InstantiatedTabs.Add(instance);
+                        
                     }
                 }
             }
