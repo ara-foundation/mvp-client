@@ -84,7 +84,11 @@ namespace Rundo.RuntimeEditor.Behaviours
 
         public override void Activate()
         {
-            _worldRaycasterBehaviour ??= gameObject.AddComponent<EditorWorldRaycasterBehaviour>();
+            var existing = gameObject.GetComponent<EditorWorldRaycasterBehaviour>();
+            if (existing != null)
+                _worldRaycasterBehaviour = existing;
+            else 
+                _worldRaycasterBehaviour ??= gameObject.AddComponent<EditorWorldRaycasterBehaviour>();
         }
 
         public override void Deactivate()
