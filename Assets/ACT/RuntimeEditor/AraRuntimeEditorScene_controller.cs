@@ -90,15 +90,8 @@ namespace Rundo.RuntimeEditor.Behaviours
         {
             if (_isLazyLoad)
                 LoadScene(_dataSceneMetaData.Guid);
-            CreateUi();
             CreateWorld();
             StopPlayScene();
-        }
-
-        private void CreateUi()
-        {
-            var uiPrefab = Resources.Load<EditorUiBehaviour>("Rundo/RuntimeEditor/RuntimeEditorUi");
-            Instantiate(uiPrefab, _editorMode.transform);
         }
 
         private void CreateWorld()

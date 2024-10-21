@@ -11,7 +11,7 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
         [SerializeField] private Transform _content;
         [SerializeField] private ProjectWindowItemBehaviour _prefabsWindowItemPrefab;
         [SerializeField] private ProjectItemsSearchFilterBehaviour _projectItemsSearchFilterBehaviour;
-        [SerializeField] private Button _closeBtn;
+        //[SerializeField] private Button _closBtn;
 
         private readonly List<ProjectWindowItemBehaviour> _items = new List<ProjectWindowItemBehaviour>();
         private readonly Dictionary<GameObject, Texture2D> _screenshotsCache = new Dictionary<GameObject, Texture2D>();
@@ -27,11 +27,12 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
             
             _projectItemsSearchFilterBehaviour.SetData(data, Redraw);
 
-            _closeBtn.onClick.AddListener(() =>
+            /*  _closeBtn.onClick.AddListener(() =>
             {
                 gameObject.SetActive(false);
                 DispatchUiEvent(new EditorUiBehaviour.HideWindowEvent{Window = GetType()});
             });
+            */
 
             StartCoroutine(UpdateThumbnails());
         }

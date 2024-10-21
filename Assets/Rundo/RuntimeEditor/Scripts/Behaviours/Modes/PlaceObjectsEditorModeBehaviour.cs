@@ -69,7 +69,7 @@ namespace Rundo.RuntimeEditor.Behaviours
 
         public override void Activate()
         {
-            _plane = new Plane(Vector3.up, Vector3.zero);
+            _plane = new Plane(Vector3.up, 0.01f);
         }
 
         public override void Deactivate()
