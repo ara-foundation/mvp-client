@@ -30,7 +30,7 @@ namespace Rundo.RuntimeEditor.Behaviours
                 if (_plane.Raycast(ray, out var distance))
                 {
                     var hitPoint = ray.GetPoint(distance);
-                    var worldPos = new Vector3(hitPoint.x, 0, hitPoint.z);
+                    var worldPos = new Vector3(hitPoint.x, hitPoint.y, hitPoint.z);
 
                     if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
                     {
@@ -40,7 +40,7 @@ namespace Rundo.RuntimeEditor.Behaviours
 
                     // sync datamodel with cursor position
                     var dataTransformBehaviour = _dataGameObject.GetComponent<DataTransformBehaviour>();
-                    var command = new SetValueToMemberCommand(dataTransformBehaviour.Data, nameof(DataTransformBehaviour.LocalPosition), worldPos);
+                    var command = new SetValueToMemberCommand(dataTransformBehaviour.Data, nameof(DataTransformBehaviour.Position), worldPos);
                     command.SetIgnoreUndoRedo();
                     command.AddDispatcherData(dataTransformBehaviour);
                     DataScene.CommandProcessor.Process(command);
@@ -70,12 +70,15 @@ namespace Rundo.RuntimeEditor.Behaviours
         public override void Activate()
         {
             _plane = new Plane(Vector3.up, 0.01f);
+            ACTLevelScene.Instance.InteractiveParts(false);
+            ACTLevelScene.Instance.OnPrimitivesWindowSelect(false);
         }
 
         public override void Deactivate()
         {
             RuntimeEditorController.SelectionBehaviour.ClearSelection();
             Destroy(_gameObject);
+            ACTLevelScene.Instance.InteractiveParts(true);
         }
     }
 }

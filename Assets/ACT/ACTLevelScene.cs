@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ACTLevelScene : MonoBehaviour
 {
+    private List<ACTPart> Parts = new ();
+
     [SerializeField] private LeanWindow PrimitivesWindow;
     private static ACTLevelScene _instance;
 
@@ -31,5 +33,29 @@ public class ACTLevelScene : MonoBehaviour
     public void OnPrimitivesWindowSelect(bool selected)
     {
         PrimitivesWindow.Set(selected);
+    }
+
+    public void AddPart(ACTPart part)
+    {
+        if (!Parts.Contains(part))
+        {
+            Parts.Add(part);
+        }
+    }
+
+    public void RemovePart(ACTPart part)
+    {
+        if (Parts.Contains(part))
+        {
+            Parts.Remove(part);
+        }
+    }
+
+    public void InteractiveParts(bool on)
+    {
+        foreach (ACTPart part in Parts)
+        {
+            part.Interactive(on);
+        }
     }
 }

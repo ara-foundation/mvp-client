@@ -28,10 +28,4 @@ public class ACTProjects : MonoBehaviour
         // Don't destroy it since, it references to all other Objects
         DontDestroyOnLoad(this);       
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
