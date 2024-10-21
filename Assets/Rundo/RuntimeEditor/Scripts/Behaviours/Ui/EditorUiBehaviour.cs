@@ -50,9 +50,9 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
             
             gameObject.SetActive(true);
             
-            InspectorWindow.gameObject.SetActive(RuntimeEditorController.IsSceneLoaded);
-            HierarchyWindow.gameObject.SetActive(RuntimeEditorController.IsSceneLoaded);
-            ProjectWindow.gameObject.SetActive(RuntimeEditorController.IsSceneLoaded);
+            //InspectorWindow.gameObject.SetActive(RuntimeEditorController.IsSceneLoaded);
+            //HierarchyWindow.gameObject.SetActive(RuntimeEditorController.IsSceneLoaded);
+            //ProjectWindow.gameObject.SetActive(RuntimeEditorController.IsSceneLoaded);
         }
 
         private void OnSetHierarchyExpandedStateEvent(SetHierarchyExpandedStateEvent data)
