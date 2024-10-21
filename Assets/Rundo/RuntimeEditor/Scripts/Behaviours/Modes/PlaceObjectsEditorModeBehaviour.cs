@@ -49,8 +49,8 @@ namespace Rundo.RuntimeEditor.Behaviours
                 // place
                 if (Input.GetMouseButtonDown(0))
                 {
-                    if (RuntimeEditorBehaviour.IsInputOverWorld)
-                        CreateDataGameObjectCommand.Process(DataScene, RundoEngine.DataSerializer.Clone(_dataGameObject), DataScene);
+                    CreateDataGameObjectCommand.Process(DataScene, RundoEngine.DataSerializer.Clone(_dataGameObject), DataScene);
+                    RuntimeEditorController.SetMode<SelectObjectsEditorModeBehaviour>();
                 }
             }
         }
