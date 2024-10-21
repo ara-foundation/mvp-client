@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-[ExecuteAlways]
+// Uncomment the code below to test the clipping in editor mode
+//[ExecuteAlways]
 public class ClippingPlane : MonoBehaviour {
 	//material we pass the values to
 	public Material mat;
