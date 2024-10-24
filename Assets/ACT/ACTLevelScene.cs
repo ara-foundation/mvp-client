@@ -10,7 +10,7 @@ using Rundo;
 
 public class ACTLevelScene : EditorBaseBehaviour
 {
-    private List<ACTPart> Parts = new ();
+    private List<ACTPart_interface> Parts = new ();
 
     [SerializeField] private LeanWindow PrimitivesWindow;
     [SerializeField] private LeanWindow LineWindow;
@@ -18,8 +18,8 @@ public class ACTLevelScene : EditorBaseBehaviour
     private static ACTLevelScene _instance;
 
     private bool _lineMode = false;
-    private GameObject _editingLine = null;
     private DataGameObject _editingLineData = null;
+    private ACTPart_line _editingLinePart = null;
 
     public static ACTLevelScene Instance
     {
@@ -52,13 +52,19 @@ public class ACTLevelScene : EditorBaseBehaviour
         {
             if (Input.GetMouseButtonDown(1))
             {
-                LineModeParts(false);
-                Debug.Log("Exit from the line mode. Todo(remove the spline controller)");
-                _lineMode = false;
-                Destroy(_editingLine);
-                DestroyDataGameObjectCommand.Process(DataScene, _editingLineData);
+                UnsetLineMode(cancel: true);
             }
         }
+    }
+
+    private void UnsetLineMode(bool cancel)
+    {
+        _lineMode = false;
+        if (cancel)
+        {
+            DestroyDataGameObjectCommand.Process(DataScene, _editingLineData);
+        }
+        SetPartsLineMode(false);
     }
 
     // Update is called once per frame
@@ -74,23 +80,59 @@ public class ACTLevelScene : EditorBaseBehaviour
         LineWindow.Set(selected);
     }
 
-    public void AddPart(ACTPart part)
+    public void AddPart(ACTPart_interface part)
     {
-        if (!Parts.Contains(part))
+        var partType = part.GetType();
+        if (partType == typeof(ACTPart_line))
         {
-            Parts.Add(part);
+            Debug.Log("Add part of line instance");
+
+            if (_lineMode)
+            {
+                _editingLinePart = part as ACTPart_line;
+            }
+        } else
+        {
+            Debug.Log("Add part of non-line instance");
+            if (!Parts.Contains(part))
+            {
+                Parts.Add(part);
+            }
         }
     }
 
-    public void RemovePart(ACTPart part)
+    public ACTPart_interface GetPart(string objectId)
     {
-        if (Parts.Contains(part))
+        foreach (var part in Parts)
         {
-            Parts.Remove(part);
+            if (part.ObjectId().Equals(objectId))
+            {
+                return part;
+            }
+        }
+
+        return null;
+    }
+
+    public void RemovePart(ACTPart_interface part)
+    {
+        var partType = part.GetType();
+        if (partType == typeof(ACTPart_line))
+        {
+            if (_lineMode)
+            {
+                _editingLinePart = null;
+            }
+        } else
+        {
+            if (Parts.Contains(part))
+            {
+                Parts.Remove(part);
+            }
         }
     }
 
-    public void InteractiveParts(bool on)
+    public void SetPartsInteractiveMode(bool on)
     {
         foreach (ACTPart part in Parts)
         {
@@ -98,7 +140,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
     }
 
-    private void LineModeParts(bool on)
+    private void SetPartsLineMode(bool on)
     {
         foreach (ACTPart part in Parts)
         {
@@ -106,31 +148,42 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
     }
 
+    /// <summary>
+    /// Changes the scene to the line placing mode.
+    /// This method is called from Sensever Dialogue
+    /// </summary>
     public void SetLineMode()
     {
         _lineMode = true;
-        Debug.Log("Set the line mode. Todo(create a spline controller, perhaps from prefab?)");
-        LineModeParts(true);
+        SetPartsLineMode(true);
         InstantiateLine();
     }
 
-    private async void InstantiateLine()
+    private void InstantiateLine()
     {
         if (LinePrefab.TryGetComponent<PrefabIdBehaviour>(out var prefabIdBehaviour))
         {
-            var dataGameObject = DataScene.InstantiateDataGameObjectFromPrefab(prefabIdBehaviour);
+            _editingLineData = DataScene.InstantiateDataGameObjectFromPrefab(prefabIdBehaviour);
 
-            dataGameObject.GetComponent<DataGameObjectBehaviour>().DataComponentPrefab.OverridePrefabComponent = true;
-            dataGameObject.GetComponent<DataTransformBehaviour>().DataComponentPrefab.OverridePrefabComponent = true;
-
-            // The part of
-            // RuntimeEditorController.SetMode<PlaceObjectsEditorModeBehaviour>().SetData(dataGameObject);
-            _editingLine = await DataScene.InstantiateGameObject(BaseDataProvider, dataGameObject, null, true);
-            _editingLine.transform.SetParent(transform, true);
-
-            _editingLineData = RundoEngine.DataSerializer.Clone(dataGameObject);
-
+            _editingLineData.GetComponent<DataGameObjectBehaviour>().DataComponentPrefab.OverridePrefabComponent = true;
+            _editingLineData.GetComponent<DataTransformBehaviour>().DataComponentPrefab.OverridePrefabComponent = true;
+            
+            // Sends to the Rundo to add the line.
+            // The instantiniated game object will call the ACTPart_interface.Activate method.
+            // The ACTPart_interface.Activate calls ACTLevelScene.AddPart back.
             CreateDataGameObjectCommand.Process(DataScene, _editingLineData, DataScene);
+        }
+    }
+
+    public void OnLinePointSelect(ACTPart part)
+    {
+        Debug.Log("ACTLevel scene set a part as a point");
+        if (_editingLinePart != null)
+        {
+            if (_editingLinePart.OnSetPoint(part))
+            {
+                UnsetLineMode(cancel: false);
+            }
         }
     }
 }

@@ -1,41 +1,105 @@
 using Dreamteck.Splines;
+using Newtonsoft.Json;
+using Rundo.RuntimeEditor.Behaviours;
+using Rundo.RuntimeEditor.Data;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 [RequireComponent(typeof(SplineComputer))]
-public class ACTPart_line : ACTPart
+public class ACTPart_line : ACTPart, ACTPart_interface
 {
+    private static string KeyPrefix = "line-";
+
     private SplineComputer spline;
-    private List<ACTPart> partList = new ();
+    [SerializeField]
+    public List<string> partList;
 
     private void Awake()
     {
         spline = GetComponent<SplineComputer>();
     }
 
-    public new void Activate()
+    public new void Activate(DataGameObjectId objectId)
     {
+        
+        this.objectId = objectId;
+        Load();
+        Debug.Log($"ACTPart line activated. How many part it has? {partList.Count}");
+        ResetPoints();
+        
         Mode = ModeInScene.View;
         ActivityState.SetActivityGroup(ACTProjects.Instance.ActivityGroup);
         Menu.SetActive(false);
         ACTLevelScene.Instance.AddPart(this);
         Canvas.worldCamera = ACTProjects.Instance.Camera;
         Canvas.gameObject.SetActive(true);
+
+        if (partList.Count > 0)
+        {
+            for(var i = 0; i < partList.Count; i++)
+            {
+                var part = ACTLevelScene.Instance.GetPart(partList[i]);
+                if (part == null)
+                {
+                    Debug.LogError($"the part {partList[i]} is not found in the scene. The line {objectId} can not be drawn");
+                    return;
+                }
+                var actPart = part as ACTPart;
+                var defaultMode = actPart.Mode;
+                actPart.Mode = ModeInScene.DrawLine;
+                SetPoint(part as ACTPart);
+                actPart.Mode = defaultMode;
+            }
+
+            // Draw to render the line.
+            spline.RebuildImmediate();
+        }
     }
 
     private void OnDestroy()
     {
         if (Mode == ModeInScene.Interactive)
         {
-            ACTLevelScene.Instance.RemovePart(this);
             Menu.SetActive(false);
         }
+        ACTLevelScene.Instance.RemovePart(this);
+        DeletePoints();
     }
 
     public new void Select(bool enabled)
     {
         return;
+    }
+
+    private void Save()
+    {
+        var key = KeyPrefix + objectId.ToStringRawValue();
+        var value = JsonConvert.SerializeObject(partList);
+        Debug.Log($"save {key} as '{value}'");
+
+        PlayerPrefs.SetString(key, value);
+    }
+
+    private void Load()
+    {
+        if (partList == null)
+        {
+            Debug.Log("The part list is null, let's define it");
+            partList = new List<string>();
+        }
+        var key = KeyPrefix + objectId.ToStringRawValue();
+        if (!PlayerPrefs.HasKey(key))
+        {
+            return;
+        }
+        var value = PlayerPrefs.GetString(key);
+        partList = JsonConvert.DeserializeObject<List<string>>(value);
+        if (partList == null)
+        {
+            partList = new List<string>();
+        }
     }
 
 
@@ -68,27 +132,26 @@ public class ACTPart_line : ACTPart
 
     public void DeletePoints()
     {
-        foreach (var part in partList)
+        if (partList == null)
         {
-            part.DeleteLastSplinePositioner();
+            return;
+        }
+        Load();
+        Debug.Log($"Number of part list: {partList.Count}");
+        foreach (var partId in partList)
+        {
+            Debug.Log($"part id {partId}");
+            var objectId = DataGameObjectId.Create(partId);
+            var part = RuntimeEditorController.DataSceneBehaviour.Find(objectId);
+            Debug.Log($"DeletePoints is part null? {part == null}");
+            var actPart = part.gameObject.GetComponent<ACTPart>();
+            actPart.DeleteLastSplinePositioner();
         }
     }
 
-    /// <summary>
-    /// Set the project part in the scene as the point of the line.
-    /// </summary>
-    /// <param name="part"></param>
-    /// <returns>True if the line is closed</returns>
-    public bool OnSetPoint(ACTPart part)
+    private int SetPoint(ACTPart part)
     {
-        if (partList.Contains(part))
-        {
-            return false;
-        }
         var pointIndex = spline.GetPoints().Length;
-
-        // For internal tracking by this spline
-        partList.Add(part);
 
         // First, let's create point. The point location must be at the part positon.
         // For this, let's get it from part itself.
@@ -101,14 +164,33 @@ public class ACTPart_line : ACTPart
         spline.SetPoint(pointIndex, point);
         part.ConnectToLine(spline, pointIndex);
 
+        return pointIndex;
+    }
+
+    /// <summary>
+    /// Set the project part in the scene as the point of the line.
+    /// </summary>
+    /// <param name="part"></param>
+    /// <returns>True if the line is closed</returns>
+    public bool OnSetPoint(ACTPart part)
+    {
+        if (partList.Contains(part.ObjectId()))
+        {
+            return false;
+        }
+        // For internal tracking by this spline
+        partList.Add(part.ObjectId());
+
+        var pointIndex = SetPoint(part);
+
         // Draw to render the line.
         spline.RebuildImmediate();
-
 
         if (pointIndex == 0) {
             return false;
         } else
         {
+            Save();
             return true;
         }
     }

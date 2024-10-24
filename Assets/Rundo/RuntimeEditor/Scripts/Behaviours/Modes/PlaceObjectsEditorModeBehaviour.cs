@@ -70,7 +70,7 @@ namespace Rundo.RuntimeEditor.Behaviours
         public override void Activate()
         {
             _plane = new Plane(Vector3.up, 0.01f);
-            ACTLevelScene.Instance.InteractiveParts(false);
+            ACTLevelScene.Instance.SetPartsInteractiveMode(false);
             ACTLevelScene.Instance.OnPrimitivesWindowSelect(false);
         }
 
@@ -78,7 +78,7 @@ namespace Rundo.RuntimeEditor.Behaviours
         {
             RuntimeEditorController.SelectionBehaviour.ClearSelection();
             Destroy(_gameObject);
-            ACTLevelScene.Instance.InteractiveParts(true);
+            ACTLevelScene.Instance.SetPartsInteractiveMode(true);
         }
     }
 }

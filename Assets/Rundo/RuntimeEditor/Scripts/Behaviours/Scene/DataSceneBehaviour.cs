@@ -45,8 +45,9 @@ namespace Rundo.RuntimeEditor.Behaviours
                 transformParent = parentGo.transform;
             
             var go = await DataScene.InstantiateGameObject(BaseDataProvider, dataGameObject, transformParent, initial);
-            var part = go.GetComponent<ACTPart>();
-            part.Activate();
+            var part = go.GetComponent<ACTPart_interface>();
+            
+            part.Activate(dataGameObject.ObjectId);
 
             var queue = new Queue<GameObject>();
             queue.Enqueue(go);

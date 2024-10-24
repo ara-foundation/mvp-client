@@ -1,9 +1,11 @@
 using Dreamteck.Splines;
+using Rundo.RuntimeEditor.Behaviours;
+using Rundo.RuntimeEditor.Data;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ACTPart : MonoBehaviour, IStateReactor
+public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 {
     public enum ModeInScene
     {
@@ -25,6 +27,7 @@ public class ACTPart : MonoBehaviour, IStateReactor
     protected List<Node> Connections = new();
 
     public ModeInScene Mode = ModeInScene.View;
+    protected DataGameObjectId objectId;
 
     void Awake()
     {
@@ -59,7 +62,7 @@ public class ACTPart : MonoBehaviour, IStateReactor
     public void ConnectToLine(SplineComputer spline, int positionIndex)
     {
         if (Mode != ModeInScene.DrawLine) {
-            Debug.LogError($"ACTPart {gameObject.name} spline positioner add was called. But its not in draw line mode");
+            Debug.LogWarning($"ACTPart {gameObject.name} spline positioner add was called. But its not in draw line mode");
             return;
         }
         var objToSpawn = new GameObject($"SplinePositioner {Connections.Count + 1}");
@@ -80,8 +83,15 @@ public class ACTPart : MonoBehaviour, IStateReactor
         }
     }
 
-    public void Activate()
+    public string ObjectId()
     {
+        return objectId.ToStringRawValue();
+    }
+
+    public void Activate(DataGameObjectId objectId)
+    {
+        this.objectId = objectId;
+        Debug.Log("ACTPart activated");
         Mode = ModeInScene.Interactive;
         ActivityState.SetActivityGroup(ACTProjects.Instance.ActivityGroup);
         Menu.SetActive(false);
@@ -163,6 +173,7 @@ public class ACTPart : MonoBehaviour, IStateReactor
         {
             Mode = ModeInScene.DrawLine;
         }
+        Debug.Log($"Set line mode {on} for {gameObject.name}");
         MouseInput.enabled = on;
     }
 }

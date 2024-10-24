@@ -102,7 +102,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1950292436430341148}
-  m_LocalRotation: {x: -0.018978564, y: 0.9447156, z: 0.05557965, w: 0.32258835}
+  m_LocalRotation: {x: -0.1979099, y: -0.044589657, z: -0.009012519, w: 0.97916406}
   m_LocalPosition: {x: 0, y: 0, z: -11.46496}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
@@ -216,16 +216,16 @@ MonoBehaviour:
     useClippedPercent: 0
     keys: []
   _clipFromSample:
-    position: {x: 2.5, y: 2, z: -1.5}
-    up: {x: 0, y: 1, z: 0}
-    forward: {x: 0.96782076, y: -0.25160193, z: 0.0044080536}
+    position: {x: -4.166667, y: 0.16666663, z: -16.333334}
+    up: {x: -0.1425288, y: 0.9578204, z: -0.24953058}
+    forward: {x: 0.9469967, y: -0.010991187, z: 0.32105532}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 0
   _clipToSample:
-    position: {x: 7.5, y: 3.5, z: -9.5}
-    up: {x: 0, y: 1, z: 0}
-    forward: {x: -0.2937452, y: 0.38173234, z: -0.8763527}
+    position: {x: 0.833333, y: 1.6666666, z: -10.833334}
+    up: {x: -0.08662129, y: 0.96149844, z: -0.26080152}
+    forward: {x: -0.9823483, y: 0.17492075, z: 0.066290714}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 1
@@ -270,16 +270,16 @@ MonoBehaviour:
   targetRigidbody2D: {fileID: 0}
   targetTransform: {fileID: 5443129513689030643}
   _result:
-    position: {x: 10.19327, y: 0, z: -1.4649601}
+    position: {x: 10.19327, y: 0, z: -11.46496}
     up: {x: 0, y: 1, z: 0}
-    forward: {x: 0.6073987, y: 0.11725842, z: -0.7856954}
+    forward: {x: -0.08375385, y: 0.38837624, z: 0.9176869}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 0.5
   _finalResult:
-    position: {x: 10.19327, y: 0, z: -1.4649601}
+    position: {x: 10.19327, y: 0, z: -11.46496}
     up: {x: 0, y: 1, z: 0}
-    forward: {x: 0.6073987, y: 0.11725842, z: -0.7856954}
+    forward: {x: -0.08375385, y: 0.38837624, z: 0.9176869}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 0.5
@@ -1223,6 +1223,7 @@ GameObject:
   - component: {fileID: 1152779958334583767}
   - component: {fileID: 7816064643647641942}
   - component: {fileID: 8324474149949478558}
+  - component: {fileID: 3864831257172820976}
   m_Layer: 0
   m_Name: Line
   m_TagString: Untagged
@@ -1271,12 +1272,12 @@ MonoBehaviour:
   _spline:
     points:
     - _type: 0
-      position: {x: 2.5, y: 2, z: -1.5}
+      position: {x: -4.166667, y: 0.16666663, z: -6.333334}
       color: {r: 1, g: 1, b: 1, a: 1}
-      normal: {x: 0, y: 1, z: 0}
+      normal: {x: -0.1425288, y: 0.9578204, z: -0.24953058}
       size: 1
-      tangent: {x: 2.5, y: 2, z: -1.5}
-      tangent2: {x: 2.5, y: 2, z: -1.5}
+      tangent: {x: -4.166667, y: 0.16666663, z: -6.333334}
+      tangent2: {x: -4.166667, y: 0.16666663, z: -6.333334}
     - _type: 0
       position: {x: 10.19327, y: 0, z: -1.4649601}
       color: {r: 1, g: 1, b: 1, a: 1}
@@ -1285,12 +1286,12 @@ MonoBehaviour:
       tangent: {x: 10.19327, y: 0, z: -1.4649601}
       tangent2: {x: 10.19327, y: 0, z: -1.4649601}
     - _type: 0
-      position: {x: 7.5, y: 3.5, z: -9.5}
+      position: {x: 0.833333, y: 1.6666666, z: -0.83333397}
       color: {r: 1, g: 1, b: 1, a: 1}
-      normal: {x: 0, y: 1, z: 0}
+      normal: {x: -0.08662129, y: 0.96149844, z: -0.26080152}
       size: 1
-      tangent: {x: 7.5, y: 3.5, z: -9.5}
-      tangent2: {x: 7.5, y: 3.5, z: -9.5}
+      tangent: {x: 0.833333, y: 1.6666666, z: -0.83333397}
+      tangent2: {x: 0.833333, y: 1.6666666, z: -0.83333397}
     type: 3
     linearAverageDirection: 1
     customValueInterpolation:
@@ -1318,25 +1319,29 @@ MonoBehaviour:
   - {fileID: 5634725183986799820}
   - {fileID: 7740898033214215718}
   _rawSamples:
-  - position: {x: 2.5, y: 2, z: -1.5}
-    up: {x: 0, y: 1, z: 0}
-    forward: {x: 0.96782076, y: -0.25160193, z: 0.0044080536}
+  - position: {x: -4.166667, y: 0.16666663, z: -6.333334}
+    up: {x: -0.1425288, y: 0.9578204, z: -0.24953058}
+    forward: {x: 0.9469967, y: -0.010991187, z: 0.32105532}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 0
   - position: {x: 10.19327, y: 0, z: -1.4649601}
     up: {x: 0, y: 1, z: 0}
-    forward: {x: 0.6073987, y: 0.11725842, z: -0.7856954}
+    forward: {x: -0.08375385, y: 0.38837624, z: 0.9176869}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 0.5
-  - position: {x: 7.5, y: 3.5, z: -9.5}
-    up: {x: 0, y: 1, z: 0}
-    forward: {x: -0.2937452, y: 0.38173234, z: -0.8763527}
+  - position: {x: 0.833333, y: 1.6666666, z: -0.83333397}
+    up: {x: -0.08662129, y: 0.96149844, z: -0.26080152}
+    forward: {x: -0.9823483, y: 0.17492075, z: 0.066290714}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 1
-  _nodes: []
+  _nodes:
+  - node: {fileID: 0}
+    pointIndex: 2
+  - node: {fileID: 0}
+    pointIndex: 0
 --- !u!33 &7925681583884293317
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1419,16 +1424,16 @@ MonoBehaviour:
     useClippedPercent: 0
     keys: []
   _clipFromSample:
-    position: {x: 2.5, y: 2, z: -1.5}
-    up: {x: 0, y: 1, z: 0}
-    forward: {x: 0.96782076, y: -0.25160193, z: 0.0044080536}
+    position: {x: -4.166667, y: 0.16666663, z: -16.333334}
+    up: {x: -0.1425288, y: 0.9578204, z: -0.24953058}
+    forward: {x: 0.9469967, y: -0.010991187, z: 0.32105532}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 0
   _clipToSample:
-    position: {x: 7.5, y: 3.5, z: -9.5}
-    up: {x: 0, y: 1, z: 0}
-    forward: {x: -0.2937452, y: 0.38173234, z: -0.8763527}
+    position: {x: 0.833333, y: 1.6666666, z: -10.833334}
+    up: {x: -0.08662129, y: 0.96149844, z: -0.26080152}
+    forward: {x: -0.9823483, y: 0.17492075, z: 0.066290714}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 1
@@ -1475,12 +1480,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Canvas: {fileID: 5979268433086433141}
-  ActivityState: {fileID: 0}
+  ActivityState: {fileID: 7816064643647641942}
   Menu: {fileID: 1950292436430341148}
-  MouseInput: {fileID: 0}
-  SplinePositionersContent: {fileID: 0}
-  SplinePositioners:
-  - {fileID: 7740898033214215718}
+  MouseInput: {fileID: 3864831257172820976}
+  SplinePositionersContent: {fileID: 5443129513689030643}
+  Connections: []
   Mode: 1
 --- !u!114 &7816064643647641942
 MonoBehaviour:
@@ -1510,6 +1514,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _guid: line-ef8f-465d-ae55-1b6a9ce5c131
   _hideInPrefabWindow: 1
+--- !u!114 &3864831257172820976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6487485661456506947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c66dcc1f42d4c747937028badc29eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ActivityState: {fileID: 7816064643647641942}
+  EnableSingleClick: 1
 --- !u!1 &6944906184680762103
 GameObject:
   m_ObjectHideFlags: 0
