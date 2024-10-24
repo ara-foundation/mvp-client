@@ -8,7 +8,10 @@ public class ACTLevelScene : MonoBehaviour
     private List<ACTPart> Parts = new ();
 
     [SerializeField] private LeanWindow PrimitivesWindow;
+    [SerializeField] private LeanWindow LineWindow;
     private static ACTLevelScene _instance;
+
+    private bool _lineMode = false;
 
     public static ACTLevelScene Instance
     {
@@ -22,6 +25,12 @@ public class ACTLevelScene : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        PrimitivesWindow.gameObject.SetActive(false);
+        LineWindow.gameObject.SetActive(false);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,10 +38,30 @@ public class ACTLevelScene : MonoBehaviour
         DontDestroyOnLoad(this);       
     }
 
+    void Update ()
+    {
+        if (_lineMode)
+        {
+            if (Input.GetMouseButtonDown(1))
+            {
+                LineModeParts(false);
+                Debug.Log("Exit from the line mode. Todo(remove the spline controller)");
+                _lineMode = false;
+            }
+        }
+    }
+
     // Update is called once per frame
     public void OnPrimitivesWindowSelect(bool selected)
     {
+        PrimitivesWindow.gameObject.SetActive(selected);
         PrimitivesWindow.Set(selected);
+    }
+
+    public void OnLineWindowSelect(bool selected)
+    {
+        LineWindow.gameObject.SetActive(selected);
+        LineWindow.Set(selected);
     }
 
     public void AddPart(ACTPart part)
@@ -57,5 +86,20 @@ public class ACTLevelScene : MonoBehaviour
         {
             part.Interactive(on);
         }
+    }
+
+    private void LineModeParts(bool on)
+    {
+        foreach (ACTPart part in Parts)
+        {
+            part.SetLineMode(on);
+        }
+    }
+
+    public void SetLineMode()
+    {
+        _lineMode = true;
+        Debug.Log("Set the line mode. Todo(create a spline controller, perhaps from prefab?)");
+        LineModeParts(true);
     }
 }

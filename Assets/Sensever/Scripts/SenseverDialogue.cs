@@ -28,11 +28,19 @@ public class SenseverDialogue : MonoBehaviour
         OnContinue();
     }
 
+    public void ShowFirst()
+    {
+        OnTextEndCallback = null;
+        OnTextStartCallback = null;
+        showed = Auroa_Tutorial.TutorialStep.None;
+        OnContinue();
+    }
+
     void OnTextEnd()
     {
         showed = NextStep(showed);
         EnableButton();
-        // Hello = 0, Idea = 1, Exit = 2
+        // Hello = 0, Idea = 1, Exit = 2 for ACT
         OnTextEndCallback?.Invoke(showed);
     }
 

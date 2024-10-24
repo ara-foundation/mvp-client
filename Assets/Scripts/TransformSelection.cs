@@ -18,6 +18,11 @@ public class TransformSelection : MonoBehaviour
 
         if (from.CompareTag(ACTProjects.Instance.targetsTag) && enabled)
         {
+            var part = from.GetComponent<ACTPart>();
+            if (part.Mode != ACTPart.ModeInScene.Interactive)
+            {
+                return;
+            }
             var dataGameObjectBehaviour = from.GetComponent<DataGameObjectBehaviour>();
             activeTab.SelectionBehaviour.AddToSelection(dataGameObjectBehaviour.gameObject);
         } else

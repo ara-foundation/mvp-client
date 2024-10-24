@@ -13,6 +13,11 @@ public class CameraFocus : MonoBehaviour
     {
         if (from.CompareTag(ACTProjects.Instance.targetsTag) && enabled)
         {
+            var part = from.GetComponent<ACTPart>();
+            if (part.Mode != ACTPart.ModeInScene.Interactive)
+            {
+                return;
+            }
             cam.SetTarget(from);
         } else
         {
