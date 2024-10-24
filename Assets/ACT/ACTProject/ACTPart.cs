@@ -12,16 +12,17 @@ public class ACTPart : MonoBehaviour, IStateReactor
         DrawLine // For drawing the line change the select
     }
     [SerializeField]
-    private Canvas Canvas;
+    protected Canvas Canvas;
     [SerializeField]
     public ActivityState ActivityState;
     [SerializeField]
-    private GameObject Menu;
+    protected GameObject Menu;
     [SerializeField]
-    private MouseInput MouseInput;
-    [SerializeField] private Transform SplinePositionersContent;
+    protected MouseInput MouseInput;
+    [SerializeField] 
+    protected Transform SplinePositionersContent;
     [SerializeField]
-    private List<SplinePositioner> SplinePositioners = new();
+    protected List<Node> Connections = new();
 
     public ModeInScene Mode = ModeInScene.View;
 
@@ -29,16 +30,45 @@ public class ACTPart : MonoBehaviour, IStateReactor
     {
     }
 
-    void AddSplinePositioner()
+    public Vector3 LinePointPosition()
     {
-        if (SplinePositioners.Count == 0)
+        return SplinePositionersContent.position;
+    }
+
+    /// <summary>
+    /// The last spline positioner is set by the line setter via AddSplinePositioner.
+    /// Therefore, call of this function is a reverse operation. To avoid misuse, makes sure its in draw line mode.
+    /// </summary>
+    public void DeleteLastSplinePositioner()
+    {
+        if (Mode != ModeInScene.DrawLine)
         {
-            var objToSpawn = new GameObject($"SplinePositioner {SplinePositioners.Count + 1}");
-            var splinePositioner = objToSpawn.AddComponent<SplinePositioner>();
-            objToSpawn.transform.parent = SplinePositionersContent;
-            objToSpawn.transform.position = Vector3.zero;
-            SplinePositioners.Add(splinePositioner);
+            Debug.LogError($"ACTPart {gameObject.name} spline positioner add was called. But its not in draw line mode");
+            return;
         }
+
+        if (Connections.Count > 0)
+        {
+            var lastIndex = Connections.Count - 1;
+            var last = Connections[lastIndex];
+            Destroy(last.gameObject);
+            Connections.RemoveAt(lastIndex);
+        }
+    }
+
+    public void ConnectToLine(SplineComputer spline, int positionIndex)
+    {
+        if (Mode != ModeInScene.DrawLine) {
+            Debug.LogError($"ACTPart {gameObject.name} spline positioner add was called. But its not in draw line mode");
+            return;
+        }
+        var objToSpawn = new GameObject($"SplinePositioner {Connections.Count + 1}");
+        objToSpawn.transform.parent = SplinePositionersContent;
+        
+        var connection = objToSpawn.AddComponent<Node>();
+        connection.AddConnection(spline, positionIndex);
+     
+        objToSpawn.transform.SetLocalPositionAndRotation(Vector3.zero, objToSpawn.transform.localRotation);
     }
 
     // Start is called before the first frame update
@@ -52,8 +82,6 @@ public class ACTPart : MonoBehaviour, IStateReactor
 
     public void Activate()
     {
-        AddSplinePositioner();
-
         Mode = ModeInScene.Interactive;
         ActivityState.SetActivityGroup(ACTProjects.Instance.ActivityGroup);
         Menu.SetActive(false);
@@ -81,7 +109,7 @@ public class ACTPart : MonoBehaviour, IStateReactor
         {
             if (enabled)
             {
-                Debug.Log($"Make {gameObject.name} as a point of line: {enabled}");
+                ACTLevelScene.Instance.OnLinePointSelect(this);
             }
         }
     }
