@@ -1,3 +1,4 @@
+using Dreamteck.Splines;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,9 +19,27 @@ public class ACTPart : MonoBehaviour, IStateReactor
     private GameObject Menu;
     [SerializeField]
     private MouseInput MouseInput;
+    [SerializeField] private Transform SplinePositionersContent;
+    [SerializeField]
+    private List<SplinePositioner> SplinePositioners = new();
 
     public ModeInScene Mode = ModeInScene.View;
 
+    void Awake()
+    {
+    }
+
+    void AddSplinePositioner()
+    {
+        if (SplinePositioners.Count == 0)
+        {
+            var objToSpawn = new GameObject($"SplinePositioner {SplinePositioners.Count + 1}");
+            var splinePositioner = objToSpawn.AddComponent<SplinePositioner>();
+            objToSpawn.transform.parent = SplinePositionersContent;
+            objToSpawn.transform.position = Vector3.zero;
+            SplinePositioners.Add(splinePositioner);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -29,11 +48,12 @@ public class ACTPart : MonoBehaviour, IStateReactor
         {
             Canvas.gameObject.SetActive(false);
         }
-        
     }
 
     public void Activate()
     {
+        AddSplinePositioner();
+
         Mode = ModeInScene.Interactive;
         ActivityState.SetActivityGroup(ACTProjects.Instance.ActivityGroup);
         Menu.SetActive(false);

@@ -109,6 +109,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5913960617505798379}
+  - {fileID: 7584696399118945820}
   m_Father: {fileID: 6803500263241665255}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &6337921640080532024
@@ -1097,6 +1098,37 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &3293485518157778269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7584696399118945820}
+  m_Layer: 0
+  m_Name: SplinePositioners
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7584696399118945820
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3293485518157778269}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3378985380359334136}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3897435290311095727
 GameObject:
   m_ObjectHideFlags: 0
@@ -2227,6 +2259,9 @@ MonoBehaviour:
   ActivityState: {fileID: 1969781664440121239}
   Menu: {fileID: 4842331702853276405}
   MouseInput: {fileID: 5919993164805369979}
+  SplinePositionersContent: {fileID: 7584696399118945820}
+  SplinePositioners: []
+  Mode: 1
 --- !u!114 &7861625761678846904
 MonoBehaviour:
   m_ObjectHideFlags: 0
