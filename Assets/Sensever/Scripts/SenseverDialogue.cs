@@ -12,6 +12,7 @@ public class SenseverDialogue : MonoBehaviour
 
     [SerializeField] private EventController EventController;
     [SerializeField] private Button ContinueButton;
+    public bool AllowSkip = false;
     [Space(20)]
     [Header("Tutorial Text")]
     public List<Event> TutorialTexts;
@@ -68,11 +69,13 @@ public class SenseverDialogue : MonoBehaviour
 
     void DisableButton()
     {
-        ContinueButton.interactable = false;
+        if (!AllowSkip)
+            ContinueButton.interactable = false;
     }
 
     void EnableButton()
     {
-        ContinueButton.interactable = true;
+        if (!AllowSkip)
+            ContinueButton.interactable = true;
     }
 }
