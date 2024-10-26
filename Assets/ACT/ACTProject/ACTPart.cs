@@ -11,7 +11,8 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     {
         Interactive, // Default mode
         View,   // During the object placeholder, make it view
-        DrawLine // For drawing the line change the select
+        DrawLine, // For drawing the line change the select
+        Edit, // Same as interactive but hides the transform handler
     }
     [SerializeField]
     protected Canvas Canvas;
@@ -46,7 +47,6 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     {
         if (Mode != ModeInScene.DrawLine)
         {
-            Debug.LogError($"ACTPart {gameObject.name} spline positioner add was called. But its not in draw line mode");
             return;
         }
 
@@ -62,7 +62,6 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     public void ConnectToLine(SplineComputer spline, int positionIndex)
     {
         if (Mode != ModeInScene.DrawLine) {
-            Debug.LogWarning($"ACTPart {gameObject.name} spline positioner add was called. But its not in draw line mode");
             return;
         }
         var objToSpawn = new GameObject($"SplinePositioner {Connections.Count + 1}");
@@ -77,7 +76,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     // Start is called before the first frame update
     void Start()
     {
-        if (Mode != ModeInScene.Interactive)
+        if (Mode != ModeInScene.Interactive && Mode != ModeInScene.Edit)
         {
             Canvas.gameObject.SetActive(false);
         }
@@ -91,19 +90,17 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     public void Activate(DataGameObjectId objectId)
     {
         this.objectId = objectId;
-        Debug.Log("ACTPart activated");
         Mode = ModeInScene.Interactive;
         ActivityState.SetActivityGroup(ACTProjects.Instance.ActivityGroup);
         Menu.SetActive(false);
         ACTLevelScene.Instance.AddPart(this);
         Canvas.worldCamera = ACTProjects.Instance.Camera;
         Canvas.gameObject.SetActive(true);
-
     }
 
     private void OnDestroy()
     {
-        if (Mode == ModeInScene.Interactive)
+        if (Mode == ModeInScene.Interactive || Mode == ModeInScene.Edit)
         {
             ACTLevelScene.Instance.RemovePart(this);
             Menu.SetActive(false);
@@ -112,7 +109,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 
     public void Select(bool enabled)
     {
-        if (Mode == ModeInScene.Interactive)
+        if (Mode == ModeInScene.Interactive || Mode == ModeInScene.Edit)
         {
             Menu.SetActive(enabled);
         } else if (Mode == ModeInScene.DrawLine)
@@ -154,6 +151,22 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         } else
         {
             Mode = ModeInScene.Interactive;
+        }
+        MouseInput.enabled = on;
+    }
+
+    public void SetEditMode(bool on)
+    {
+        if (!on)
+        {
+            ActivityState.ChangeMode(StateMode.None);
+            Mode = ModeInScene.View;
+        }
+        else
+        {
+            Mode = ModeInScene.Edit;
+
+            ActivityState.Select(true);
         }
         MouseInput.enabled = on;
     }

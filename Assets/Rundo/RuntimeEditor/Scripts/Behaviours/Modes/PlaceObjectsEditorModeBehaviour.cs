@@ -49,6 +49,7 @@ namespace Rundo.RuntimeEditor.Behaviours
                 // place
                 if (Input.GetMouseButtonDown(0))
                 {
+                    ACTLevelScene.Instance.FlagNextPartForEditing();
                     CreateDataGameObjectCommand.Process(DataScene, RundoEngine.DataSerializer.Clone(_dataGameObject), DataScene);
                     RuntimeEditorController.SetMode<SelectObjectsEditorModeBehaviour>();
                 }
@@ -74,6 +75,10 @@ namespace Rundo.RuntimeEditor.Behaviours
             ACTLevelScene.Instance.OnPrimitivesWindowSelect(false);
         }
 
+        /// <summary>
+        /// This function is called automatically be Rundo, when the packages switches
+        /// mode.
+        /// </summary>
         public override void Deactivate()
         {
             RuntimeEditorController.SelectionBehaviour.ClearSelection();

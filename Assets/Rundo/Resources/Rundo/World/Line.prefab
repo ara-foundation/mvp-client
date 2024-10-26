@@ -216,14 +216,14 @@ MonoBehaviour:
     useClippedPercent: 0
     keys: []
   _clipFromSample:
-    position: {x: -4.166667, y: 0.16666663, z: -16.333334}
+    position: {x: -4.166667, y: 0.16666663, z: -6.333334}
     up: {x: -0.1425288, y: 0.9578204, z: -0.24953058}
     forward: {x: 0.9469967, y: -0.010991187, z: 0.32105532}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 0
   _clipToSample:
-    position: {x: 0.833333, y: 1.6666666, z: -10.833334}
+    position: {x: 0.833333, y: 1.6666666, z: -0.83333397}
     up: {x: -0.08662129, y: 0.96149844, z: -0.26080152}
     forward: {x: -0.9823483, y: 0.17492075, z: 0.066290714}
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -270,14 +270,14 @@ MonoBehaviour:
   targetRigidbody2D: {fileID: 0}
   targetTransform: {fileID: 5443129513689030643}
   _result:
-    position: {x: 10.19327, y: 0, z: -11.46496}
+    position: {x: 10.19327, y: 0, z: -1.4649601}
     up: {x: 0, y: 1, z: 0}
     forward: {x: -0.08375385, y: 0.38837624, z: 0.9176869}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 0.5
   _finalResult:
-    position: {x: 10.19327, y: 0, z: -11.46496}
+    position: {x: 10.19327, y: 0, z: -1.4649601}
     up: {x: 0, y: 1, z: 0}
     forward: {x: -0.08375385, y: 0.38837624, z: 0.9176869}
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -1337,11 +1337,7 @@ MonoBehaviour:
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 1
-  _nodes:
-  - node: {fileID: 0}
-    pointIndex: 2
-  - node: {fileID: 0}
-    pointIndex: 0
+  _nodes: []
 --- !u!33 &7925681583884293317
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1424,14 +1420,14 @@ MonoBehaviour:
     useClippedPercent: 0
     keys: []
   _clipFromSample:
-    position: {x: -4.166667, y: 0.16666663, z: -16.333334}
+    position: {x: -4.166667, y: 0.16666663, z: -6.333334}
     up: {x: -0.1425288, y: 0.9578204, z: -0.24953058}
     forward: {x: 0.9469967, y: -0.010991187, z: 0.32105532}
     color: {r: 1, g: 1, b: 1, a: 1}
     size: 1
     percent: 0
   _clipToSample:
-    position: {x: 0.833333, y: 1.6666666, z: -10.833334}
+    position: {x: 0.833333, y: 1.6666666, z: -0.83333397}
     up: {x: -0.08662129, y: 0.96149844, z: -0.26080152}
     forward: {x: -0.9823483, y: 0.17492075, z: 0.066290714}
     color: {r: 1, g: 1, b: 1, a: 1}
@@ -1486,6 +1482,7 @@ MonoBehaviour:
   SplinePositionersContent: {fileID: 5443129513689030643}
   Connections: []
   Mode: 1
+  partList: []
 --- !u!114 &7816064643647641942
 MonoBehaviour:
   m_ObjectHideFlags: 0

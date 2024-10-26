@@ -11,9 +11,6 @@ public class Logos : MonoBehaviour
     [SerializeField] private GameObject ideaCard;
     [SerializeField] private GameObject content;
 
-    private string currentUrl = default;
-    private Dictionary<string, AraIdeas> cache = new ();
-
     private static Logos _instance;
 
     public static Logos Instance

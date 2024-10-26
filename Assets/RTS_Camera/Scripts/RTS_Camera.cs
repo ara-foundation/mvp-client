@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using TMPro;
 
 namespace RTS_Cam
 {
@@ -7,6 +10,11 @@ namespace RTS_Cam
     [AddComponentMenu("RTS Camera")]
     public class RTS_Camera : MonoBehaviour
     {
+        public static bool IsInputFieldFocused()
+        {
+            GameObject obj = EventSystem.current.currentSelectedGameObject;
+            return (obj != null && (obj.GetComponent<InputField>() != null || obj.GetComponent<TMP_InputField>() != null));
+        }
 
         #region Foldouts
 
@@ -109,7 +117,7 @@ namespace RTS_Cam
 
         private Vector2 KeyboardInput
         {
-            get { return useKeyboardInput ? new Vector2(Input.GetAxis(horizontalAxis), Input.GetAxis(verticalAxis)) : Vector2.zero; }
+            get { return useKeyboardInput && !IsInputFieldFocused() ? new Vector2(Input.GetAxis(horizontalAxis), Input.GetAxis(verticalAxis)) : Vector2.zero; }
         }
 
         private Vector2 MouseInput
@@ -131,6 +139,10 @@ namespace RTS_Cam
         {
             get
             {
+                if (IsInputFieldFocused())
+                {
+                    return 0;
+                }
                 bool zoomIn = Input.GetKey(zoomInKey);
                 bool zoomOut = Input.GetKey(zoomOutKey);
                 if (zoomIn && zoomOut)
@@ -148,6 +160,11 @@ namespace RTS_Cam
         {
             get
             {
+                if (IsInputFieldFocused())
+                {
+                    return 0;
+                }
+
                 bool rotateRight = Input.GetKey(rotateRightKey);
                 bool rotateLeft = Input.GetKey(rotateLeftKey);
                 if(rotateLeft && rotateRight)
@@ -208,6 +225,7 @@ namespace RTS_Cam
         {
             if (useKeyboardInput)
             {
+                GameObject obj = EventSystem.current.currentSelectedGameObject;
                 Vector3 desiredMove = new Vector3(KeyboardInput.x, 0, KeyboardInput.y);
 
                 desiredMove *= keyboardMovementSpeed;

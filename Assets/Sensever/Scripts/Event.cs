@@ -5,6 +5,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Event", menuName = "Event")]
 public class Event : ScriptableObject
 {
-    [TextArea]
+    [TextArea(3, 30)]
     public string finalText;
 }

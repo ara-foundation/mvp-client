@@ -26,7 +26,6 @@ public class ACTPart_line : ACTPart, ACTPart_interface
         
         this.objectId = objectId;
         Load();
-        Debug.Log($"ACTPart line activated. How many part it has? {partList.Count}");
         ResetPoints();
         
         Mode = ModeInScene.View;
@@ -77,7 +76,6 @@ public class ACTPart_line : ACTPart, ACTPart_interface
     {
         var key = KeyPrefix + objectId.ToStringRawValue();
         var value = JsonConvert.SerializeObject(partList);
-        Debug.Log($"save {key} as '{value}'");
 
         PlayerPrefs.SetString(key, value);
     }
@@ -86,7 +84,6 @@ public class ACTPart_line : ACTPart, ACTPart_interface
     {
         if (partList == null)
         {
-            Debug.Log("The part list is null, let's define it");
             partList = new List<string>();
         }
         var key = KeyPrefix + objectId.ToStringRawValue();
@@ -137,13 +134,10 @@ public class ACTPart_line : ACTPart, ACTPart_interface
             return;
         }
         Load();
-        Debug.Log($"Number of part list: {partList.Count}");
         foreach (var partId in partList)
         {
-            Debug.Log($"part id {partId}");
             var objectId = DataGameObjectId.Create(partId);
             var part = RuntimeEditorController.DataSceneBehaviour.Find(objectId);
-            Debug.Log($"DeletePoints is part null? {part == null}");
             var actPart = part.gameObject.GetComponent<ACTPart>();
             actPart.DeleteLastSplinePositioner();
         }

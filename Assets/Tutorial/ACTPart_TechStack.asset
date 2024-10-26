@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0711fa1f55f68d34ab25783913a3e929, type: 3}
+  m_Name: ACTPart_TechStack
+  m_EditorClassIdentifier: 
+  finalText: 'Describe the part.
+
+
+    Don''t try to write details if you get stuck.
+    Just write whats in your mind.
+
+    Later you can come back to it.
+
+
+    For
+    example in case of the website "Frontend using React library and Next framework.
+    It will have five pages"
+
+
+    TODO: Sensever parses the tech stack, and can
+    suggest how many internal parts to add. Or adds them as the placeholder.
+
+
+    TODO:
+    Sensever parses the tech stack, finds the similar template to create the internal
+    part.
+
+
+    TODO: Sensever updates the parts in the ACTPart menu. Notifies it
+    to the user.'

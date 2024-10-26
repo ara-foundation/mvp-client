@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0711fa1f55f68d34ab25783913a3e929, type: 3}
+  m_Name: ACTPart_Budget
+  m_EditorClassIdentifier: 
+  finalText: 'How much it will cost to implement this part?
+
+
+    It doesn''t have
+    to be exact right now. You can always finalize as you go into more details by
+    adding mroe tasks and parts.
+
+
+    For now, you may write "Well, its about 50
+    hours, plus the server cost and some paid software cost, I expect it will be
+    about 200$". '

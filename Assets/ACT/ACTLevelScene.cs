@@ -14,12 +14,37 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     [SerializeField] private LeanWindow PrimitivesWindow;
     [SerializeField] private LeanWindow LineWindow;
+    [SerializeField] private GameObject BottomMenuPlane;
     [SerializeField] private GameObject LinePrefab;
+    [SerializeField] private MouseInput BoxEnvironment;
     private static ACTLevelScene _instance;
 
+    #region PartParameterEditing
+    public enum TutorialStep
+    {
+        ProjectName = 0,
+        TechStackStart = 1,
+        TechStackEnd = 4,
+        BudgetStart = 5,
+        BudgetEnd = 6,
+        Maintainer = 7,
+        Tasks = 8,
+    }
+    public List<Event> PrimitiveTutorialTexts;
+    /// <summary>
+    /// When a AddPart method is called, and this flag is true. Then 
+    /// start the editing mode.
+    /// </summary>
+    private bool _nextPartForEditing = false;
+    private ACTPart_interface _editingPart = null;
+    private int _editingStep = Sensever_dialogue.None;
+    #endregion
+
+    #region LineEditingVariables
     private bool _lineMode = false;
     private DataGameObject _editingLineData = null;
     private ACTPart_line _editingLinePart = null;
+    #endregion
 
     public static ACTLevelScene Instance
     {
@@ -85,18 +110,21 @@ public class ACTLevelScene : EditorBaseBehaviour
         var partType = part.GetType();
         if (partType == typeof(ACTPart_line))
         {
-            Debug.Log("Add part of line instance");
-
             if (_lineMode)
             {
                 _editingLinePart = part as ACTPart_line;
             }
         } else
         {
-            Debug.Log("Add part of non-line instance");
             if (!Parts.Contains(part))
             {
                 Parts.Add(part);
+
+                if (_nextPartForEditing)
+                {
+                    _nextPartForEditing = false;
+                    StartEditingPart(part);
+                }
             }
         }
     }
@@ -138,6 +166,32 @@ public class ACTLevelScene : EditorBaseBehaviour
         {
             part.Interactive(on);
         }
+        BoxEnvironment.enabled = on;
+    }
+
+    private void StartEditingPart(ACTPart_interface part)
+    {
+        _editingPart = part;
+        var _part = _editingPart as ACTPart;
+
+        // Focus the camera on the part.
+        // The drawback is that transform handler is also activated.
+        _part.SetEditMode(true);
+
+        // Start tutorial
+        _editingStep = Sensever_dialogue.None;
+        Sensever_window.Instance.ShowSensever(PrimitiveTutorialTexts, OnDialogueEnd, OnDialogueStart, HideSenseverInsteadContinue);
+    }
+
+    /// <summary>
+    /// This function makes sure that the next element added into the scene requires a meta data
+    /// editing.
+    /// 
+    /// For meta data editing we use Sensever, Set the object as the target.
+    /// </summary>
+    public void FlagNextPartForEditing()
+    {
+        _nextPartForEditing = true;
     }
 
     private void SetPartsLineMode(bool on)
@@ -146,6 +200,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         {
             part.SetLineMode(on);
         }
+        BoxEnvironment.enabled = on;
     }
 
     /// <summary>
@@ -177,7 +232,6 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     public void OnLinePointSelect(ACTPart part)
     {
-        Debug.Log("ACTLevel scene set a part as a point");
         if (_editingLinePart != null)
         {
             if (_editingLinePart.OnSetPoint(part))
@@ -185,5 +239,58 @@ public class ACTLevelScene : EditorBaseBehaviour
                 UnsetLineMode(cancel: false);
             }
         }
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///
+    ///
+    ///
+    ///////////////////////////////////////////////////////////////////
+
+    private void OnDialogueEnd(int showed)
+    {
+        Debug.Log($"Dialogue ended for {showed} is it this one {_editingStep}");
+    }
+
+    private void OnDialogueStart(int started)
+    {
+        _editingStep = started;
+        Debug.Log("Starting the dialogue text for " + (TutorialStep)started);
+    }
+
+    private bool HideSenseverInsteadContinue(int _)
+    {
+        var showedStep = _editingStep;
+        Debug.Log($"Hide Sensever instead continuing? {(TutorialStep)showedStep}?");
+        // Once we show the project name, let's hide the sensever tutorial until user completes the project name
+        if (showedStep == (int)TutorialStep.ProjectName)
+        {
+            return true;
+        } else 
+        // Tech stack has multiple data, therefore show them all.
+        if (showedStep >= (int)TutorialStep.TechStackStart && showedStep < (int)TutorialStep.TechStackEnd)
+        {
+            return false;
+        } else 
+        // Once we show the tech stack, let's hide the sensever tutorial until user completes the tech stack
+        if (showedStep == (int)TutorialStep.TechStackEnd)
+        {
+            return true;
+        } else if (showedStep >= (int)TutorialStep.BudgetStart && showedStep < (int)TutorialStep.BudgetEnd)
+        {
+            return false;
+        } else if (showedStep == (int)TutorialStep.BudgetEnd)
+        {
+            return true;
+        } else if (showedStep == (int)TutorialStep.Maintainer)
+        {
+            return false;
+        } else 
+        // The last step, therefore hide the tutorial
+        if (showedStep == (int)TutorialStep.Tasks)
+        {
+            return true;
+        }
+        return false;
     }
 }

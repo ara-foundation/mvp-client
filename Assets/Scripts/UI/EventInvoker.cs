@@ -2,11 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SelectEvent : MonoBehaviour, IStateReactor
+/// <summary>
+/// Make a callback methods when activity state changed
+/// </summary>
+public class EventInvoker : MonoBehaviour, IStateReactor
 {
     bool selected = false;
+    bool focused = false;
 
     public UnityEngine.Events.UnityEvent<bool> OnSelect;
+    public UnityEngine.Events.UnityEvent<bool> OnFocus;
 
     public void Clear()
     {
@@ -15,10 +20,24 @@ public class SelectEvent : MonoBehaviour, IStateReactor
             selected = false;
             OnSelect.Invoke(selected);
         }
+        if (focused)
+        {
+            focused = false;
+            OnFocus.Invoke(focused);
+        }
     }
 
     public void Focus(bool enabled)
     {
+        if (enabled)
+        {
+            focused = true;
+        }
+        else
+        {
+            focused = false;
+        }
+        OnFocus?.Invoke(focused);
     }
 
     public void Highlight(bool enabled)
@@ -34,6 +53,6 @@ public class SelectEvent : MonoBehaviour, IStateReactor
         {
             selected = false;
         }
-        OnSelect.Invoke(selected);
+        OnSelect?.Invoke(selected);
     }
 }

@@ -215,6 +215,29 @@ public class ActivityState : MonoBehaviour
         }
     }
 
+    public void Select(bool enabled)
+    {
+        // If already selected, then simply deselect
+        var toggledOn = mode == StateMode.Selected;
+        if (enabled == toggledOn)
+        {
+            return;
+        }
+        if (enabled)
+        {
+            ChangeMode(StateMode.Selected);
+        }
+        else
+        {
+            ChangeMode(StateMode.None);
+        }
+
+        if (ActivityGroup != null)
+        {
+            ActivityGroup.Select(this, enabled);
+        }
+    }
+
     private void OnDestroy()
     {
         if (ActivityGroup != null)
