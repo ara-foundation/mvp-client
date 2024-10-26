@@ -684,6 +684,7 @@ MonoBehaviour:
   MouseInput: {fileID: 6844299925188518315}
   SplinePositionersContent: {fileID: 4312102281691073359}
   Connections: []
+  Edit: {fileID: 0}
   Mode: 1
 --- !u!114 &6899349945455365929
 MonoBehaviour:
@@ -1873,19 +1874,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnSelect:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6899349945455365929}
-        m_TargetAssemblyTypeName: ACTPart_edit, Assembly-CSharp
-        m_MethodName: OnProjectNameEditSelect
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_OnDeselect:
     m_PersistentCalls:
       m_Calls: []
