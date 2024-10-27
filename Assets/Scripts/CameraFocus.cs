@@ -26,13 +26,13 @@ public class CameraFocus : MonoBehaviour
     /// <summary>
     /// Call it for any object in the scene. For example for the input fields.
     /// </summary>
-    /// <param name="from"></param>
-    /// <param name="enabled"></param>
-    public void SelectTargetThrough(Transform from, bool enabled)
+    /// <param name="target"></param>
+    /// <param name="selecting"></param>
+    public void SelectTargetThrough(Transform target, bool selecting)
     {
-        if (from.CompareTag(ACTProjects.Instance.targetsTag) && enabled)
+        if (target.CompareTag(ACTProjects.Instance.targetsTag) && selecting)
         {
-            cam.SetTarget(from);
+            cam.SetTarget(target);
         }
         else
         {

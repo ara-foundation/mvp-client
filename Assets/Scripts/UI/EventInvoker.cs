@@ -18,12 +18,12 @@ public class EventInvoker : MonoBehaviour, IStateReactor
         if (selected)
         {
             selected = false;
-            OnSelect.Invoke(selected);
+            OnSelect?.Invoke(selected);
         }
         if (focused)
         {
             focused = false;
-            OnFocus.Invoke(focused);
+            OnFocus?.Invoke(focused);
         }
     }
 

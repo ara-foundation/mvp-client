@@ -197,6 +197,20 @@ public class ActivityState : MonoBehaviour
         mode = updatedTo;
     }
 
+    public void Focus()
+    {
+        // If already selected, then simply deselect
+        var toggleOn = mode != StateMode.Focused;
+        Debug.Log($"Focus on {gameObject.name}, current mode {mode}");
+        if (toggleOn)
+        {
+            ChangeMode(StateMode.Focused);
+        } else
+        {
+            ChangeMode(StateMode.None);
+        }
+    }
+
     public void Select()
     {
         // If already selected, then simply deselect
