@@ -1472,9 +1472,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Sensever_dialogue, Assembly-CSharp
-        m_MethodName: OnClickContinue
+      - m_Target: {fileID: 3594006447391458530}
+        m_TargetAssemblyTypeName: ACTPart_edit, Assembly-CSharp
+        m_MethodName: OnTechStackSubmitted
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3179,8 +3179,10 @@ MonoBehaviour:
   ProjectNameLabel: {fileID: 5618457934324220587}
   ProjectNameState: {fileID: 936695130364221029}
   ProjectNameFieldContainer: {fileID: 4385005391941511096}
+  TechStackMenuButton: {fileID: 5743362373953159073}
   TechStackWindow: {fileID: 7136218855862595191}
   TechStackCameraTarget: {fileID: 4027190744534574679}
+  TechStackContent: {fileID: 9070412746466494434}
 --- !u!114 &5437736095630422765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4771,7 +4773,19 @@ MonoBehaviour:
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3594006447391458530}
+        m_TargetAssemblyTypeName: ACTPart_edit, Assembly-CSharp
+        m_MethodName: OnTechStackEditEnd
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls: []
