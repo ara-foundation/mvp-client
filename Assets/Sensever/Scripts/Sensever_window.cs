@@ -52,7 +52,13 @@ public class Sensever_window: MonoBehaviour
     public void ContinueSensever(int nextStep)
     {
         this.nextStep = nextStep;
-        LeanWindow.Set(true);
+        if (!LeanWindow.On)
+        {
+            LeanWindow.Set(true);
+        } else
+        {
+            OnToggle();
+        }
     }
 
     public void HideSensever()
@@ -60,9 +66,15 @@ public class Sensever_window: MonoBehaviour
         LeanWindow.Set(false);
     }
 
+    /// <summary>
+    /// Along with the OffTogle its a callback to activate sensever after its window is open
+    /// </summary>
     public void OnToggle()
     {
-        SenseverMesh.SetActive(true);
+        if (!SenseverMesh.activeSelf)
+        {
+            SenseverMesh.SetActive(true);
+        }
         if (this.nextStep != Sensever_dialogue.None)
         {
             SenseverDialogue.ShowAt(this.nextStep);
@@ -73,6 +85,9 @@ public class Sensever_window: MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Along with the OnToggle its a callback to deactivate sensever after its window is closed
+    /// </summary>
     public void OffToggle()
     {
 

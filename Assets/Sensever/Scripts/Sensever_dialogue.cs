@@ -59,6 +59,9 @@ public class Sensever_dialogue : MonoBehaviour
             Notification.Instance.Show("No tutorial was set to start");
             return;
         }
+        // Force Update is called here, to ensure that end call receives the callback about previous event.
+        // Otherwise, showat will place arbitrary showed parameter.
+        ForceStopTexting();
         showed = PrevStep(step);
         OnClickContinue();
     }
