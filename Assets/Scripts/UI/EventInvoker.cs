@@ -9,9 +9,11 @@ public class EventInvoker : MonoBehaviour, IStateReactor
 {
     bool selected = false;
     bool focused = false;
+    bool highlighted = false;
 
     public UnityEngine.Events.UnityEvent<bool> OnSelect;
     public UnityEngine.Events.UnityEvent<bool> OnFocus;
+    public UnityEngine.Events.UnityEvent<bool> OnHighlight;
 
     public void Clear()
     {
@@ -24,6 +26,11 @@ public class EventInvoker : MonoBehaviour, IStateReactor
         {
             focused = false;
             OnFocus?.Invoke(focused);
+        }
+        if (highlighted)
+        {
+            highlighted = false;
+            OnHighlight?.Invoke(highlighted);
         }
     }
 
@@ -42,6 +49,15 @@ public class EventInvoker : MonoBehaviour, IStateReactor
 
     public void Highlight(bool enabled)
     {
+        if (enabled)
+        {
+            highlighted = true;
+        }
+        else
+        {
+            highlighted = false;
+        }
+        OnHighlight?.Invoke(highlighted);
     }
 
     public void Select(bool enabled)
