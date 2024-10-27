@@ -123,7 +123,7 @@ public class ACTLevelScene : EditorBaseBehaviour
                 if (_nextPartForEditing)
                 {
                     _nextPartForEditing = false;
-                    StartEditingPart(part);
+                    StartCoroutine(StartEditingPart(part));
                 }
             }
         }
@@ -169,18 +169,39 @@ public class ACTLevelScene : EditorBaseBehaviour
         BoxEnvironment.enabled = on;
     }
 
-    private void StartEditingPart(ACTPart_interface part)
+    IEnumerator StartEditingPart(ACTPart_interface part)
     {
+        yield return 0; // wait for the next frame
+
         _editingPart = part;
         var _part = _editingPart as ACTPart;
 
         // Focus the camera on the part.
         // The drawback is that transform handler is also activated.
         _part.SetEditMode(true);
+        _part.EditProjectName(OnProjectNameEdited);
 
         // Start tutorial
         _editingStep = Sensever_dialogue.None;
         Sensever_window.Instance.ShowSensever(PrimitiveTutorialTexts, OnDialogueEnd, OnDialogueStart, HideSenseverInsteadContinue);
+    }
+
+    private void OnProjectNameEdited(string name, bool submitted)
+    {
+        var _part = _editingPart as ACTPart;
+        
+        if (submitted)
+        {
+            Debug.Log("TODO ActScene: Project name was set, let's now work on the tech stack by continuing sensever");
+            Sensever_window.Instance.ContinueSensever((int)TutorialStep.TechStackStart);
+        } else
+        {
+            //Notification.Instance.Show("To continue set the project name first.");
+            Debug.LogWarning("To continue set the project name first.");
+            _part.EditProjectName(OnProjectNameEdited);
+            return;
+        }
+
     }
 
     /// <summary>
@@ -258,10 +279,9 @@ public class ACTLevelScene : EditorBaseBehaviour
         Debug.Log("Starting the dialogue text for " + (TutorialStep)started);
     }
 
-    private bool HideSenseverInsteadContinue(int _)
+    private bool HideSenseverInsteadContinue(int showedStep)
     {
-        var showedStep = _editingStep;
-        Debug.Log($"Hide Sensever instead continuing? {(TutorialStep)showedStep}?");
+        Debug.Log($"Hide Sensever instead continuing? {(TutorialStep)showedStep}");
         // Once we show the project name, let's hide the sensever tutorial until user completes the project name
         if (showedStep == (int)TutorialStep.ProjectName)
         {
@@ -290,7 +310,10 @@ public class ACTLevelScene : EditorBaseBehaviour
         if (showedStep == (int)TutorialStep.Tasks)
         {
             return true;
+        } else if (showedStep == (int)Sensever_dialogue.None)
+        {
+            return false;
         }
-        return false;
+        throw new System.Exception("Invalid step");
     }
 }

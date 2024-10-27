@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -11,6 +12,13 @@ public class ACTPart_edit : MonoBehaviour
     [SerializeField] private TextMeshProUGUI ProjectNameLabel;
     [SerializeField] private ActivityState ProjectNameState;
     [SerializeField] private GameObject ProjectNameFieldContainer;
+    public delegate void ProjectNameEditedDelegate(string name, bool submitted);
+
+    /// <summary>
+    /// OnProjectNameEdited is invoked when project name switches back from edit field to a label.
+    /// First argument is the new string, the second argument is is it submitted
+    /// </summary>
+    public ProjectNameEditedDelegate OnProjectNameEdited;
 
     // Start is called before the first frame update
     void Start()
@@ -41,6 +49,7 @@ public class ACTPart_edit : MonoBehaviour
         {
             return;
         }
+
         ProjectNameState.ChangeMode(StateMode.None);
         ToggleProjectNameEditing(edit: true);
         CameraFocus.Instance.SelectTargetThrough(ProjectNameContainer, enabled: true);
@@ -57,16 +66,22 @@ public class ACTPart_edit : MonoBehaviour
         if (!EventSystem.current.alreadySelecting) EventSystem.current.SetSelectedGameObject(null);
 
         ToggleProjectNameEditing(edit: false);
+        var submitted = false;
+        var editedName = name;
 
         if (Input.GetKeyDown(KeyCode.Escape) || ProjectNameLabel.text.Equals(name) || string.IsNullOrEmpty(name))
         {
-            // Nothing just cancel
+            editedName = ProjectNameLabel.text;
         } else
         {
+            submitted = true;
             ProjectNameLabel.text = name;
             // TODO call back the ara tutorial to start showing next part
             Debug.Log("Submit the data (1) check is text changed, (2) call submit to save data in the server");
         }
+
+        OnProjectNameEdited?.Invoke(name, submitted);
+        OnProjectNameEdited = null;
     }
 
     #endregion

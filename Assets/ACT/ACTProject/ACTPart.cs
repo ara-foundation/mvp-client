@@ -1,9 +1,11 @@
 using Dreamteck.Splines;
 using Rundo.RuntimeEditor.Behaviours;
 using Rundo.RuntimeEditor.Data;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static ACTPart_edit;
 
 public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 {
@@ -26,12 +28,15 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     protected Transform SplinePositionersContent;
     [SerializeField]
     protected List<Node> Connections = new();
+    [SerializeField]
+    protected ACTPart_edit Edit;
 
     public ModeInScene Mode = ModeInScene.View;
     protected DataGameObjectId objectId;
 
     void Awake()
     {
+        Edit = gameObject.GetComponent<ACTPart_edit>();
     }
 
     public Vector3 LinePointPosition()
@@ -169,6 +174,19 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
             ActivityState.Select(true);
         }
         MouseInput.enabled = on;
+    }
+
+    public void EditProjectName(ProjectNameEditedDelegate onEdited)
+    {
+        if (Edit == null)
+        {
+            Notification.Instance.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
+            return;
+        }
+
+        // Start editing the project name
+        Edit.OnProjectNameEdited += onEdited;
+        Edit.OnEditProjectName(true);
     }
 
     public void SetLineMode(bool on)
