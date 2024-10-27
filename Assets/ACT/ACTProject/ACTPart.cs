@@ -34,6 +34,12 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     public ModeInScene Mode = ModeInScene.View;
     protected DataGameObjectId objectId;
 
+    /// <summary>
+    /// Orphan means its called manually without loading from the scripts.
+    /// Orphan scripts will show the canvas.
+    /// </summary>
+    private bool orphaned = false;
+
     void Awake()
     {
         Edit = gameObject.GetComponent<ACTPart_edit>();
@@ -81,9 +87,22 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     // Start is called before the first frame update
     void Start()
     {
+        var found = TryGetComponent<DataGameObjectBehaviour>(out var dataGameObjectBehaviour);
+        orphaned = !found;
+        if (orphaned)
+        {
+            Debug.LogWarning($"Orphaned {gameObject.name}! The orphaned act parts are not applied by the transform. Also make sure that changes are net send to the server");
+        }
+
         if (Mode != ModeInScene.Interactive && Mode != ModeInScene.Edit)
         {
-            Canvas.gameObject.SetActive(false);
+            if (!orphaned)
+            {
+                Canvas.gameObject.SetActive(false);
+            } else
+            {
+                Activate(DataGameObjectId.Create(Time.deltaTime.ToString()));
+            }
         }
     }
 

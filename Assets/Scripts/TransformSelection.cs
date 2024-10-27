@@ -23,8 +23,11 @@ public class TransformSelection : MonoBehaviour
             {
                 return;
             }
-            var dataGameObjectBehaviour = from.GetComponent<DataGameObjectBehaviour>();
-            activeTab.SelectionBehaviour.AddToSelection(dataGameObjectBehaviour.gameObject);
+            var notOrphaned = from.TryGetComponent<DataGameObjectBehaviour>(out var dataGameObjectBehaviour);
+            if (notOrphaned)
+            {
+                activeTab.SelectionBehaviour.AddToSelection(dataGameObjectBehaviour.gameObject);
+            }
         } else
         {
             activeTab.SelectionBehaviour.ClearSelection();
