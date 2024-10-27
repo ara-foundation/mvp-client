@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0711fa1f55f68d34ab25783913a3e929, type: 3}
   m_Name: ACTPart_TechStackTodo2
   m_EditorClassIdentifier: 
-  finalText: '(TODO) For upcoming versions:
+  finalText: '(TODO 2/3) For upcoming versions:
 
 
-    Also, Sensever may suggest how
-    many internal parts, tasks to add. Or adds them as the placeholder inside the
-    part.'
+    Also, Sensever may suggest
+    how many internal parts, tasks to add. Or adds them as the placeholder inside
+    the part.'

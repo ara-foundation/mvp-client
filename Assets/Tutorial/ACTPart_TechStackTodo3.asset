@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0711fa1f55f68d34ab25783913a3e929, type: 3}
   m_Name: ACTPart_TechStackTodo3
   m_EditorClassIdentifier: 
-  finalText: '(TODO) For upcoming versions:
+  finalText: '(TODO 3/3) For upcoming versions:
 
 
-    We will make the template of general
-    tasks, architecture for the part based on the tech stack you described.
+    We will make the template of
+    general tasks, architecture for the part based on the tech stack you described.
 
 
     Sensever
