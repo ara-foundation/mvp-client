@@ -1,4 +1,5 @@
 using Dreamteck.Splines;
+using Lean.Transition;
 using Rundo.RuntimeEditor.Behaviours;
 using Rundo.RuntimeEditor.Data;
 using System;
@@ -120,6 +121,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         ACTLevelScene.Instance.AddPart(this);
         Canvas.worldCamera = ACTProjects.Instance.Camera;
         Canvas.gameObject.SetActive(true);
+        Canvas.transform.eulerAnglesTransform(new Vector3(30, 0, 0), 0.2f, LeanEase.Smooth);
     }
 
     private void OnDestroy()
