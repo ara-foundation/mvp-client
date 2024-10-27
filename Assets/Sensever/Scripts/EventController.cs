@@ -26,6 +26,21 @@ public class EventController : MonoBehaviour
         ReproduceText();
     }
 
+    public void StopTexting()
+    {
+        if (runningCoroutine != null)
+        {
+            StopCoroutine(runningCoroutine);
+            runningCoroutine = null;
+            OnEndCallback?.Invoke();
+        }
+    }
+
+    public bool IsTexting()
+    {
+        return runningCoroutine != null;
+    }
+
     private void ReproduceText()
     {
         runningCoroutine = null;
@@ -56,7 +71,10 @@ public class EventController : MonoBehaviour
     private void OnDisable()
     {
         if (runningCoroutine != null)
-        StopCoroutine(runningCoroutine);
+        {
+            StopCoroutine(runningCoroutine);
+            runningCoroutine = null;
+        }
     }
 
     private IEnumerator PauseBetweenChars(char letter)

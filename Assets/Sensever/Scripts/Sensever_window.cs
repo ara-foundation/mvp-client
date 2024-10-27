@@ -75,6 +75,8 @@ public class Sensever_window: MonoBehaviour
 
     public void OffToggle()
     {
+
+        SenseverDialogue.CancelTexting();
         SenseverMesh.SetActive(false);
     }
 }

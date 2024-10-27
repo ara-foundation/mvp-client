@@ -91,14 +91,37 @@ public class Sensever_dialogue : MonoBehaviour
         return nextStep - 1;
     }
 
+    public void CancelTexting()
+    {
+        EventController.StopTexting();
+    }
+
+    /// <summary>
+    /// Returns a flag to hide instead continue if showed text is marked as such.
+    /// </summary>
+    /// <returns></returns>
+    private bool ForceStopTexting()
+    {
+        if (!EventController.IsTexting())
+        {
+            return false;
+        }
+
+        EventController.StopTexting();
+
+        return (HideInsteadContinue != null && HideInsteadContinue(showed));
+    }
+
     public void OnClickContinue()
     {
-        if (HideInsteadContinue != null && HideInsteadContinue(showed))
+        var hideInsteadContinue = ForceStopTexting();
+        if (hideInsteadContinue)
         {
             Sensever_window.Instance.HideSensever();
             return;
         }
         var nextStep = NextStep(showed);
+
         OnTextStartCallback?.Invoke(nextStep);
         var text = TutorialTexts.ElementAtOrDefault(nextStep);
         if (text != null)
