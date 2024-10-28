@@ -110,17 +110,13 @@ public class ACTPart_edit : MonoBehaviour
 
         ToggleProjectNameEditing(edit: false);
         var submitted = false;
-        var editedName = name;
 
-        if (Input.GetKeyDown(KeyCode.Escape) || ProjectNameLabel.text.Equals(name) || string.IsNullOrEmpty(name))
-        {
-            editedName = ProjectNameLabel.text;
-        } else
+        if (!Input.GetKeyDown(KeyCode.Escape) && !ProjectNameLabel.text.Equals(name) && !string.IsNullOrEmpty(name))
         {
             submitted = true;
             ProjectNameLabel.text = name;
             // TODO call back the ara tutorial to start showing next part
-            Debug.Log("Submit the data (1) check is text changed, (2) call submit to save data in the server");
+            Debug.Log("Submit the data (1=done) check is text changed, (2=todo) call submit to save data in the server");
         }
 
         OnProjectNameEdited?.Invoke(name, submitted);
