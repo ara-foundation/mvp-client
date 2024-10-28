@@ -11,6 +11,7 @@ public class ACTPart_edit : MonoBehaviour
     public delegate void ProjectNameEditedDelegate(string name, bool submitted);
     public delegate void TechStackEditedDelegate(string name, bool submitted);
     public delegate void BudgetEditedDelegate(double amount, bool submitted);
+    public delegate void MaintainerNameEditedDelegate(string name, bool submitted);
 
     [Header("Project Name")]
     [SerializeField] private Transform ProjectNameContainer;
@@ -29,6 +30,13 @@ public class ACTPart_edit : MonoBehaviour
     [SerializeField] private LeanWindow BudgetWindow;
     [SerializeField] private Transform BudgetCameraTarget;
     [SerializeField] private PieChart.ViitorCloud.PieChart BudgetPieChart;
+    [Space(20)]
+    [Header("Maintainer")]
+    [SerializeField] private TextMeshProUGUI MaintainerMenuLabel;
+    [SerializeField] private ActivityState MaintainerState;
+    [SerializeField] private GameObject MaintainerInputFieldContainer;
+    [SerializeField] private Transform MaintainerCameraTarget;
+    private string maintainerName = "none";
 
     /// <summary>
     /// OnProjectNameEdited is invoked when project name switches back from edit field to a label.
@@ -37,13 +45,29 @@ public class ACTPart_edit : MonoBehaviour
     public ProjectNameEditedDelegate OnProjectNameEdited;
     public TechStackEditedDelegate OnTechStackEdited;
     public BudgetEditedDelegate OnBudgetEdited;
+    public MaintainerNameEditedDelegate OnMaintainerNameEdited;
 
     // Start is called before the first frame update
     void Start()
     {
         // Show a project name label, hide the project name editing field.
         ToggleProjectNameEditing(edit: false);
+        ToggleMaintainerEditing(edit: false);
         BudgetMenuLabel.text = "Budget: $0";
+        
+    }
+
+    private void OnEnable()
+    {
+        if (AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
+        {
+            maintainerName = AraAuth.Instance.UserParams.loginParams.username;
+        }
+        else
+        {
+            maintainerName = "none";
+        }
+        SetMaintainerName();
     }
 
     #region ProjectName
@@ -172,4 +196,56 @@ public class ACTPart_edit : MonoBehaviour
     }
 
     #endregion
+
+    #region Maintainer
+
+    void ToggleMaintainerEditing(bool edit)
+    {
+        MaintainerMenuLabel.gameObject.SetActive(!edit);
+        MaintainerInputFieldContainer.SetActive(edit);
+    }
+
+    void SetMaintainerName()
+    {
+        MaintainerMenuLabel.text = "Maintainer: " + maintainerName;
+    }
+
+    public void OnEditMaintainer(bool focused)
+    {
+        if (!focused)
+        {
+            return;
+        }
+
+        MaintainerState.ChangeMode(StateMode.None);
+        ToggleMaintainerEditing(edit: true);
+        CameraFocus.Instance.SelectTargetThrough(MaintainerCameraTarget, selecting: true);
+    }
+
+    public void OnMaintainerEditEnd(string name)
+    {
+        CameraFocus.Instance.SelectTargetThrough(MaintainerCameraTarget, selecting: false);
+
+        if (!EventSystem.current.alreadySelecting) EventSystem.current.SetSelectedGameObject(null);
+
+        ToggleMaintainerEditing(edit: false);
+        var submitted = false;
+        var editedName = name;
+
+        if (!Input.GetKeyDown(KeyCode.Escape) && !maintainerName.Equals(name) && !string.IsNullOrEmpty(name))
+        {
+            submitted = true;
+            maintainerName = name;
+            SetMaintainerName();
+            // TODO call back the ara tutorial to start showing next part
+            Debug.Log("Submit the maintainer name (1=done) check is text changed, (2=todo) call submit to save data in the server");
+        }
+
+        OnMaintainerNameEdited?.Invoke(name, submitted);
+        OnMaintainerNameEdited = null;
+    }
+
+    #endregion
+
+    /// Tasks are managed in the nested level so it's a part of ACTPart
 }
