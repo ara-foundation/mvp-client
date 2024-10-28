@@ -9,6 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: BallRobot_glass_red
   m_Shader: {fileID: 45, guid: 0000000000000000f000000000000000, type: 0}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHABLEND_ON
   - _EMISSION
@@ -20,6 +22,7 @@ Material:
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -82,7 +85,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 0.6509804, g: 0.21568628, b: 0.31537968, a: 0.228}
+    - _Color: {r: 0.6509804, g: 0.2156862, b: 0.31537965, a: 0.50980395}
     - _EmissionColor: {r: 0.5, g: 0.11351751, b: 0.021226406, a: 1}
     - _SpecColor: {r: 0.8745098, g: 0.7115363, b: 0.50980395, a: 1}
   m_BuildTextureStacks: []
