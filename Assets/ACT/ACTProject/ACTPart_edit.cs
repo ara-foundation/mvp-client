@@ -24,7 +24,7 @@ public class ACTPart_edit : MonoBehaviour
     [SerializeField] private Transform TechStackCameraTarget;
     [SerializeField] private TMP_InputField TechStackContent;
     [Space(20)]
-    [Header("Tech Stack")]
+    [Header("Budget")]
     [SerializeField] private TextMeshProUGUI BudgetMenuLabel;
     [SerializeField] private LeanWindow BudgetWindow;
     [SerializeField] private Transform BudgetCameraTarget;
