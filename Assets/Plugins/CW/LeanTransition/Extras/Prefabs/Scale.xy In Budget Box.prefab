@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4781537505444806}
   - component: {fileID: 114194043430355712}
   m_Layer: 0
-  m_Name: Scale.xy Out
+  m_Name: Scale.xy In Budget Box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -48,5 +48,5 @@ MonoBehaviour:
   Data:
     Duration: 1
     Target: {fileID: 0}
-    Value: {x: 0, y: 0.001}
-    Ease: 200
+    Value: {x: 0.35, y: 0.225}
+    Ease: 250
