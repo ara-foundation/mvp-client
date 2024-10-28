@@ -10,7 +10,8 @@ public class ACTPart_edit : MonoBehaviour
 {
     public delegate void ProjectNameEditedDelegate(string name, bool submitted);
     public delegate void TechStackEditedDelegate(string name, bool submitted);
-    
+    public delegate void BudgetEditedDelegate(double amount, bool submitted);
+
     [Header("Project Name")]
     [SerializeField] private Transform ProjectNameContainer;
     [SerializeField] private TextMeshProUGUI ProjectNameLabel;
@@ -22,6 +23,12 @@ public class ACTPart_edit : MonoBehaviour
     [SerializeField] private LeanWindow TechStackWindow;
     [SerializeField] private Transform TechStackCameraTarget;
     [SerializeField] private TMP_InputField TechStackContent;
+    [Space(20)]
+    [Header("Tech Stack")]
+    [SerializeField] private TextMeshProUGUI BudgetMenuLabel;
+    [SerializeField] private LeanWindow BudgetWindow;
+    [SerializeField] private Transform BudgetCameraTarget;
+    [SerializeField] private PieChart.ViitorCloud.PieChart BudgetPieChart;
 
     /// <summary>
     /// OnProjectNameEdited is invoked when project name switches back from edit field to a label.
@@ -29,12 +36,14 @@ public class ACTPart_edit : MonoBehaviour
     /// </summary>
     public ProjectNameEditedDelegate OnProjectNameEdited;
     public TechStackEditedDelegate OnTechStackEdited;
+    public BudgetEditedDelegate OnBudgetEdited;
 
     // Start is called before the first frame update
     void Start()
     {
         // Show a project name label, hide the project name editing field.
         ToggleProjectNameEditing(edit: false);
+        BudgetMenuLabel.text = "Budget: $0";
     }
 
     #region ProjectName
@@ -125,6 +134,41 @@ public class ACTPart_edit : MonoBehaviour
         TechStackMenuButton.Focus();
         OnTechStackEdited?.Invoke(TechStackContent.text, true);
         OnTechStackEdited = null;
+    }
+
+    #endregion
+
+    #region Budget
+
+    /// <summary>
+    /// Double click on the tech stack
+    /// </summary>
+    /// <param name="focused"></param>
+    public void OnEditBudget(bool focused)
+    {
+        BudgetWindow.Set(focused);
+        CameraFocus.Instance.SelectTargetThrough(BudgetCameraTarget, selecting: focused);
+        
+        if (focused)
+        {
+            BudgetPieChart.GenerateChart();
+        }
+    }
+
+    public void OnCancelBudgetEdit()
+    {
+        if (!EventSystem.current.alreadySelecting) EventSystem.current.SetSelectedGameObject(null);
+
+        OnBudgetEdited?.Invoke(0, true);
+        OnBudgetEdited = null;
+    }
+
+    public void OnBudgetSubmitted()
+    {
+        if (!EventSystem.current.alreadySelecting) EventSystem.current.SetSelectedGameObject(null);
+
+        OnBudgetEdited?.Invoke(0, true);
+        OnBudgetEdited = null;
     }
 
     #endregion
