@@ -18,6 +18,7 @@ public class ACTLevelScene : EditorBaseBehaviour
     public Camera Camera;
     public ActivityGroup ActivityGroup;
 
+    [SerializeField] public LeanWindow LoadingSceneModal;
     [SerializeField] private LeanWindow PrimitivesWindow;
     [SerializeField] private LeanWindow LineWindow;
     [SerializeField] private GameObject BottomMenuPlane;
@@ -250,7 +251,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         
         if (submitted)
         {
-            Debug.Log("TODO ActScene: Project name was set, let's now work on the tech stack by continuing sensever");
+            Debug.Log("TODO ActScene: Project name was set, let's now work on the tech stack by continuing sensever. Also we must call UI change");
             Sensever_window.Instance.ContinueSensever((int)TutorialStep.TechStackStart);
         } else
         {
@@ -328,7 +329,7 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     private void OnDialogueEnd(int showed)
     {
-        Debug.Log($"Dialogue ended for {showed} is it this one {_editingStep}");
+        Debug.Log($"Tutorial ended for {showed} is it this one {_editingStep}");
     }
 
     private void OnDialogueStart(int started)
