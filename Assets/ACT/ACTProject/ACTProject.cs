@@ -1,13 +1,29 @@
+using Lean.Gui;
+using Nethereum.Web3;
+using RTS_Cam;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
+using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ACTProject : MonoBehaviour, IStateReactor
 {
-    [SerializeField]
-    public ActivityState ActivityState;
-    [SerializeField]
-    private GameObject Menu;
+    [SerializeField] public ActivityState ActivityState;
+    [SerializeField] private GameObject Menu;
+
+    [Space(20)]
+    [Header("UI Section")]
+    [SerializeField] private TextMeshProUGUI ProjectNameLabel;
+    [SerializeField] private TextMeshProUGUI PartsLabel;
+    [SerializeField] private LeanTooltipData[] TechStackTooltipData;
+    [SerializeField] private TextMeshProUGUI BudgetMenuLabel;
+    [SerializeField] private TextMeshProUGUI MaintainerMenuLabel;
+    [SerializeField] private TextMeshProUGUI TasksMenuLabel;
+    [SerializeField] private TextMeshProUGUI ProgressLabel;
+
+    private ActWithProjectAndPlan actWithProject;
 
     // Start is called before the first frame update
     void Start()
@@ -28,6 +44,43 @@ public class ACTProject : MonoBehaviour, IStateReactor
 
     public void Focus(bool enabled)
     {
+        if (!enabled)
+        {
+            return;
+        }
+
+        StartCoroutine(DiveInto());
+    }
+
+    IEnumerator DiveInto()
+    {
+        Debug.Log($"Double clicked, lets dive into {System.DateTime.Now}");
+
+        // https://docs.unity3d.com/ScriptReference/AsyncOperation-allowSceneActivation.html
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
+        asyncOperation.allowSceneActivation = true;
+
+        var rts = ACTLevelScene.Instance.Camera.gameObject.GetComponent<RTS_Camera>();
+        
+        var originalZ = rts.targetOffset.z;
+        ProgressLabel.text = "Loading " + (asyncOperation.progress * 100) + "%";
+
+        ACTLevelScene.Instance.LoadingSceneModal.Set(true);
+
+        while (!asyncOperation.isDone)
+        {
+            //Output the current progress
+            rts.targetOffset = new UnityEngine.Vector3(rts.targetOffset.x, rts.targetOffset.y, originalZ + asyncOperation.progress);
+            ProgressLabel.text = "Loading " + (asyncOperation.progress * 100) + "%";
+
+            // Check if the load has finished
+            if (asyncOperation.progress >= 0.9f)
+            {
+                Notification.Instance.Show($"Diving into {this.actWithProject.project_v1[0].project_name}...");
+            }
+
+            yield return null;
+        }
     }
 
     public void Highlight(bool enabled)
@@ -37,4 +90,65 @@ public class ACTProject : MonoBehaviour, IStateReactor
     public void Clear()
     {
     }
+
+    public void Show(ActWithProjectAndPlan actWithProject)
+    {
+        this.actWithProject = actWithProject;
+
+        ProjectNameLabel.text = actWithProject.project_v1[0].project_name;
+        PartsLabel.text = "Parts: " + CountParts();
+        SetTechStackTooltip();
+        BudgetMenuLabel.text = "Budget: $" + GetBudget();
+        MaintainerMenuLabel.text = "Maintainer: " + Maintainer();
+        TasksMenuLabel.text = "Tasks: " + CountTasks();
+        SetProgressBar();
+    }
+
+    private void SetProgressBar()
+    {
+        Debug.LogWarning("Todo! Progress bar is implemented after tasks");
+        ProgressLabel.text = "0%";
+    }
+
+    private int CountTasks()
+    {
+        Debug.LogWarning("Todo! Task is not enabled yet. We will do it after setting everything with the server and levels");
+        return 0;
+    }
+
+    private string Maintainer()
+    {
+        if (actWithProject.project_v1[0].leader != null)
+        {
+            return actWithProject.project_v1[0].leader.username;
+        }
+        return "<i>unknown</i>";
+    }
+
+    private decimal GetBudget()
+    {
+        if (actWithProject != null && actWithProject.plan != null && actWithProject.plan.Length > 0)
+        {
+            return Web3.Convert.FromWei(BigInteger.Parse(actWithProject.plan[0].cost_usd));
+        }
+
+        return 0;
+    }
+
+    private void SetTechStackTooltip()
+    {
+        for (int i = 0; i<TechStackTooltipData.Length; i++)
+        {
+            TechStackTooltipData[i].Text = this.actWithProject.tech_stack;
+        }
+    }
+
+    private int CountParts()
+    {
+        if (actWithProject != null && actWithProject.parts != null) {
+            return actWithProject.parts.Length;
+        }
+        return 0;
+    }
+
 }
