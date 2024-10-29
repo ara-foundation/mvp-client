@@ -19,7 +19,9 @@ public class SenseverScenarioRequest
 public class SenseverScenarioResponse
 {
     public bool correct;
+#nullable enable
     public UserScenario? answer;
+#nullable disable
 }
 
 [Serializable]

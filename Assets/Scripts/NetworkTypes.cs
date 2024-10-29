@@ -40,8 +40,10 @@ public class FirstPost
 public class Links
 {
     public string first { get; set; }
+#nullable enable
     public string? next { get; set; }
     public string? prev { get; set; }
+#nullable disable
 }
 
 public class Relationships
