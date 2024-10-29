@@ -361,7 +361,7 @@ namespace PieChart.ViitorCloud
                     }
 
                 }
-                catch (System.Exception w)
+                catch (System.Exception)
                 {
                     //Debug.Log(w.Message);
                     continue;
