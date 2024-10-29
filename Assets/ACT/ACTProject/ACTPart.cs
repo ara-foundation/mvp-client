@@ -116,10 +116,10 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     {
         this.objectId = objectId;
         Mode = ModeInScene.Interactive;
-        ActivityState.SetActivityGroup(ACTProjects.Instance.ActivityGroup);
+        ActivityState.SetActivityGroup(ACTLevelScene.Instance.ActivityGroup);
         Menu.SetActive(false);
         ACTLevelScene.Instance.AddPart(this);
-        Canvas.worldCamera = ACTProjects.Instance.Camera;
+        Canvas.worldCamera = ACTLevelScene.Instance.Camera;
         Canvas.gameObject.SetActive(true);
     }
 

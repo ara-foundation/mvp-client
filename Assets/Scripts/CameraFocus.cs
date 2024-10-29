@@ -30,7 +30,7 @@ public class CameraFocus : MonoBehaviour
     /// <param name="selecting"></param>
     public void SelectTargetThrough(Transform target, bool selecting)
     {
-        if (target.CompareTag(ACTProjects.Instance.targetsTag) && selecting)
+        if (target.CompareTag(ACTProjects.TargetTag) && selecting)
         {
             cam.SetTarget(target);
         }
@@ -47,7 +47,7 @@ public class CameraFocus : MonoBehaviour
     /// <param name="enabled"></param>
     public void SelectTarget(Transform from, bool enabled)
     {
-        if (from.CompareTag(ACTProjects.Instance.targetsTag) && enabled)
+        if (from.CompareTag(ACTProjects.TargetTag) && enabled)
         {
             var part = from.GetComponent<ACTPart>();
             if (part.Mode != ACTPart.ModeInScene.Interactive)

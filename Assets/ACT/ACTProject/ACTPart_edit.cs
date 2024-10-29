@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+
 public class ACTPart_edit : MonoBehaviour
 {
     public delegate void ProjectNameEditedDelegate(string name, bool submitted);
@@ -53,13 +54,15 @@ public class ACTPart_edit : MonoBehaviour
         // Show a project name label, hide the project name editing field.
         ToggleProjectNameEditing(edit: false);
         ToggleMaintainerEditing(edit: false);
-        BudgetMenuLabel.text = "Budget: $0";
-        
+        if (BudgetMenuLabel != null)
+        {
+            BudgetMenuLabel.text = "Budget: $0";
+        }
     }
 
     private void OnEnable()
     {
-        if (AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
+        if (AraAuth.Instance != null && AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
         {
             maintainerName = AraAuth.Instance.UserParams.loginParams.username;
         }
@@ -197,13 +200,18 @@ public class ACTPart_edit : MonoBehaviour
 
     void ToggleMaintainerEditing(bool edit)
     {
-        MaintainerMenuLabel.gameObject.SetActive(!edit);
-        MaintainerInputFieldContainer.SetActive(edit);
+        if (MaintainerMenuLabel != null) { 
+            MaintainerMenuLabel.gameObject.SetActive(!edit);
+            MaintainerInputFieldContainer.SetActive(edit);
+        }
     }
 
     void SetMaintainerName()
     {
-        MaintainerMenuLabel.text = "Maintainer: " + maintainerName;
+        if (MaintainerMenuLabel != null)
+        {
+            MaintainerMenuLabel.text = "Maintainer: " + maintainerName;
+        }
     }
 
     public void OnEditMaintainer(bool focused)

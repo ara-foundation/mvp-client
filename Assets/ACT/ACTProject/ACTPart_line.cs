@@ -29,10 +29,10 @@ public class ACTPart_line : ACTPart, ACTPart_interface
         ResetPoints();
         
         Mode = ModeInScene.View;
-        ActivityState.SetActivityGroup(ACTProjects.Instance.ActivityGroup);
+        ActivityState.SetActivityGroup(ACTLevelScene.Instance.ActivityGroup);
         Menu.SetActive(false);
         ACTLevelScene.Instance.AddPart(this);
-        Canvas.worldCamera = ACTProjects.Instance.Camera;
+        Canvas.worldCamera = ACTLevelScene.Instance.Camera;
         Canvas.gameObject.SetActive(true);
 
         if (partList.Count > 0)

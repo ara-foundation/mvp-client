@@ -16,7 +16,7 @@ public class TransformSelection : MonoBehaviour
             return;
         }
 
-        if (from.CompareTag(ACTProjects.Instance.targetsTag) && enabled)
+        if (from.CompareTag(ACTProjects.TargetTag) && enabled)
         {
             var part = from.GetComponent<ACTPart>();
             if (part.Mode != ACTPart.ModeInScene.Interactive)

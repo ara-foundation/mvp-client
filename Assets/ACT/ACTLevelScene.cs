@@ -7,10 +7,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using Rundo.RuntimeEditor.Commands;
 using Rundo;
+using Newtonsoft.Json;
+using System.Threading.Tasks;
+using System;
 
 public class ACTLevelScene : EditorBaseBehaviour
 {
     private List<ACTPart_interface> Parts = new ();
+
+    public Camera Camera;
+    public ActivityGroup ActivityGroup;
 
     [SerializeField] private LeanWindow PrimitivesWindow;
     [SerializeField] private LeanWindow LineWindow;
@@ -46,6 +52,12 @@ public class ACTLevelScene : EditorBaseBehaviour
     private ACTPart_line _editingLinePart = null;
     #endregion
 
+    public bool manualTest = false;
+    [Tooltip("Loads a new empty scene, otherwise loads the predefined scene for a part")]
+    public bool manualNewScene = false;
+    private string manualProjectId = "67056baf24372ef24a58420c";
+    private string manualPartId = "67056baf24372ef24a58420c";
+
     public static ACTLevelScene Instance
     {
         get
@@ -58,17 +70,63 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
     }
 
-    private void Awake()
+
+    private void OnEnable()
     {
-        PrimitivesWindow.gameObject.SetActive(false);
-        LineWindow.gameObject.SetActive(false);
+        if (manualTest)
+        {
+            Debug.Log("Automatically loading manual project");
+            Debug.Log($"Manual project id: {manualProjectId}");
+            if (manualNewScene)
+            {
+                Debug.Log("Loading a new empty scene");
+            } else
+            {
+                Debug.Log($"Loading the scene for {manualPartId}");
+            }
+        }
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private async Task<List<PlanWithProject>> FetchProject(string projectId, string levelId)
     {
-        // Don't destroy it since, it references to all other Objects
-        DontDestroyOnLoad(this);       
+        List<PlanWithProject> incorrectResult = new();
+
+        string url = NetworkParams.AraActUrl + "/maydone/plans";
+
+        string res;
+        try
+        {
+            res = await WebClient.Get(url);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex);
+            return incorrectResult;
+        }
+
+        List<PlanWithProject> result;
+        try
+        {
+            result = JsonConvert.DeserializeObject<List<PlanWithProject>>(res);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e + " for " + res);
+            return incorrectResult;
+        }
+        return result;
+    }
+
+    private void Awake()
+    {
+        if (PrimitivesWindow != null)
+        {
+            PrimitivesWindow.gameObject.SetActive(false);
+        }
+        if (LineWindow != null)
+        {
+            LineWindow.gameObject.SetActive(false);
+        }
     }
 
     void Update ()

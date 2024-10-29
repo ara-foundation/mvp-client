@@ -12,7 +12,7 @@ public class ACTProject : MonoBehaviour, IStateReactor
     // Start is called before the first frame update
     void Start()
     {
-        ActivityState.SetActivityGroup(ACTProjects.Instance.ActivityGroup);
+        ActivityState.SetActivityGroup(ACTLevelScene.Instance.ActivityGroup);
         Menu.SetActive(false);
     }
 

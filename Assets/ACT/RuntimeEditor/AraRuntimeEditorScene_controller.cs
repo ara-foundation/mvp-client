@@ -139,7 +139,7 @@ namespace Rundo.RuntimeEditor.Behaviours
 
         private void SetMainCamera()
         {
-            ActiveCamera = ACTProjects.Instance.Camera;
+            ActiveCamera = ACTLevelScene.Instance.Camera;
         }
 
         public T SetMode<T>() where T : EditorModeBaseBehaviour
