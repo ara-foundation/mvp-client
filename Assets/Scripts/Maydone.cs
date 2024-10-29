@@ -18,7 +18,7 @@ public class ForumParams
 }
 
 [Serializable]
-public class Plan: ForumParams
+public class PlanRequest: ForumParams
 {
     //
     // Generic data
@@ -101,12 +101,19 @@ public class Plan: ForumParams
 }
 
 [Serializable]
-public class PlanWithProject: ForumParams
+public class Plan : ForumParams
 {
     public string _id;
     public string project_id;
     public string cost_usd;
-    public string sangha_welcome;
+#nullable enable
+    public string? sangha_welcome;
+#nullable disable
+}
+
+[Serializable]
+public class PlanWithProject: Plan
+{
     [SerializeField] public Project[] project_v1;
 }
 
