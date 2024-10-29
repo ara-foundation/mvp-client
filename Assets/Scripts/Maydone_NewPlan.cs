@@ -77,7 +77,7 @@ public class Project
 public class Maydone_NewPlan : MonoBehaviour
 {
     [Header("Welcome page")]
-    [SerializeField] public Plan Plan;
+    [SerializeField] public PlanRequest Plan;
     [SerializeField] private CardLogos WelcomeLogos;
     [Space(20)]
     [Header("Form")]
@@ -209,7 +209,7 @@ public class Maydone_NewPlan : MonoBehaviour
         LastReturnButton.interactable = true;
 
         Debug.Log("Hide the new plan, reset the plan");
-        Plan = new Plan();
+        Plan = new PlanRequest();
         logos = null;
     } 
 
@@ -487,7 +487,7 @@ public class Maydone_NewPlan : MonoBehaviour
 
         Debug.Log("Attach leader...");
 
-        Plan = new Plan();
+        Plan = new PlanRequest();
         if (userScenario != null)
         {
             Plan.user_scenario_id = userScenario._id;
