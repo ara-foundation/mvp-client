@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+[Serializable]
 public enum StateMode
 {
     None = 0,               // Default
@@ -33,6 +34,7 @@ public enum StateMode
 public class ActivityState : MonoBehaviour
 {
     private StateMode mode = StateMode.None;
+    [SerializeField]
     public StateMode Mode { get { return mode; } }
 
     public ActivityGroup ActivityGroup;
