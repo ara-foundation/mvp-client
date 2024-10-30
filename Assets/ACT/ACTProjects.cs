@@ -37,7 +37,8 @@ public class ActWithProjectAndPlan : ForumParams
     public int start_time;//: number;
     public string duration;//: number;
 #nullable enable
-    public object[]? parts;//: any[];
+    public string? scene_id;//: any[];
+    public int? parts_amount;
 #nullable disable
     [SerializeField] public Project[] project_v1;
     [SerializeField] public Plan[] plan;
