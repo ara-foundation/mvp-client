@@ -154,6 +154,11 @@ public class ACTPart_edit : MonoBehaviour
 
     public void OnTechStackSubmitted()
     {
+        if (string.IsNullOrEmpty(TechStackContent.text))
+        {
+            Notification.Instance.Show("Tech Stack is empty");
+            return;
+        }
         TechStackMenuButton.Focus();
         OnTechStackEdited?.Invoke(TechStackContent.text, true);
         OnTechStackEdited = null;

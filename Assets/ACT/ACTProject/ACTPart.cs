@@ -209,6 +209,18 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         Edit.OnEditProjectName(true);
     }
 
+    public void EditTechStack(TechStackEditedDelegate onEdited)
+    {
+        if (Edit == null)
+        {
+            Notification.Instance.Show("ACTPart_edit not set. Are you on Line since lindes dont have edit yet");
+            return;
+        }
+
+        Edit.OnTechStackEdited += onEdited;
+        Edit.OnEditTechStack(true);
+    }
+
     public void SetLineMode(bool on)
     {
         if ((on && Mode == ModeInScene.DrawLine) || (!on && Mode == ModeInScene.View))

@@ -253,6 +253,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         {
             Debug.Log("TODO ActScene: Project name was set, let's now work on the tech stack by continuing sensever. Also we must call UI change");
             Sensever_window.Instance.ContinueSensever((int)TutorialStep.TechStackStart);
+            _part.EditTechStack(OnTechStackEdited);
         } else
         {
             //Notification.Instance.Show("To continue set the project name first.");
@@ -260,7 +261,26 @@ public class ACTLevelScene : EditorBaseBehaviour
             _part.EditProjectName(OnProjectNameEdited);
             return;
         }
+    }
 
+    private void OnTechStackEdited(string name, bool submitted)
+    {
+        var _part = _editingPart as ACTPart;
+
+        if (submitted)
+        {
+            Debug.Log("TODO ActScene: Tech stack was set, let's now work on the budget. Add the budget UI controller");
+            _part.Interactive(true);
+            //Sensever_window.Instance.ContinueSensever((int)TutorialStep.TechStackStart);
+            //_part.EditTechStack(OnTechStackEdited);
+        }
+        else
+        {
+            //Notification.Instance.Show("To continue set the project name first.");
+            Debug.LogWarning("To continue set the tech stack first.");
+            _part.EditTechStack(OnTechStackEdited);
+            return;
+        }
     }
 
     /// <summary>
