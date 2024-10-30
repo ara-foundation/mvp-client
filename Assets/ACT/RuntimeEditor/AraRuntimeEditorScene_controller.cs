@@ -80,6 +80,7 @@ namespace Rundo.RuntimeEditor.Behaviours
         
         private EditorModeBaseBehaviour _currentMode;
         private bool _isLazyLoad;
+        private bool _isNewScene;
 
         public DataSceneBehaviour DataSceneBehaviour { get; private set; }
         public SelectionBehaviour SelectionBehaviour { get; private set; }
@@ -89,9 +90,15 @@ namespace Rundo.RuntimeEditor.Behaviours
         private void Start()
         {
             if (_isLazyLoad)
+            {
                 LoadScene(_dataSceneMetaData.Guid);
+            }
             CreateWorld();
             StopPlayScene();
+            if (_isNewScene)
+            {
+                CreateScene();
+            }
         }
 
         private void CreateWorld()
@@ -116,6 +123,11 @@ namespace Rundo.RuntimeEditor.Behaviours
             _isLazyLoad = true;
             _dataSceneMetaData = dataSceneMetaData;
             AraRuntimeEditor_manager.Instance.DispatchUiEventToAllSceneControllers(new RuntimeEditorBehaviour.OnSceneSetToTabEvent());
+        }
+
+        public void CreateNewScene()
+        {
+            _isNewScene = true;
         }
 
         public void LoadScene(TGuid<DataScene.TDataSceneId> sceneId)

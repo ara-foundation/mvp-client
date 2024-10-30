@@ -20,7 +20,7 @@ namespace Ara.RuntimeEditor
         [SerializeField] private GameObject RuntimeEditorController;
         
         /// <summary>
-        /// Load the Given Scene on the List
+        /// Load the Scene from Name and GUUID
         /// </summary>
         /// <param name="sceneMetaData"></param>
         /// <param name="_tabsContent"></param>
@@ -41,6 +41,7 @@ namespace Ara.RuntimeEditor
         {
             var obj = Instantiate(RuntimeEditorController, _tabsContent);
             var instance = obj.GetComponent<AraRuntimeEditorScene_controller>();
+            instance.CreateNewScene();
             return instance;
         }
     }

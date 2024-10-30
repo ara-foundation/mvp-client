@@ -10,6 +10,7 @@ using Rundo;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 using System;
+using Ara.RuntimeEditor;
 
 public class ACTLevelScene : EditorBaseBehaviour
 {
@@ -57,7 +58,7 @@ public class ACTLevelScene : EditorBaseBehaviour
     [Tooltip("Loads a new empty scene, otherwise loads the predefined scene for a part")]
     public bool manualNewScene = false;
     private string manualProjectId = "67056baf24372ef24a58420c";
-    private string manualPartId = "67056baf24372ef24a58420c";
+    public string manualSceneId = "67056baf24372ef24a58420c";
 
     public static ACTLevelScene Instance
     {
@@ -81,9 +82,11 @@ public class ACTLevelScene : EditorBaseBehaviour
             if (manualNewScene)
             {
                 Debug.Log("Loading a new empty scene");
+                AraRuntimeEditor_manager.Instance.CreateNewScene();
             } else
             {
-                Debug.Log($"Loading the scene for {manualPartId}");
+                AraRuntimeEditor_manager.Instance.LoadScene(manualSceneId);
+                Debug.Log($"Loading the scene for {manualSceneId}");
             }
         }
     }
