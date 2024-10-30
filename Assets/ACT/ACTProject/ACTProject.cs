@@ -132,10 +132,11 @@ public class ACTProject : MonoBehaviour, IStateReactor
 
     private int CountParts()
     {
-        if (actWithProject != null && actWithProject.parts != null) {
-            return actWithProject.parts.Length;
+        if (actWithProject == null)
+        {
+            return 0;
         }
-        return 0;
+        return actWithProject.parts_amount ?? 0;
     }
 
 }
