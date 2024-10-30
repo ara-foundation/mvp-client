@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-
+[RequireComponent(typeof(ACTPart_controller))]
 public class ACTPart_edit : MonoBehaviour
 {
     public delegate void ProjectNameEditedDelegate(string name, bool submitted);
@@ -14,29 +14,9 @@ public class ACTPart_edit : MonoBehaviour
     public delegate void BudgetEditedDelegate(double amount, bool submitted);
     public delegate void MaintainerNameEditedDelegate(string name, bool submitted);
 
-    [Header("Project Name")]
-    [SerializeField] private Transform ProjectNameContainer;
-    [SerializeField] private TextMeshProUGUI ProjectNameLabel;
-    [SerializeField] private ActivityState ProjectNameState;
-    [SerializeField] private GameObject ProjectNameFieldContainer;
-    [Space(20)]
-    [Header("Tech Stack")]
-    [SerializeField] private ActivityState TechStackMenuButton;
-    [SerializeField] private LeanWindow TechStackWindow;
-    [SerializeField] private Transform TechStackCameraTarget;
-    [SerializeField] private TMP_InputField TechStackContent;
-    [Space(20)]
-    [Header("Budget")]
-    [SerializeField] private TextMeshProUGUI BudgetMenuLabel;
-    [SerializeField] private LeanWindow BudgetWindow;
-    [SerializeField] private Transform BudgetCameraTarget;
-    [SerializeField] private PieChart.ViitorCloud.PieChart BudgetPieChart;
-    [Space(20)]
-    [Header("Maintainer")]
-    [SerializeField] private TextMeshProUGUI MaintainerMenuLabel;
-    [SerializeField] private ActivityState MaintainerState;
-    [SerializeField] private GameObject MaintainerInputFieldContainer;
-    [SerializeField] private Transform MaintainerCameraTarget;
+    [HideInInspector]
+    private ACTPart_controller Controller;
+
     private string maintainerName = "none";
 
     /// <summary>
@@ -48,15 +28,20 @@ public class ACTPart_edit : MonoBehaviour
     public BudgetEditedDelegate OnBudgetEdited;
     public MaintainerNameEditedDelegate OnMaintainerNameEdited;
 
+    void Awake()
+    {
+        Controller = GetComponent<ACTPart_controller>();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         // Show a project name label, hide the project name editing field.
         ToggleProjectNameEditing(edit: false);
         ToggleMaintainerEditing(edit: false);
-        if (BudgetMenuLabel != null)
+        if (Controller.BudgetMenuLabel != null)
         {
-            BudgetMenuLabel.text = "Budget: $0";
+            Controller.BudgetMenuLabel.text = "Budget: $0";
         }
     }
 
@@ -81,8 +66,8 @@ public class ACTPart_edit : MonoBehaviour
     /// <param name="edit"></param>
     void ToggleProjectNameEditing(bool edit)
     {
-        ProjectNameState.gameObject.SetActive(!edit);
-        ProjectNameFieldContainer.SetActive(edit);
+        Controller.ProjectNameState.gameObject.SetActive(!edit);
+        Controller.ProjectNameFieldContainer.SetActive(edit);
     }
 
     /// <summary>
@@ -96,9 +81,9 @@ public class ACTPart_edit : MonoBehaviour
             return;
         }
 
-        ProjectNameState.ChangeMode(StateMode.None);
+        Controller.ProjectNameState.ChangeMode(StateMode.None);
         ToggleProjectNameEditing(edit: true);
-        CameraFocus.Instance.SelectTargetThrough(ProjectNameContainer, selecting: true);
+        CameraFocus.Instance.SelectTargetThrough(Controller.ProjectNameContainer, selecting: true);
     }
 
     /// <summary>
@@ -107,17 +92,17 @@ public class ACTPart_edit : MonoBehaviour
     /// <param name="name"></param>
     public void OnProjectNameEditEnd(string name)
     {
-        CameraFocus.Instance.SelectTargetThrough(ProjectNameContainer, selecting: false);
+        CameraFocus.Instance.SelectTargetThrough(Controller.ProjectNameContainer, selecting: false);
 
         if (!EventSystem.current.alreadySelecting) EventSystem.current.SetSelectedGameObject(null);
 
         ToggleProjectNameEditing(edit: false);
         var submitted = false;
 
-        if (!Input.GetKeyDown(KeyCode.Escape) && !ProjectNameLabel.text.Equals(name) && !string.IsNullOrEmpty(name))
+        if (!Input.GetKeyDown(KeyCode.Escape) && !Controller.ProjectNameLabel.text.Equals(name) && !string.IsNullOrEmpty(name))
         {
             submitted = true;
-            ProjectNameLabel.text = name;
+            Controller.ProjectNameLabel.text = name;
             // TODO call back the ara tutorial to start showing next part
             Debug.Log("Submit the data (1=done) check is text changed, (2=todo) call submit to save data in the server");
         }
@@ -136,8 +121,8 @@ public class ACTPart_edit : MonoBehaviour
     /// <param name="focused"></param>
     public void OnEditTechStack(bool focused)
     {
-        TechStackWindow.Set(focused);
-        CameraFocus.Instance.SelectTargetThrough(TechStackCameraTarget, selecting: focused);
+        Controller.TechStackWindow.Set(focused);
+        CameraFocus.Instance.SelectTargetThrough(Controller.TechStackCameraTarget, selecting: focused);
     }
 
     public void OnTechStackEditEnd(string content)
@@ -146,7 +131,7 @@ public class ACTPart_edit : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape) || string.IsNullOrEmpty(content))
         {
-            TechStackMenuButton.Focus();
+            Controller.TechStackMenuButton.Focus();
             OnTechStackEdited?.Invoke(content, false);
             OnTechStackEdited = null;
         }
@@ -154,13 +139,13 @@ public class ACTPart_edit : MonoBehaviour
 
     public void OnTechStackSubmitted()
     {
-        if (string.IsNullOrEmpty(TechStackContent.text))
+        if (string.IsNullOrEmpty(Controller.TechStackContent.text))
         {
             Notification.Instance.Show("Tech Stack is empty");
             return;
         }
-        TechStackMenuButton.Focus();
-        OnTechStackEdited?.Invoke(TechStackContent.text, true);
+        Controller.TechStackMenuButton.Focus();
+        OnTechStackEdited?.Invoke(Controller.TechStackContent.text, true);
         OnTechStackEdited = null;
     }
 
@@ -174,12 +159,12 @@ public class ACTPart_edit : MonoBehaviour
     /// <param name="focused"></param>
     public void OnEditBudget(bool focused)
     {
-        BudgetWindow.Set(focused);
-        CameraFocus.Instance.SelectTargetThrough(BudgetCameraTarget, selecting: focused);
+        Controller.BudgetWindow.Set(focused);
+        CameraFocus.Instance.SelectTargetThrough(Controller.BudgetCameraTarget, selecting: focused);
         
         if (focused)
         {
-            BudgetPieChart.GenerateChart();
+            Controller.BudgetPieChart.GenerateChart();
         }
     }
 
@@ -205,17 +190,17 @@ public class ACTPart_edit : MonoBehaviour
 
     void ToggleMaintainerEditing(bool edit)
     {
-        if (MaintainerMenuLabel != null) { 
-            MaintainerMenuLabel.gameObject.SetActive(!edit);
-            MaintainerInputFieldContainer.SetActive(edit);
+        if (Controller.MaintainerMenuLabel != null) {
+            Controller.MaintainerMenuLabel.gameObject.SetActive(!edit);
+            Controller.MaintainerInputFieldContainer.SetActive(edit);
         }
     }
 
     void SetMaintainerName()
     {
-        if (MaintainerMenuLabel != null)
+        if (Controller.MaintainerMenuLabel != null)
         {
-            MaintainerMenuLabel.text = "Maintainer: " + maintainerName;
+            Controller.MaintainerMenuLabel.text = "Maintainer: " + maintainerName;
         }
     }
 
@@ -226,14 +211,14 @@ public class ACTPart_edit : MonoBehaviour
             return;
         }
 
-        MaintainerState.ChangeMode(StateMode.None);
+        Controller.MaintainerState.ChangeMode(StateMode.None);
         ToggleMaintainerEditing(edit: true);
-        CameraFocus.Instance.SelectTargetThrough(MaintainerCameraTarget, selecting: true);
+        CameraFocus.Instance.SelectTargetThrough(Controller.MaintainerCameraTarget, selecting: true);
     }
 
     public void OnMaintainerEditEnd(string name)
     {
-        CameraFocus.Instance.SelectTargetThrough(MaintainerCameraTarget, selecting: false);
+        CameraFocus.Instance.SelectTargetThrough(Controller.MaintainerCameraTarget, selecting: false);
 
         if (!EventSystem.current.alreadySelecting) EventSystem.current.SetSelectedGameObject(null);
 

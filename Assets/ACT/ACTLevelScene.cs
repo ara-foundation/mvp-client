@@ -19,6 +19,7 @@ public class ACTLevelScene : EditorBaseBehaviour
     public Camera Camera;
     public ActivityGroup ActivityGroup;
 
+    public GameObject PartControllerPrefab;
     [SerializeField] public LeanWindow LoadingSceneModal;
     [SerializeField] private LeanWindow PrimitivesWindow;
     [SerializeField] private LeanWindow LineWindow;

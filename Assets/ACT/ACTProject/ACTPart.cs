@@ -10,6 +10,7 @@ using static ACTPart_edit;
 
 public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 {
+    [Serializable]
     public enum ModeInScene
     {
         Interactive, // Default mode
@@ -17,21 +18,22 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         DrawLine, // For drawing the line change the select
         Edit, // Same as interactive but hides the transform handler
     }
-    [SerializeField]
+    [HideInInspector]
     protected Canvas Canvas;
     [SerializeField]
     public ActivityState ActivityState;
-    [SerializeField]
+    [HideInInspector]
     protected GameObject Menu;
     [SerializeField]
     protected MouseInput MouseInput;
-    [SerializeField] 
+    [HideInInspector] 
     protected Transform SplinePositionersContent;
     [SerializeField]
     protected List<Node> Connections = new();
     [SerializeField, HideInInspector]
     protected ACTPart_edit Edit;
 
+    public bool EnableController;
     public ModeInScene Mode = ModeInScene.View;
     protected DataGameObjectId objectId;
 
@@ -43,7 +45,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 
     void Awake()
     {
-        Edit = gameObject.GetComponent<ACTPart_edit>();
+        
     }
 
     public Vector3 LinePointPosition()
@@ -97,10 +99,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 
         if (Mode != ModeInScene.Interactive && Mode != ModeInScene.Edit)
         {
-            if (!orphaned)
-            {
-                Canvas.gameObject.SetActive(false);
-            } else
+            if (orphaned)
             {
                 Activate(DataGameObjectId.Create(Time.deltaTime.ToString()));
             }
@@ -114,6 +113,21 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 
     public void Activate(DataGameObjectId objectId)
     {
+        if (EnableController)
+        {
+            if (ACTLevelScene.Instance != null)
+            {
+                var obj = Instantiate(ACTLevelScene.Instance.PartControllerPrefab, transform);
+                var controller = obj.GetComponent<ACTPart_controller>();
+                Canvas = controller.Canvas;
+                Menu = controller.Menu;
+                SplinePositionersContent = controller.SplinePositionerContent;
+
+                Edit = obj.GetComponent<ACTPart_edit>();
+            }
+
+        }
+
         this.objectId = objectId;
         Mode = ModeInScene.Interactive;
         ActivityState.SetActivityGroup(ACTLevelScene.Instance.ActivityGroup);
