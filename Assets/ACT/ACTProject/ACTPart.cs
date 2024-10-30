@@ -29,7 +29,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     protected Transform SplinePositionersContent;
     [SerializeField]
     protected List<Node> Connections = new();
-    [SerializeField]
+    [SerializeField, HideInInspector]
     protected ACTPart_edit Edit;
 
     public ModeInScene Mode = ModeInScene.View;
