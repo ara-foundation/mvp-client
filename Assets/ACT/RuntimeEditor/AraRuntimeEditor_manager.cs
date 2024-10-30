@@ -9,6 +9,8 @@ using Rundo;
 using Rundo.RuntimeEditor.Behaviours;
 using static Rundo.RuntimeEditor.Behaviours.RuntimeEditorBehaviour;
 using Rundo.RuntimeEditor.Commands;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 
 namespace Ara.RuntimeEditor
 {
@@ -60,9 +62,10 @@ namespace Ara.RuntimeEditor
             RundoEngine.DataSerializer.AddDefaultReadConverter(new DataComponentReadJsonConverter());
 
             var sceneMetaDatas = PersistentDataScenes.LoadData();
+            var editorPrefs = PersistentEditorPrefs.LoadData();
 
             // load scenes
-            foreach (var it in PersistentEditorPrefs.LoadData().OpenedScenes)
+            /*foreach (var it in editorPrefs.OpenedScenes)
             {
                 if (showOneTab && InstantiatedTabs.Count == 1)
                 {
@@ -78,16 +81,41 @@ namespace Ara.RuntimeEditor
                     {
                         var instance = RuntimeEditorRoot.Load(sceneMetaData, _tabsContent);
                         InstantiatedTabs.Add(instance);
-                        
+                        Debug.Log($"The opened tab id: {instance.TabGuid} of '{instance.DataScene.DataSceneMetaData.Guid}' scene");
                     }
+                }
+            }*/
+
+            //if (InstantiatedTabs.Count == 0)
+            //    AddTab();
+
+            //Debug.Log($"The empty scene id: {InstantiatedTabs[0].TabGuid}");
+            //SelectTab(InstantiatedTabs[0].TabGuid);
+        }
+
+
+        public void CreateNewScene()
+        {
+            AddTab();
+        }
+
+        public void LoadScene(string sceneGuuid) {
+            var sceneMetaDatas = PersistentDataScenes.LoadData();
+
+            // load scenes
+            foreach (var sceneMetaData in sceneMetaDatas)
+            {
+                if (sceneMetaData.Guid.ToStringRawValue() == sceneGuuid)
+                {
+                    var instance = RuntimeEditorRoot.Load(sceneMetaData, _tabsContent);
+                    InstantiatedTabs.Add(instance);
+                    break;
                 }
             }
 
-            if (InstantiatedTabs.Count == 0)
-                AddTab();
-            
             SelectTab(InstantiatedTabs[0].TabGuid);
         }
+
 
         public void SelectTab(TGuid<TRuntimeEditorTab> tabGuid)
         {
@@ -168,6 +196,10 @@ namespace Ara.RuntimeEditor
             return _prefabs;
         }
 
+        /// <summary>
+        /// The scene events are used to redraw the Tab UI
+        /// </summary>
+        /// <param name="data"></param>
         public void DispatchUiEventToAllSceneControllers(IUiEvent data)
         {
             foreach (var it in InstantiatedTabs)
