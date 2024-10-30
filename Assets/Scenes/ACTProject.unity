@@ -2701,7 +2701,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6225881171699773568, guid: 797064feb7efe5240bf1b48e4fbb32ec, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -4635823
+      value: -4724446
       objectReference: {fileID: 0}
     - target: {fileID: 6225881171926023598, guid: 797064feb7efe5240bf1b48e4fbb32ec, type: 3}
       propertyPath: m_LocalScale.x
@@ -4642,6 +4642,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Camera: {fileID: 1972920590}
   ActivityGroup: {fileID: 1450465019}
+  LoadingSceneModal: {fileID: 0}
   PrimitivesWindow: {fileID: 1375466230}
   LineWindow: {fileID: 225811832}
   BottomMenuPlane: {fileID: 501673996}
@@ -4657,8 +4658,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3a758f98206f172439ded6059254cdb8, type: 2}
   - {fileID: 11400000, guid: 5f8271e0e0b60314eac02f27bce8cb3d, type: 2}
   - {fileID: 11400000, guid: acb97e1ddcc1f8747aafff65a0e70a29, type: 2}
-  manualTest: 0
-  manualNewScene: 0
+  manualTest: 1
+  manualNewScene: 1
+  manualSceneId: 3adac669-62b3-47a9-ab24-807ea8e06580
 --- !u!114 &1462966934 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5565622153392821129, guid: c42dc2d1b383ab14faed4d29d4a02eb0, type: 3}
