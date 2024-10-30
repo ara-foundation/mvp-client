@@ -1,3 +1,4 @@
+using Lean.Gui;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -46,6 +47,9 @@ public class ActWithProjectAndPlan : ForumParams
 public class ACTProjects : MonoBehaviour
 {
     private static ACTProjects _instance;
+
+    [SerializeField] public LeanWindow LoadingSceneModal;
+    public ActivityGroup ActivityGroup;
 
     public static string TargetTag = "target"; // objects must have this element
 
