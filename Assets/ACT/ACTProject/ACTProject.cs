@@ -28,7 +28,7 @@ public class ACTProject : MonoBehaviour, IStateReactor
     // Start is called before the first frame update
     void Start()
     {
-        ActivityState.SetActivityGroup(ACTLevelScene.Instance.ActivityGroup);
+        ActivityState.SetActivityGroup(ACTProjects.Instance.ActivityGroup);
         Menu.SetActive(false);
     }
 
@@ -56,31 +56,18 @@ public class ACTProject : MonoBehaviour, IStateReactor
     {
         Debug.Log($"Double clicked, lets dive into {System.DateTime.Now}");
 
+        ACTSession.Instance.SetFirstLevel(actWithProject);
+        ACTProjects.Instance.LoadingSceneModal.Set(true);
+
         // https://docs.unity3d.com/ScriptReference/AsyncOperation-allowSceneActivation.html
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
         asyncOperation.allowSceneActivation = true;
 
-        var rts = ACTLevelScene.Instance.Camera.gameObject.GetComponent<RTS_Camera>();
+        var rts = ACTProjects.Instance.ACTProjectsCamera.gameObject.GetComponent<RTS_Camera>();
         
-        var originalZ = rts.targetOffset.z;
-        ProgressLabel.text = "Loading " + (asyncOperation.progress * 100) + "%";
-
-        ACTLevelScene.Instance.LoadingSceneModal.Set(true);
-
-        while (!asyncOperation.isDone)
-        {
-            //Output the current progress
-            rts.targetOffset = new UnityEngine.Vector3(rts.targetOffset.x, rts.targetOffset.y, originalZ + asyncOperation.progress);
-            ProgressLabel.text = "Loading " + (asyncOperation.progress * 100) + "%";
-
-            // Check if the load has finished
-            if (asyncOperation.progress >= 0.9f)
-            {
-                Notification.Instance.Show($"Diving into {this.actWithProject.project_v1[0].project_name}...");
-            }
-
-            yield return null;
-        }
+        var zoomIn = rts.targetOffset.z + 1;
+        rts.targetOffset = new UnityEngine.Vector3(rts.targetOffset.x, rts.targetOffset.y, zoomIn);
+        yield return null;
     }
 
     public void Highlight(bool enabled)
