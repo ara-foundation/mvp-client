@@ -10,7 +10,7 @@ namespace Rundo.Core.Data
 {
     public class DataFactory
     {
-        private static readonly GameObject _gameObject = new GameObject("DataComponentsCreator");
+        private static GameObject _gameObject = new("DataComponentsCreator");
 
         public T Instantiate<T>(IParentable parent = null)
         {
@@ -28,6 +28,10 @@ namespace Rundo.Core.Data
             
             if (typeof(MonoBehaviour).IsAssignableFrom(type))
             {
+                if (_gameObject == null)
+                {
+                    _gameObject = new GameObject("DataComponentsCreator");
+                }
                 if (_gameObject.activeSelf)
                     _gameObject.SetActive(false);
                 
