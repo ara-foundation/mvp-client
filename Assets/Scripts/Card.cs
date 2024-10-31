@@ -24,10 +24,7 @@ public class Card : MonoBehaviour
 
     private void OnEnable()
     {
-        var found = gameObject.TryGetComponent<LeanDrag>(out Drag);
-        if (!found) {
-            Debug.LogWarning("Card has no LeanDrag component");
-        }
+        gameObject.TryGetComponent<LeanDrag>(out Drag);
         _bodyTransform = Body.gameObject.GetComponent<RectTransform>();
         _transform = gameObject.GetComponent<RectTransform>();
 
