@@ -9,8 +9,6 @@ using UnityEngine;
 [RequireComponent(typeof(SplineComputer))]
 public class ACTPart_line : ACTPart, ACTPart_interface
 {
-    private static string KeyPrefix = "line-";
-
     private SplineComputer spline;
     [SerializeField]
     public List<string> partList;
@@ -22,7 +20,6 @@ public class ACTPart_line : ACTPart, ACTPart_interface
 
     public new void Activate(DataGameObjectId objectId)
     {
-        
         this.objectId = objectId;
         Load();
         ResetPoints();
@@ -70,27 +67,15 @@ public class ACTPart_line : ACTPart, ACTPart_interface
 
     private void Save()
     {
-        var key = KeyPrefix + objectId.ToStringRawValue();
-        var value = JsonConvert.SerializeObject(partList);
-
-        PlayerPrefs.SetString(key, value);
+        ACTLevelScene.Instance.OnLineEditingEnd(objectId, partList);
     }
 
     private void Load()
     {
+        partList = ACTLevelScene.Instance.LineConnections(objectId);
         if (partList == null)
         {
-            partList = new List<string>();
-        }
-        var key = KeyPrefix + objectId.ToStringRawValue();
-        if (!PlayerPrefs.HasKey(key))
-        {
-            return;
-        }
-        var value = PlayerPrefs.GetString(key);
-        partList = JsonConvert.DeserializeObject<List<string>>(value);
-        if (partList == null)
-        {
+            Debug.Log("The act level scene returned empty result");
             partList = new List<string>();
         }
     }

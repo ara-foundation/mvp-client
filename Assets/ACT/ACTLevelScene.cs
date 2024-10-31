@@ -338,6 +338,40 @@ public class ACTLevelScene : EditorBaseBehaviour
         ACTLevels.Instance.OnSceneUpdate(OnSaveScene);
     }
 
+    public void OnLineEditingEnd(DataGameObjectId dataGameObjectId, List<string> connection)
+    {
+        if (_currentLevel == null)
+        {
+            return;
+        }
+        if (_currentLevel.lines == null)
+        {
+            _currentLevel.lines = new();
+        }
+        _currentLevel.lines.Add(dataGameObjectId.ToStringRawValue(), connection);
+
+        ACTLevels.Instance.OnSceneUpdate(OnSaveScene);
+    }
+
+    public List<string> LineConnections(DataGameObjectId dataGameObjectId)
+    {
+        if (_currentLevel == null)
+        {
+            return null;
+        }
+
+        if (_currentLevel.lines == null)
+        {
+            return null;
+        }
+
+        if (!_currentLevel.lines.ContainsKey(dataGameObjectId.ToStringRawValue())) {
+            return null;
+        }
+
+        return _currentLevel.lines[dataGameObjectId.ToStringRawValue()];
+    }
+
     private async void OnSaveScene()
     {
         _currentLevel.dataScene = RuntimeEditorController.GetSerializedDataScene();
@@ -348,9 +382,7 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     private async Task SaveScene(string _id, Level _level)
     {
-        var body = JsonUtility.ToJson(_level);
-        Debug.Log(body);
-        Debug.Log(_level.dataScene);
+        var body = JsonConvert.SerializeObject(_level);
         string url = NetworkParams.AraActUrl + "/act/scenes/" + _id;
 
         Tuple<long, string> res;
