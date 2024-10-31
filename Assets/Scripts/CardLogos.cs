@@ -31,7 +31,7 @@ public class CardLogos : MonoBehaviour
         }
         var createdAt = araDiscussion.relationships.firstPost.attributes.createdAt.Split(":")[0];
 
-        Title.text = araDiscussion.attributes.title;
+        Title.text = AraString.RemoveDiacritics(araDiscussion.attributes.title);
         PublicationTime.text = createdAt;
         Content.text = content;
         SharedAmount.text = "0";
