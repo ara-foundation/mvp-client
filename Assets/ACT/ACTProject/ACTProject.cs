@@ -49,25 +49,34 @@ public class ACTProject : MonoBehaviour, IStateReactor
             return;
         }
 
+
         StartCoroutine(DiveInto());
     }
 
     IEnumerator DiveInto()
     {
-        Debug.Log($"Double clicked, lets dive into {System.DateTime.Now}");
-
         ACTSession.Instance.SetFirstLevel(actWithProject);
         ACTProjects.Instance.LoadingSceneModal.Set(true);
 
-        // https://docs.unity3d.com/ScriptReference/AsyncOperation-allowSceneActivation.html
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
-        asyncOperation.allowSceneActivation = true;
-
         var rts = ACTProjects.Instance.ACTProjectsCamera.gameObject.GetComponent<RTS_Camera>();
-        
         var zoomIn = rts.targetOffset.z + 1;
         rts.targetOffset = new UnityEngine.Vector3(rts.targetOffset.x, rts.targetOffset.y, zoomIn);
-        yield return null;
+
+        yield return 0;
+
+        // https://docs.unity3d.com/ScriptReference/AsyncOperation-allowSceneActivation.html
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
+
+        float progress = asyncOperation.progress;
+        while (!asyncOperation.isDone)
+        {
+            if (progress != asyncOperation.progress)
+            {
+                Debug.Log($"Async progress {progress}");
+                progress = asyncOperation.progress;
+            }
+            yield return null;
+        }
     }
 
     public void Highlight(bool enabled)

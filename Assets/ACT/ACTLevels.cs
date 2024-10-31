@@ -32,21 +32,30 @@ public class ACTLevels: MonoBehaviour
 
     public void OnReturnBack()
     {
-        StartCoroutine(RiseUp());
+        if (Levels.Count > 0)
+        {
+            StartCoroutine(RiseUp());
+        }
+    }
+
+    public void OnSceneUpdate(Action OnSave)
+    {
+        if (currentLevel == null)
+        {
+            return;
+        }
+
+        currentLevel.SetSave(OnSave);
     }
 
     IEnumerator RiseUp()
     {
-        Debug.Log($"Double clicked, lets dive into {System.DateTime.Now}");
-
         ACTSession.Instance.Clear();
-
         Global.Instance.ShowLoadingScene();
 
-        // https://docs.unity3d.com/ScriptReference/AsyncOperation-allowSceneActivation.html
-        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(0, LoadSceneMode.Single);
-        asyncOperation.allowSceneActivation = true;
+        yield return new WaitForSeconds(0.2f);
 
-        yield return null;
+        // https://docs.unity3d.com/ScriptReference/AsyncOperation-allowSceneActivation.html
+        SceneManager.LoadScene(0, LoadSceneMode.Single);
     }
 }
