@@ -25,11 +25,11 @@ namespace Ara.RuntimeEditor
         /// <param name="sceneMetaData"></param>
         /// <param name="_tabsContent"></param>
         /// <returns></returns>
-        public AraRuntimeEditorScene_controller Load(DataSceneMetaData sceneMetaData, Transform _tabsContent)
+        public AraRuntimeEditorScene_controller Load(DataSceneMetaData sceneMetaData, DataScene sceneData, Transform _tabsContent)
         {
             var obj = Instantiate(RuntimeEditorController, _tabsContent);
             var instance = obj.GetComponent<AraRuntimeEditorScene_controller>();
-            instance.LazyLoadScene(sceneMetaData);
+            instance.LazyLoadScene(sceneMetaData, sceneData);
             return instance;
         }
 

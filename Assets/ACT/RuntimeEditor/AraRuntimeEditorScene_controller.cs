@@ -91,7 +91,7 @@ namespace Rundo.RuntimeEditor.Behaviours
         {
             if (_isLazyLoad)
             {
-                LoadScene(_dataSceneMetaData.Guid);
+                LoadScene();
             }
             CreateWorld();
             StopPlayScene();
@@ -118,8 +118,9 @@ namespace Rundo.RuntimeEditor.Behaviours
             SetMode<SelectObjectsEditorModeBehaviour>();
         }
 
-        public void LazyLoadScene(DataSceneMetaData dataSceneMetaData)
+        public void LazyLoadScene(DataSceneMetaData dataSceneMetaData, DataScene dataScene)
         {
+            _dataScene = dataScene;
             _isLazyLoad = true;
             _dataSceneMetaData = dataSceneMetaData;
             AraRuntimeEditor_manager.Instance.DispatchUiEventToAllSceneControllers(new RuntimeEditorBehaviour.OnSceneSetToTabEvent());
@@ -130,9 +131,9 @@ namespace Rundo.RuntimeEditor.Behaviours
             _isNewScene = true;
         }
 
-        public void LoadScene(TGuid<DataScene.TDataSceneId> sceneId)
+        public void LoadScene()
         {
-            LoadSceneInternal(sceneId);
+            LoadSceneInternal();
         }
 
         public void CreateScene()
@@ -182,18 +183,23 @@ namespace Rundo.RuntimeEditor.Behaviours
                 return;
             
             RuntimeEditorBehaviour.PersistentDataScenes.SaveData(_dataScene.DataSceneMetaData, _dataScene);
-
-            var editorPrefs = RuntimeEditorBehaviour.PersistentEditorPrefs.LoadData();
-            if (editorPrefs.OpenedScenes.Contains(_dataScene.DataSceneMetaData.Guid.ToStringRawValue()) == false)
-            {
-                editorPrefs.OpenedScenes.Add(_dataScene.DataSceneMetaData.Guid.ToStringRawValue());
-                RuntimeEditorBehaviour.PersistentEditorPrefs.SaveData(editorPrefs);
-            }
         }
 
-        private void LoadSceneInternal(TGuid<DataScene.TDataSceneId> sceneId)
+
+        private void LoadSceneInternal()
         {
-            SetScene(RuntimeEditorBehaviour.PersistentDataScenes.LoadData(sceneId.ToStringRawValue()));
+            _isLazyLoad = false;
+
+            _dataSceneMetaData = _dataScene?.DataSceneMetaData ?? default;
+
+            _commandProcessor.ClearUndoRedo();
+
+            _dataScene?.SetCommandProcessor(CommandProcessor);
+
+            DispatchUiEvent(new OnSceneLoadedEvent());
+            AraRuntimeEditor_manager.Instance.DispatchUiEventToAllSceneControllers(new RuntimeEditorBehaviour.OnSceneSetToTabEvent());
+
+            CreateWorld();
         }
         
         private void SetScene(DataScene dataScene)
@@ -216,6 +222,11 @@ namespace Rundo.RuntimeEditor.Behaviours
         public DataScene GetDataScene()
         {
             return _dataScene;
+        }
+
+        public string GetSerializedDataScene()
+        {
+            return RundoEngine.DataSerializer.SerializeObject(_dataScene);
         }
 
         public async Task<PrefabIdBehaviour> LoadPrefab(TGuid<TPrefabId> prefabId)

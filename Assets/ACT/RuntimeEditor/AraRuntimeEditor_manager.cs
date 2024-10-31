@@ -10,6 +10,7 @@ using Rundo.RuntimeEditor.Behaviours;
 using static Rundo.RuntimeEditor.Behaviours.RuntimeEditorBehaviour;
 using Rundo.RuntimeEditor.Commands;
 using UnityEngine.SceneManagement;
+using static Rundo.RuntimeEditor.Data.DataScene;
 
 namespace Ara.RuntimeEditor
 {
@@ -60,8 +61,17 @@ namespace Ara.RuntimeEditor
         {
             RundoEngine.DataSerializer.AddDefaultReadConverter(new DataComponentReadJsonConverter());
 
-            var sceneMetaDatas = PersistentDataScenes.LoadData();
-            var editorPrefs = PersistentEditorPrefs.LoadData();
+            //var sceneMetaDatas = PersistentDataScenes.LoadData();
+            //var editorPrefs = PersistentEditorPrefs.LoadData();
+
+            /*foreach (var metaData in  sceneMetaDatas)
+            {
+                Debug.Log($"Loaded scene: {metaData.Guid}, {metaData.Name}");
+            }
+            foreach (var openedScene in editorPrefs.OpenedScenes)
+            {
+                Debug.Log($"Loaded scene: {openedScene}");
+            }*/
 
             // load scenes
             /*foreach (var it in editorPrefs.OpenedScenes)
@@ -98,19 +108,15 @@ namespace Ara.RuntimeEditor
             AddTab();
         }
 
-        public void LoadScene(string sceneGuuid) {
-            var sceneMetaDatas = PersistentDataScenes.LoadData();
+        public void LoadScene(string sceneGuuid, string sceneData) {
 
-            // load scenes
-            foreach (var sceneMetaData in sceneMetaDatas)
-            {
-                if (sceneMetaData.Guid.ToStringRawValue() == sceneGuuid)
-                {
-                    var instance = RuntimeEditorRoot.Load(sceneMetaData, _tabsContent);
-                    InstantiatedTabs.Add(instance);
-                    break;
-                }
-            }
+            var sceneMetaData = new DataSceneMetaData();
+            sceneMetaData.Guid = TGuid<TDataSceneId>.Create(sceneGuuid);
+
+            var dataScene = RundoEngine.DataSerializer.DeserializeObject<DataScene>(sceneData);
+
+            var instance = RuntimeEditorRoot.Load(sceneMetaData, dataScene, _tabsContent);
+            InstantiatedTabs.Add(instance);
 
             SelectTab(InstantiatedTabs[0].TabGuid);
         }

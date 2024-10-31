@@ -12,6 +12,24 @@ using System.Threading.Tasks;
 using System;
 using Ara.RuntimeEditor;
 
+[Serializable]
+public class Level
+{
+    public string sceneId;
+#nullable enable
+    public string? dataScene;
+    public Dictionary<string, List<string>>? lines;
+#nullable disable
+
+    public bool Exist()
+    {
+        return (!string.IsNullOrEmpty(dataScene) && !string.IsNullOrEmpty(sceneId));
+    }
+}
+
+/// <summary>
+/// The ACT Scene where a person draws a diagram and plans the project.
+/// </summary>
 public class ACTLevelScene : EditorBaseBehaviour
 {
     private List<ACTPart_interface> Parts = new ();
@@ -27,6 +45,9 @@ public class ACTLevelScene : EditorBaseBehaviour
     [SerializeField] private GameObject LinePrefab;
     [SerializeField] private MouseInput BoxEnvironment;
     private static ACTLevelScene _instance;
+
+    private string _currentId = "";
+    private Level _currentLevel = null;
 
     #region PartParameterEditing
     public enum TutorialStep
@@ -74,29 +95,49 @@ public class ACTLevelScene : EditorBaseBehaviour
     }
 
 
-    private void OnEnable()
+    private async void OnEnable()
     {
-        if (manualTest)
+        //Debug.Log("C:\\Users\\milay\\AppData\\LocalLow\\DefaultCompany\\mvp-client to check the list of scene ids");
+        if (ACTSession.Instance)
         {
-            Debug.Log("Automatically loading manual project");
-            Debug.Log($"Manual project id: {manualProjectId}");
-            if (manualNewScene)
+            _currentId = ACTSession.Instance.Project._id;
+            _currentLevel = await FetchScene(_currentId);
+            if (!_currentLevel.Exist())
             {
-                Debug.Log("Loading a new empty scene");
                 AraRuntimeEditor_manager.Instance.CreateNewScene();
             } else
             {
-                AraRuntimeEditor_manager.Instance.LoadScene(manualSceneId);
-                Debug.Log($"Loading the scene for {manualSceneId}");
+                AraRuntimeEditor_manager.Instance.LoadScene(_currentLevel.sceneId, _currentLevel.dataScene);
+            }
+        } else
+        {
+            Debug.LogWarning("No ACTSession was given which comes from Ara scene. Enable the manualTest flag on this level scene on inspector to use a standalone version");
+
+            if (manualTest)
+            {
+                Debug.Log("Automatically loading manual project");
+                Debug.Log($"Manual project id: {manualProjectId}");
+                if (manualNewScene)
+                {
+                    Debug.Log("Loading a new empty scene");
+                    AraRuntimeEditor_manager.Instance.CreateNewScene();
+                } else
+                {
+                    //AraRuntimeEditor_manager.Instance.LoadScene(manualSceneId);
+                    Debug.Log($"Loading the scene for {manualSceneId}");
+                }
             }
         }
     }
 
-    private async Task<List<PlanWithProject>> FetchProject(string projectId, string levelId)
-    {
-        List<PlanWithProject> incorrectResult = new();
 
-        string url = NetworkParams.AraActUrl + "/maydone/plans";
+    private async Task<Level> FetchScene(string id)
+    {
+        Level incorrectResult = new() { 
+            sceneId = "",
+        };
+
+        string url = NetworkParams.AraActUrl + "/act/scenes/" + id;
 
         string res;
         try
@@ -105,18 +146,21 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
         catch (Exception ex)
         {
-            Debug.LogError(ex);
             return incorrectResult;
         }
 
-        List<PlanWithProject> result;
+        if (string.IsNullOrEmpty(res))
+        {
+            return incorrectResult;
+        }
+
+        Level result;
         try
         {
-            result = JsonConvert.DeserializeObject<List<PlanWithProject>>(res);
+            result = JsonConvert.DeserializeObject<Level>(res);
         }
         catch (Exception e)
         {
-            Debug.LogError(e + " for " + res);
             return incorrectResult;
         }
         return result;
@@ -273,8 +317,8 @@ public class ACTLevelScene : EditorBaseBehaviour
 
         if (submitted)
         {
+            OnEditingEnd();
             Debug.Log("TODO ActScene: Tech stack was set, let's now work on the budget. Add the budget UI controller");
-            _part.Interactive(true);
             //Sensever_window.Instance.ContinueSensever((int)TutorialStep.TechStackStart);
             //_part.EditTechStack(OnTechStackEdited);
         }
@@ -285,6 +329,48 @@ public class ACTLevelScene : EditorBaseBehaviour
             _part.EditTechStack(OnTechStackEdited);
             return;
         }
+    }
+
+    private void OnEditingEnd()
+    {
+        var _part = _editingPart as ACTPart;
+        _part.Interactive(true);
+        ACTLevels.Instance.OnSceneUpdate(OnSaveScene);
+    }
+
+    private async void OnSaveScene()
+    {
+        _currentLevel.dataScene = RuntimeEditorController.GetSerializedDataScene();
+        _currentLevel.sceneId = AraRuntimeEditor_manager.Instance.GetSceneId(RuntimeEditorController.TabGuid).ToStringRawValue();
+
+        await SaveScene(_currentId, _currentLevel);
+    }
+
+    private async Task SaveScene(string _id, Level _level)
+    {
+        var body = JsonUtility.ToJson(_level);
+        Debug.Log(body);
+        Debug.Log(_level.dataScene);
+        string url = NetworkParams.AraActUrl + "/act/scenes/" + _id;
+
+        Tuple<long, string> res;
+        try
+        {
+            res = await WebClient.Post(url, body);
+        }
+        catch (Exception ex)
+        {
+            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Debug.LogError(ex);
+            return;
+        }
+        if (res.Item1 != 200)
+        {
+            Notification.Instance.Show($"Error: {res.Item2}");
+            return;
+        }
+
+        Notification.Instance.Show($"Scene was saved successfully!");
     }
 
     /// <summary>

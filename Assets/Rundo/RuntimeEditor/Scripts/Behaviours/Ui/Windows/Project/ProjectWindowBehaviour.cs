@@ -27,13 +27,6 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
             
             _projectItemsSearchFilterBehaviour.SetData(data, Redraw);
 
-            /*  _closeBtn.onClick.AddListener(() =>
-            {
-                gameObject.SetActive(false);
-                DispatchUiEvent(new EditorUiBehaviour.HideWindowEvent{Window = GetType()});
-            });
-            */
-
             StartCoroutine(UpdateThumbnails());
         }
 

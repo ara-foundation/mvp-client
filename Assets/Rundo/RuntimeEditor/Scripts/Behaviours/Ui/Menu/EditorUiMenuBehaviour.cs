@@ -54,7 +54,8 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
             
             _load.OnSubmit(data =>
             {
-                RuntimeEditorController.LoadScene(TGuid<DataScene.TDataSceneId>.Create(data.Value));
+                Debug.Log("LoadScene from RuntimeEditorContorller");
+                //RuntimeEditorController.LoadScene(TGuid<DataScene.TDataSceneId>.Create(data.Value));
             });
         
             _scene.onClick.AddListener(() =>
