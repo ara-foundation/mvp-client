@@ -1880,7 +1880,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c87aa37eee593ef4cad8a5f1786ebcaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _outline: {fileID: 4601243092535477079}
+  _outline: {fileID: 0}
   Fixed:
   - {fileID: 2322561636277317489}
   - {fileID: 1974723619783611508}
@@ -2370,7 +2370,6 @@ GameObject:
   - component: {fileID: 894311327594274498}
   - component: {fileID: 7195219008446932271}
   - component: {fileID: 3668712814030061836}
-  - component: {fileID: 6920956493839706872}
   m_Layer: 5
   m_Name: Card_New Post Placeholder
   m_TagString: Untagged
@@ -2396,7 +2395,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 265, y: -158}
-  m_SizeDelta: {x: 400, y: 191}
+  m_SizeDelta: {x: 400, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7195219008446932271
 MonoBehaviour:
@@ -2507,18 +2506,6 @@ MonoBehaviour:
   onEnd:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &6920956493839706872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9197326913787786416}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a07ec06eb7783d74a99ce670663035ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &2464028933160015624
 PrefabInstance:
   m_ObjectHideFlags: 0

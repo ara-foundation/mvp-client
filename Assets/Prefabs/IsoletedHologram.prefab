@@ -314,7 +314,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8889338063605170033}
-  - component: {fileID: 6908040436556754569}
   m_Layer: 5
   m_Name: ImportantParts
   m_TagString: Untagged
@@ -338,23 +337,6 @@ Transform:
   - {fileID: 2626315877751148503}
   m_Father: {fileID: 7848185527931844129}
   m_LocalEulerAnglesHint: {x: 0, y: 144.926, z: 0}
---- !u!114 &6908040436556754569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1385321238743305140}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0af3d23af1b8a954eaa5473cddf1422f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  KeepOriginalPosition: 0
-  KeepRelativeToParent: 0
-  CameraRig: {fileID: 0}
-  Offset: {x: 0, y: 0, z: 0}
-  SelfOfsset: {x: 0, y: 0, z: 0}
 --- !u!1 &5950789640422113360
 GameObject:
   m_ObjectHideFlags: 0
@@ -544,7 +526,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3865534611523428844}
-  - component: {fileID: 6915195948901703900}
   m_Layer: 0
   m_Name: IsoletedHologram
   m_TagString: Untagged
@@ -569,22 +550,6 @@ Transform:
   - {fileID: 7848185527931844129}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6915195948901703900
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7616603682976430675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f635ec27c515794e944c596dbec996e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BalanceText: {fileID: 0}
-  Name: {fileID: 2436338134843062681}
-  Node: {fileID: 0}
-  TransferValue: {fileID: 0}
 --- !u!1 &7917306653949814752
 GameObject:
   m_ObjectHideFlags: 0
@@ -774,40 +739,8 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4652225833230060, guid: ba649581e7ae3f54a9892d5967eaaf4a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3412729792864527767}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1947637386273484, guid: ba649581e7ae3f54a9892d5967eaaf4a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6308649773277980473}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ba649581e7ae3f54a9892d5967eaaf4a, type: 3}
---- !u!1 &2622467248130388983 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1947637386273484, guid: ba649581e7ae3f54a9892d5967eaaf4a, type: 3}
-  m_PrefabInstance: {fileID: 2621670358379860283}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &6308649773277980473
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2622467248130388983}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15d90a34005387843a7198a412e4551c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetType: 1
-  autoFindMultiTarget: 0
-  multiTarget: {fileID: 0}
-  cameraBrain: {fileID: 0}
-  triggerTag: 
-  revertOnExit: 0
-  OnEnterTag:
-    m_PersistentCalls:
-      m_Calls: []
-  OnExitTag:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!4 &2626315877751148503 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4652225833230060, guid: ba649581e7ae3f54a9892d5967eaaf4a, type: 3}
@@ -886,16 +819,7 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 1643762750520372, guid: f47cd7e4a4ddb1f4983f59adc504c65e, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6572601435596026404}
-    - targetCorrespondingSourceObject: {fileID: 1643762750520372, guid: f47cd7e4a4ddb1f4983f59adc504c65e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6743817321016312189}
-    - targetCorrespondingSourceObject: {fileID: 1643762750520372, guid: f47cd7e4a4ddb1f4983f59adc504c65e, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 7351446450034816558}
-    - targetCorrespondingSourceObject: {fileID: 1643762750520372, guid: f47cd7e4a4ddb1f4983f59adc504c65e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6056433197849092146}
   m_SourcePrefab: {fileID: 100100000, guid: f47cd7e4a4ddb1f4983f59adc504c65e, type: 3}
 --- !u!4 &7848185527931844129 stripped
 Transform:
@@ -907,36 +831,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 1643762750520372, guid: f47cd7e4a4ddb1f4983f59adc504c65e, type: 3}
   m_PrefabInstance: {fileID: 7852776042792436739}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6572601435596026404
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7854133485764720695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e91a49980a45b1a4cadb95672cda34bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ActivityGroup: {fileID: 0}
-  reactors:
-  - {fileID: 6056433197849092146}
---- !u!114 &6743817321016312189
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7854133485764720695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 762dd2ad37c90084e88d48ce5987be44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ActivityState: {fileID: 6572601435596026404}
-  EnableSingleClick: 1
-  _hoverPointer: pointer
 --- !u!114 &7351446450034816558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -955,19 +849,3 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!114 &6056433197849092146
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7854133485764720695}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 88770823bc37c444b95fb69a4689b170, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FocusColor: {r: 0.9652686, g: 0, b: 1, a: 1}
-  HighlightColor: {r: 0, g: 1, b: 0.8205199, a: 1}
-  SelectColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  meshBody: {fileID: 7854133485764720695}

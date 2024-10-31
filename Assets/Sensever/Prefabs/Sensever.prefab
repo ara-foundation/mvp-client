@@ -9,12 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 447398955364583169}
-  - component: {fileID: 553710096040367113}
-  - component: {fileID: 533783908307983947}
   - component: {fileID: 7856237355256136372}
   - component: {fileID: 1996404649310694075}
   - component: {fileID: 3074868482741169549}
-  - component: {fileID: 4820331938756032334}
   m_Layer: 5
   m_Name: Sensever
   m_TagString: Untagged
@@ -41,39 +38,6 @@ Transform:
   - {fileID: 3442761681275078250}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &553710096040367113
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 450265941291756281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdfe52ad0699f7842b1bd6f40aadd01e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!95 &533783908307983947
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 450265941291756281}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: bff429107601444d59c67940e6ad78c4, type: 3}
-  m_Controller: {fileID: 9100000, guid: 8df5b386369d54778a922298504d1aba, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 1
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &7856237355256136372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,11 +50,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d3fe0e0308d0ae44a18950cf8b27d84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FocusColor: {r: 0.9496974, g: 0.9496974, b: 0.97735846, a: 1}
-  HighlightColor: {r: 0.9547169, g: 0.27920952, b: 0.84686774, a: 1}
-  terminalPage: {fileID: 0}
   terminalTextField: {fileID: 0}
-  terminalCameraRig: {fileID: 0}
+  SenseverBackendUrl: 
+  meshBody: {fileID: 0}
+  senseverChat: {fileID: 0}
 --- !u!135 &1996404649310694075
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -130,30 +93,6 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
---- !u!114 &4820331938756032334
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 450265941291756281}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 15d90a34005387843a7198a412e4551c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetType: 1
-  autoFindMultiTarget: 0
-  multiTarget: {fileID: 0}
-  cameraBrain: {fileID: 0}
-  triggerTag: 
-  revertOnExit: 0
-  OnEnterTag:
-    m_PersistentCalls:
-      m_Calls: []
-  OnExitTag:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!1 &2803168482232234805
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,7 +102,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1556698820461964078}
-  - component: {fileID: 5135865959550590311}
   m_Layer: 0
   m_Name: CameraRig
   m_TagString: Untagged
@@ -186,44 +124,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 447398955364583169}
   m_LocalEulerAnglesHint: {x: 25, y: -90, z: 0}
---- !u!114 &5135865959550590311
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2803168482232234805}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae199c9253342ed4d89bd678ee6e97ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  registerCamera: 1
-  freeFlyCamera: 0
-  cameraShake: 0
-  gmkInputController: {fileID: 0}
-  moveSpeed: 10
-  boostSpeed: 25
-  xSensitivity: 50
-  ySensitivity: 50
-  freeFlyActive: 0
-  freelookRig: {fileID: 0}
-  follow: {fileID: 0}
-  lookAt: {fileID: 3442761681275078250}
-  turnSpeed: 1
-  followOffset: {x: 0, y: 0, z: 0}
-  shakeSmoothing: 1
-  positionMagnitude: 7.5
-  rotationMagnitude: 5
-  lens:
-    verticalFOV: 50
-    nearClipPlane: 0.1
-    farClipPlane: 1000
-    showFrustrum: 1
-    tilt: 0
-    cullingMask:
-      serializedVersion: 2
-      m_Bits: 4294967295
 --- !u!1 &2862669367375110627
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,9 +164,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5451991867054555648}
-  - component: {fileID: 516237503963701719}
-  - component: {fileID: 5960526109395196351}
-  - component: {fileID: 5176396137377772264}
   m_Layer: 0
   m_Name: CameraFreelookRig (1)
   m_TagString: Untagged
@@ -290,170 +187,6 @@ Transform:
   - {fileID: 461379670492567563}
   m_Father: {fileID: 447398955364583169}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &516237503963701719
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6113969316507238877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 266eb073c45759741950f0973aee7ccd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lockCursorOnLoad: 0
-  gizmosOnSelected: 1
-  cameraCollisions: 1
-  customInputAction: 0
-  moveCamera:
-    m_UseReference: 1
-    m_Action:
-      m_Name: Move Camera
-      m_Type: 0
-      m_ExpectedControlType: 
-      m_Id: 7476fde3-eded-49b3-b1b5-836a450bf826
-      m_Processors: 
-      m_Interactions: 
-      m_SingletonActionBindings: []
-      m_Flags: 0
-    m_Reference: {fileID: 6018395993947079248, guid: 3cbb883ef1e586a4991387a291e7a14d, type: 3}
-  gmkInputController: {fileID: 5176396137377772264}
-  follow: {fileID: 3442761681275078250}
-  cameraOrbit:
-    rigOffset: 0
-    height:
-      up: 3
-      down: -1.5
-    radius:
-      top: 2
-      middle: 7
-      bottom: 3
-  xSensitivity: 50
-  ySensitivity: 50
-  rotationOffset: -90
-  collisionOffset: 0.2
-  collisionLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
---- !u!114 &5960526109395196351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6113969316507238877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 3cbb883ef1e586a4991387a291e7a14d, type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: KeyboardMouse
-  m_DefaultActionMap: GMK
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
---- !u!114 &5176396137377772264
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6113969316507238877}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03e3b61d8fb360e47a6013e76f5327c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  legacyInputSystem: 0
-  legacyInputs:
-    button0: 32
-    button1: 306
-    button2: 308
-    button3: 99
-    button4: 304
-    button5: 102
-    button6: 112
-    button7: 27
-    button8: 113
-    button9: 101
-    axisXY_up: 119
-    axisXY_left: 97
-    axisXY_down: 115
-    axisXY_right: 100
-    axis45_up: 273
-    axis45_left: 276
-    axis45_down: 274
-    axis45_right: 275
-    axis67_up: 49
-    axis67_left: 50
-    axis67_down: 52
-    axis67_right: 51
-    axis9: 323
-    axis10: 324
-  playerInput: {fileID: 5960526109395196351}
-  inputs:
-    inputButton0:
-      keydown: 0
-      keypressed: 0
-      keyreleased: 0
-    inputButton1:
-      keydown: 0
-      keypressed: 0
-      keyreleased: 0
-    inputButton2:
-      keydown: 0
-      keypressed: 0
-      keyreleased: 0
-    inputButton3:
-      keydown: 0
-      keypressed: 0
-      keyreleased: 0
-    inputButton4:
-      keydown: 0
-      keypressed: 0
-      keyreleased: 0
-    inputButton5:
-      keydown: 0
-      keypressed: 0
-      keyreleased: 0
-    inputButton6:
-      keydown: 0
-      keypressed: 0
-      keyreleased: 0
-    inputButton7:
-      keydown: 0
-      keypressed: 0
-      keyreleased: 0
-    inputButton8:
-      keydown: 0
-      keypressed: 0
-      keyreleased: 0
-    inputButton9:
-      keydown: 0
-      keypressed: 0
-      keyreleased: 0
-    inputAxisX: 0
-    inputAxisY: 0
-    inputAxis4: 0
-    inputAxis5: 0
-    inputAxis6: 0
-    inputAxis7: 0
-    inputAxis9: 0
-    inputAxis10: 0
 --- !u!1 &7775051870506211417
 GameObject:
   m_ObjectHideFlags: 0
@@ -463,7 +196,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 461379670492567563}
-  - component: {fileID: 8768853624921044502}
   m_Layer: 0
   m_Name: CameraRig (ThirdPerson)
   m_TagString: Untagged
@@ -486,44 +218,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5451991867054555648}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8768853624921044502
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7775051870506211417}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae199c9253342ed4d89bd678ee6e97ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  registerCamera: 1
-  freeFlyCamera: 0
-  cameraShake: 0
-  gmkInputController: {fileID: 0}
-  moveSpeed: 10
-  boostSpeed: 25
-  xSensitivity: 50
-  ySensitivity: 50
-  freeFlyActive: 0
-  freelookRig: {fileID: 516237503963701719}
-  follow: {fileID: 0}
-  lookAt: {fileID: 0}
-  turnSpeed: 1
-  followOffset: {x: 0, y: 0, z: 0}
-  shakeSmoothing: 1
-  positionMagnitude: 7.5
-  rotationMagnitude: 5
-  lens:
-    verticalFOV: 50
-    nearClipPlane: 1
-    farClipPlane: 1000
-    showFrustrum: 1
-    tilt: 0
-    cullingMask:
-      serializedVersion: 2
-      m_Bits: 4294967295
 --- !u!1001 &1355690933410034381
 PrefabInstance:
   m_ObjectHideFlags: 0

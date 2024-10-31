@@ -1416,7 +1416,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 229, y: -357}
-  m_SizeDelta: {x: 400, y: 462}
+  m_SizeDelta: {x: 400, y: 167}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4686713103327234104
 MonoBehaviour:
@@ -1601,7 +1601,7 @@ MonoBehaviour:
   onNonInteractable:
     m_PersistentCalls:
       m_Calls: []
-  expectedInteractable: 0
+  expectedInteractable: 1
   requiredButtons: -1
   multiDown: 0
   dragThreshold: 10
@@ -1827,7 +1827,7 @@ MonoBehaviour:
   m_text: '"Digital Nomad cafe in Vietnam" idea'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 79459efec17a4d00a321bdcc27bbc385, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3858,7 +3858,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c87aa37eee593ef4cad8a5f1786ebcaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _outline: {fileID: 4184561946079001087}
+  _outline: {fileID: 0}
   Fixed:
   - {fileID: 5895504864013533189}
   - {fileID: 5791893342076473324}
