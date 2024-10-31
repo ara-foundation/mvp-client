@@ -9,7 +9,6 @@ using Rundo;
 using Rundo.RuntimeEditor.Behaviours;
 using static Rundo.RuntimeEditor.Behaviours.RuntimeEditorBehaviour;
 using Rundo.RuntimeEditor.Commands;
-using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
 namespace Ara.RuntimeEditor
