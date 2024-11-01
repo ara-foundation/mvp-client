@@ -38,7 +38,7 @@ public class ACTPart_controller : MonoBehaviour
     [SerializeField] public GameObject MaintainerInputFieldContainer;
     [SerializeField] public Transform MaintainerCameraTarget;
 
-    //public ACTPartModel Model { get { return _model; } }
+    public ACTPartModel Model { get { return _model; } }
 
     //
     // Tasks are managed in the nested level so it's a part of ACTPart

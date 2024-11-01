@@ -263,6 +263,18 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         MouseInput.enabled = on;
     }
 
+    public async Task<Tuple<bool, bool>> SaveModel()
+    {
+        if (!EnableController)
+        {
+            return Tuple.Create(false, false);
+        }
+
+        var model = Edit.gameObject.GetComponent<ACTPart_controller>().Model;
+
+        return await SaveModel(model);
+    }
+
     /// <summary>
     /// Fetch the part parameters for the development id
     /// </summary>
@@ -316,9 +328,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         } else if (Mode == ModeInScene.Edit)
         {
             Debug.Log("Model was changed, but its in edit mode, so nothing will change");
-
         }
-
     }
 
     public void SetData(ACTPartModel model)

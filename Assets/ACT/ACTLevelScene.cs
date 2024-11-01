@@ -477,10 +477,15 @@ public class ACTLevelScene : EditorBaseBehaviour
         _currentLevel.dataScene = RuntimeEditorController.GetSerializedDataScene();
         _currentLevel.sceneId = AraRuntimeEditor_manager.Instance.GetSceneId(RuntimeEditorController.TabGuid).ToStringRawValue();
 
-        await SaveScene(_currentId, _currentLevel);
+        var sceneSaved = await SaveScene(_currentId, _currentLevel);
+        if (sceneSaved && _editingPart != null)
+        {
+            var part = _editingPart as ACTPart;
+            await part.SaveModel();
+        }
     }
 
-    private async Task SaveScene(string _id, Level _level)
+    private async Task<bool> SaveScene(string _id, Level _level)
     {
         var body = JsonConvert.SerializeObject(_level);
         string url = NetworkParams.AraActUrl + "/act/scenes/" + _id;
@@ -494,15 +499,16 @@ public class ACTLevelScene : EditorBaseBehaviour
         {
             Notification.Instance.Show($"Error: web client exception {ex.Message}");
             Debug.LogError(ex);
-            return;
+            return false;
         }
         if (res.Item1 != 200)
         {
             Notification.Instance.Show($"Error: {res.Item2}");
-            return;
+            return false;
         }
 
         Notification.Instance.Show($"Scene was saved successfully!");
+        return true;
     }
 
     /// <summary>
