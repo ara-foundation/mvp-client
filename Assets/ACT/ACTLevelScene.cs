@@ -27,12 +27,37 @@ public class Level
     }
 }
 
+[Serializable]
+public class ACTPartModel
+{
+    public string _id;
+    //
+    // Meta params
+    //
+    public string objId;          // on scene
+    public string developmentId; // project it belongs too
+    public int level;        // level at which it resides
+    public string[] childObjsId;
+    public string parentObjId;
+
+    // 
+    // The part params
+    //
+    public string projectName;
+    public string techStack;
+    public int deadline;
+    public double budget;
+    public string maintainer;
+
+}
+
 /// <summary>
 /// The ACT Scene where a person draws a diagram and plans the project.
 /// </summary>
 public class ACTLevelScene : EditorBaseBehaviour
 {
     private List<ACTPart_interface> Parts = new ();
+    private ACTPartModel[] Models = new ACTPartModel[] { };
 
     public Camera Camera;
     public ActivityGroup ActivityGroup;
@@ -48,6 +73,7 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     private string _currentId = "";
     private Level _currentLevel = null;
+    private int _currentLevelNum = 0;
 
     #region PartParameterEditing
     public enum TutorialStep
@@ -102,6 +128,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         {
             _currentId = ACTSession.Instance.Project._id;
             _currentLevel = await FetchScene(_currentId);
+            _currentLevelNum = ACTSession.Instance.Level;
             if (!_currentLevel.Exist())
             {
                 AraRuntimeEditor_manager.Instance.CreateNewScene();
@@ -128,6 +155,16 @@ public class ACTLevelScene : EditorBaseBehaviour
                 }
             }
         }
+    }
+
+    public void OnSceneLoaded()
+    {
+        LoadParts(_currentId);
+    }
+
+    async void LoadParts(string developmentId, int level = 1, string parentObjId = "")
+    {
+        Models = await FetchParts(developmentId);
     }
 
 
@@ -161,6 +198,46 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
         catch (Exception e)
         {
+            return incorrectResult;
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Fetch the part parameters for the development id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    private async Task<ACTPartModel[]> FetchParts(string id)
+    {
+        ACTPartModel[] incorrectResult = new ACTPartModel[] { };
+
+        string url = NetworkParams.AraActUrl + "/act/parts/" + id;
+
+        string res;
+        try
+        {
+            res = await WebClient.Get(url);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex);
+            return incorrectResult;
+        }
+
+        if (string.IsNullOrEmpty(res))
+        {
+            return incorrectResult;
+        }
+
+        ACTPartModel[] result;
+        try
+        {
+            result = JsonConvert.DeserializeObject<ACTPartModel[]>(res);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
             return incorrectResult;
         }
         return result;
@@ -231,9 +308,32 @@ public class ACTLevelScene : EditorBaseBehaviour
                 {
                     _nextPartForEditing = false;
                     StartCoroutine(StartEditingPart(part));
+                } else
+                {
+                    SetPartData(part);
                 }
             }
         }
+    }
+
+    private void SetPartData(ACTPart_interface actPart)
+    {
+        Debug.Log($"Set Part Data {Models != null}");
+        if (Models == null)
+        {
+            return;
+        }
+
+        foreach (var model in Models)
+        {
+            if (model.objId.Equals(actPart.ObjectId()))
+            {
+                actPart.SetData(model);
+                return;
+            }
+        }
+
+        actPart.SetData(_currentId, _currentLevelNum);
     }
 
     public ACTPart_interface GetPart(string objectId)

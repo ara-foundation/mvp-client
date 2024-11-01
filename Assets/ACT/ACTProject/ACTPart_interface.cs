@@ -9,4 +9,7 @@ public interface ACTPart_interface
 {
     void Activate(DataGameObjectId objectId);
     string ObjectId();
+
+    void SetData(ACTPartModel model);
+    void SetData(string developmentId, int level);
 }

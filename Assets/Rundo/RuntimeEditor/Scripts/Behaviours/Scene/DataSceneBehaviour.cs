@@ -21,8 +21,10 @@ namespace Rundo.RuntimeEditor.Behaviours
             var scene = DataScene;
 
             if (scene != null)
+            {
                 foreach (var dataGameObject in scene.DataGameObjects)
                     CreateEditorObject(dataGameObject, scene, true);
+            }
         }
 
         private void OnCreateDataGameObjectCommand(CreateDataGameObjectCommand data)

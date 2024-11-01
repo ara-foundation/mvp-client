@@ -199,9 +199,11 @@ namespace Rundo.RuntimeEditor.Behaviours
             DispatchUiEvent(new OnSceneLoadedEvent());
             AraRuntimeEditor_manager.Instance.DispatchUiEventToAllSceneControllers(new RuntimeEditorBehaviour.OnSceneSetToTabEvent());
 
+            ACTLevelScene.Instance.OnSceneLoaded();
+
             CreateWorld();
         }
-        
+
         private void SetScene(DataScene dataScene)
         {
             _isLazyLoad = false;

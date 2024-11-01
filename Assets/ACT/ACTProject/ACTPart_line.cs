@@ -72,12 +72,27 @@ public class ACTPart_line : ACTPart, ACTPart_interface
 
     private void Load()
     {
+        if (objectId == null || string.IsNullOrEmpty(objectId.ToStringRawValue()))
+        {
+            partList = new List<string>();
+            return;
+        }
         partList = ACTLevelScene.Instance.LineConnections(objectId);
         if (partList == null)
         {
             Debug.Log("The act level scene returned empty result");
             partList = new List<string>();
         }
+    }
+
+    public new void SetData(ACTPartModel _)
+    {
+
+    }
+
+    public new void SetData(string _devId, int _lvl)
+    {
+
     }
 
 

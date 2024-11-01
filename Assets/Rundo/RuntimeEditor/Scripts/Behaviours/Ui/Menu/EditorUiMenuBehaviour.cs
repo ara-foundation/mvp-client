@@ -103,10 +103,12 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
         private void RefreshScenesList()
         {
             _load.Clear();
-            var scenes = RuntimeEditorBehaviour.PersistentDataScenes.LoadData();
-            if (scenes != null)
-                foreach (var it in scenes)
-                    _load.AddData(it.Guid.ToStringRawValue(), it.Name);
+            var scene = RuntimeEditorController.GetDataScene();
+            if (scene != null) { 
+                _load.AddData(scene.DataSceneMetaData.Guid.ToStringRawValue(), scene.DataSceneMetaData.Name);
+            } else {
+                Debug.Log("EditorUiMenu doesnt have a scene yet");
+            }
         }
         
         private void Redraw()

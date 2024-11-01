@@ -13,6 +13,7 @@ public class ACTPart_edit : MonoBehaviour
     public delegate void TechStackEditedDelegate(string name, bool submitted);
     public delegate void BudgetEditedDelegate(double amount, bool submitted);
     public delegate void MaintainerNameEditedDelegate(string name, bool submitted);
+    public delegate void ModelEditedDelegate(ACTPartModel model);
 
     [HideInInspector]
     private ACTPart_controller Controller;
@@ -27,6 +28,7 @@ public class ACTPart_edit : MonoBehaviour
     public TechStackEditedDelegate OnTechStackEdited;
     public BudgetEditedDelegate OnBudgetEdited;
     public MaintainerNameEditedDelegate OnMaintainerNameEdited;
+    public ModelEditedDelegate OnModelEdited;
 
     void Awake()
     {
@@ -37,38 +39,16 @@ public class ACTPart_edit : MonoBehaviour
     void Start()
     {
         // Show a project name label, hide the project name editing field.
-        ToggleProjectNameEditing(edit: false);
-        ToggleMaintainerEditing(edit: false);
-        if (Controller.BudgetMenuLabel != null)
+        Controller.ToggleProjectNameEditing(edit: false);
+        Controller.ToggleMaintainerEditing(edit: false);
+        /*if (Controller != null)
         {
-            Controller.BudgetMenuLabel.text = "Budget: $0";
-        }
-    }
-
-    private void OnEnable()
-    {
-        if (AraAuth.Instance != null && AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
-        {
-            maintainerName = AraAuth.Instance.UserParams.loginParams.username;
-        }
-        else
-        {
-            maintainerName = "none";
-        }
-        SetMaintainerName();
+            Controller.SetBudget(0);
+        }*/
     }
 
     #region ProjectName
 
-    /// <summary>
-    /// Switch between editing the project name and showing it as a label
-    /// </summary>
-    /// <param name="edit"></param>
-    void ToggleProjectNameEditing(bool edit)
-    {
-        Controller.ProjectNameState.gameObject.SetActive(!edit);
-        Controller.ProjectNameFieldContainer.SetActive(edit);
-    }
 
     /// <summary>
     /// Invoked from Scene. By original design when a user clicks twice on project name label
@@ -82,7 +62,7 @@ public class ACTPart_edit : MonoBehaviour
         }
 
         Controller.ProjectNameState.ChangeMode(StateMode.None);
-        ToggleProjectNameEditing(edit: true);
+        Controller.ToggleProjectNameEditing(edit: true);
         CameraFocus.Instance.SelectTargetThrough(Controller.ProjectNameContainer, selecting: true);
     }
 
@@ -96,15 +76,14 @@ public class ACTPart_edit : MonoBehaviour
 
         if (!EventSystem.current.alreadySelecting) EventSystem.current.SetSelectedGameObject(null);
 
-        ToggleProjectNameEditing(edit: false);
+        Controller.ToggleProjectNameEditing(edit: false);
         var submitted = false;
 
-        if (!Input.GetKeyDown(KeyCode.Escape) && !Controller.ProjectNameLabel.text.Equals(name) && !string.IsNullOrEmpty(name))
+        if (!Input.GetKeyDown(KeyCode.Escape) && !string.IsNullOrEmpty(name) && !Controller.ProjectName().Equals(name))
         {
             submitted = true;
-            Controller.ProjectNameLabel.text = name;
-            // TODO call back the ara tutorial to start showing next part
-            Debug.Log("Submit the data (1=done) check is text changed, (2=todo) call submit to save data in the server");
+            var model = Controller.SetProjectName(name);
+            OnModelEdited?.Invoke(model);
         }
 
         OnProjectNameEdited?.Invoke(name, submitted);
@@ -134,19 +113,23 @@ public class ACTPart_edit : MonoBehaviour
             Controller.TechStackMenuButton.Focus();
             OnTechStackEdited?.Invoke(content, false);
             OnTechStackEdited = null;
+
         }
     }
 
     public void OnTechStackSubmitted()
     {
-        if (string.IsNullOrEmpty(Controller.TechStackContent.text))
+        var techStack = Controller.TechStack();
+        if (string.IsNullOrEmpty(techStack))
         {
             Notification.Instance.Show("Tech Stack is empty");
             return;
         }
         Controller.TechStackMenuButton.Focus();
-        OnTechStackEdited?.Invoke(Controller.TechStackContent.text, true);
+        OnTechStackEdited?.Invoke(techStack, true);
         OnTechStackEdited = null;
+
+        OnModelEdited?.Invoke(Controller.SetTechStack(techStack));
     }
 
     #endregion
@@ -188,22 +171,6 @@ public class ACTPart_edit : MonoBehaviour
 
     #region Maintainer
 
-    void ToggleMaintainerEditing(bool edit)
-    {
-        if (Controller.MaintainerMenuLabel != null) {
-            Controller.MaintainerMenuLabel.gameObject.SetActive(!edit);
-            Controller.MaintainerInputFieldContainer.SetActive(edit);
-        }
-    }
-
-    void SetMaintainerName()
-    {
-        if (Controller.MaintainerMenuLabel != null)
-        {
-            Controller.MaintainerMenuLabel.text = "Maintainer: " + maintainerName;
-        }
-    }
-
     public void OnEditMaintainer(bool focused)
     {
         if (!focused)
@@ -212,7 +179,7 @@ public class ACTPart_edit : MonoBehaviour
         }
 
         Controller.MaintainerState.ChangeMode(StateMode.None);
-        ToggleMaintainerEditing(edit: true);
+        Controller.ToggleMaintainerEditing(edit: true);
         CameraFocus.Instance.SelectTargetThrough(Controller.MaintainerCameraTarget, selecting: true);
     }
 
@@ -222,7 +189,7 @@ public class ACTPart_edit : MonoBehaviour
 
         if (!EventSystem.current.alreadySelecting) EventSystem.current.SetSelectedGameObject(null);
 
-        ToggleMaintainerEditing(edit: false);
+        Controller.ToggleMaintainerEditing(edit: false);
         var submitted = false;
         var editedName = name;
 
@@ -230,9 +197,8 @@ public class ACTPart_edit : MonoBehaviour
         {
             submitted = true;
             maintainerName = name;
-            SetMaintainerName();
-            // TODO call back the ara tutorial to start showing next part
-            Debug.Log("Submit the maintainer name (1=done) check is text changed, (2=todo) call submit to save data in the server");
+            var model = Controller.SetMaintainerName(maintainerName);
+            OnModelEdited?.Invoke(model);
         }
 
         OnMaintainerNameEdited?.Invoke(name, submitted);

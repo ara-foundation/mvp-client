@@ -20,7 +20,6 @@ namespace PieChart.ViitorCloud
         {
             var midPoint = GetMidPont(GetComponent<MeshCollider>());
             forward = transform.TransformPoint(midPoint);
-            Debug.Log($"Midpoint of {gameObject.name} is {midPoint}");
             forward = new Vector3(forward.x, forward.y, transform.position.z);
             if (gameObject.GetComponent<Outline>() == null)
                 gameObject.AddComponent<Outline>();

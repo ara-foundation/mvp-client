@@ -25,7 +25,6 @@ public class ACTLevel: MonoBehaviour
     {
         this.projectName = projectName;
         this.selected = selected;
-        Debug.Log($"ACTLevel was set as {selected}");
 
         SaveObj.SetActive(false);
         Button.interactable = selected;

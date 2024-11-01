@@ -72,7 +72,6 @@ public class ACTProject : MonoBehaviour, IStateReactor
         {
             if (progress != asyncOperation.progress)
             {
-                Debug.Log($"Async progress {progress}");
                 progress = asyncOperation.progress;
             }
             yield return null;

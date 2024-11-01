@@ -1,12 +1,22 @@
 using Dreamteck.Splines;
 using Lean.Transition;
+using Newtonsoft.Json;
 using Rundo.RuntimeEditor.Behaviours;
 using Rundo.RuntimeEditor.Data;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 using static ACTPart_edit;
+
+[Serializable]
+public class SaveModelResult
+{
+    [SerializeField]
+    public ACTPartModel part;
+    public bool increasePartsAmount;
+}
 
 public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 {
@@ -33,6 +43,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     [SerializeField, HideInInspector]
     protected ACTPart_edit Edit;
 
+    [Tooltip("For lines for now no controller used")]
     public bool EnableController;
     public ModeInScene Mode = ModeInScene.View;
     protected DataGameObjectId objectId;
@@ -42,11 +53,6 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     /// Orphan scripts will show the canvas.
     /// </summary>
     private bool orphaned = false;
-
-    void Awake()
-    {
-        
-    }
 
     public Vector3 LinePointPosition()
     {
@@ -90,7 +96,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     // Start is called before the first frame update
     void Start()
     {
-        var found = TryGetComponent<DataGameObjectBehaviour>(out var dataGameObjectBehaviour);
+        var found = TryGetComponent<DataGameObjectBehaviour>(out _);
         orphaned = !found;
         if (orphaned)
         {
@@ -124,8 +130,11 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
                 SplinePositionersContent = controller.SplinePositionerContent;
 
                 Edit = obj.GetComponent<ACTPart_edit>();
+                if (Edit != null)
+                {
+                    Edit.OnModelEdited += OnModelEdited;
+                }
             }
-
         }
 
         this.objectId = objectId;
@@ -227,7 +236,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     {
         if (Edit == null)
         {
-            Notification.Instance.Show("ACTPart_edit not set. Are you on Line since lindes dont have edit yet");
+            Notification.Instance.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
             return;
         }
 
@@ -252,5 +261,90 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         }
         Debug.Log($"Set line mode {on} for {gameObject.name}");
         MouseInput.enabled = on;
+    }
+
+    /// <summary>
+    /// Fetch the part parameters for the development id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    private async Task<Tuple<bool, bool>> SaveModel(ACTPartModel model)
+    {
+        string body = JsonConvert.SerializeObject(model);
+        string url = NetworkParams.AraActUrl + "/act/part";
+
+        Tuple<long, string> res;
+        try
+        {
+            res = await WebClient.Post(url, body);
+        }
+        catch (Exception ex)
+        {
+            Notification.Instance.Show($"Error to save model: client exception {ex.Message}");
+            Debug.LogError(ex);
+            return Tuple.Create(false, false);
+        }
+        if (res.Item1 != 200)
+        {
+            Notification.Instance.Show($"Error to save model: {res.Item2}");
+            return Tuple.Create(false, false);
+        }
+
+        Notification.Instance.Show($"Part was saved successfully!");
+
+        SaveModelResult result;
+        try
+        {
+            result = JsonConvert.DeserializeObject<SaveModelResult>(res.Item2);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e + " for " + res);
+            return Tuple.Create(false, false);
+        }
+        return Tuple.Create(true, result.increasePartsAmount);
+    }
+
+    private async void OnModelEdited(ACTPartModel _model)
+    {
+        if (Mode == ModeInScene.Interactive)
+        {
+            var saveResult = await SaveModel(_model);
+            if (saveResult.Item1 && saveResult.Item2) {
+                
+            }
+        } else if (Mode == ModeInScene.Edit)
+        {
+            Debug.Log("Model was changed, but its in edit mode, so nothing will change");
+
+        }
+
+    }
+
+    public void SetData(ACTPartModel model)
+    {
+        Debug.Log($"Set act part data {Edit != null}");
+        if (Edit != null)
+        {
+            var controller = Edit.gameObject.GetComponent<ACTPart_controller>();
+            if (controller != null)
+            {
+                controller.SetData(model);
+            }
+        }
+    }
+
+    public void SetData(string developmentId, int level)
+    {
+        Debug.Log($"Set empty act part data {Edit != null} object {ObjectId()}");
+
+        var model = new ACTPartModel
+        {
+            parentObjId = null,
+            objId = ObjectId(),
+            developmentId = developmentId,
+            level = level
+        };
+        SetData(model);
     }
 }
