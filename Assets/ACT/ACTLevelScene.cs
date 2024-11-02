@@ -148,16 +148,12 @@ public class ACTLevelScene : EditorBaseBehaviour
 
             if (manualTest)
             {
-                Debug.Log("Automatically loading manual project");
-                Debug.Log($"Manual project id: {manualProjectId}");
                 if (manualNewScene)
                 {
-                    Debug.Log("Loading a new empty scene");
                     AraRuntimeEditor_manager.Instance.CreateNewScene();
                 } else
                 {
                     //AraRuntimeEditor_manager.Instance.LoadScene(manualSceneId);
-                    Debug.Log($"Loading the scene for {manualSceneId}");
                 }
             }
         }
@@ -173,7 +169,6 @@ public class ACTLevelScene : EditorBaseBehaviour
         Models = await FetchParts(developmentId);
     }
 
-
     private async Task<Level> FetchScene(string id)
     {
         Level incorrectResult = new() { 
@@ -187,7 +182,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         {
             res = await WebClient.Get(url);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             return incorrectResult;
         }
@@ -202,7 +197,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         {
             result = JsonConvert.DeserializeObject<Level>(res);
         }
-        catch (Exception e)
+        catch (Exception)
         {
             return incorrectResult;
         }
@@ -478,6 +473,8 @@ public class ACTLevelScene : EditorBaseBehaviour
             Notification.Instance.Show("Failed to save the part in the server. Please try again later :(");
             return;
         }
+
+
 
         Sensever_window.Instance.ContinueSensever((int)TutorialStep.Congrats);
     }
