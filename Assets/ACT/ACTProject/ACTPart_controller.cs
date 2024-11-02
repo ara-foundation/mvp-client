@@ -11,6 +11,7 @@ public class ACTPart_controller : MonoBehaviour
 {
     private ACTPartModel _model;
     [SerializeField] public Canvas Canvas;
+    [SerializeField] public GameObject HintReactor;
     [SerializeField] public GameObject Menu;
     [SerializeField] public Transform SplinePositionerContent;
 

@@ -129,6 +129,8 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
                 Menu = controller.Menu;
                 SplinePositionersContent = controller.SplinePositionerContent;
 
+                ActivityState.AddReactor(controller.HintReactor);
+
                 Edit = obj.GetComponent<ACTPart_edit>();
                 if (Edit != null)
                 {
