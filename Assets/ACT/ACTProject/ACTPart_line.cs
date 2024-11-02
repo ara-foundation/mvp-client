@@ -80,7 +80,6 @@ public class ACTPart_line : ACTPart, ACTPart_interface
         partList = ACTLevelScene.Instance.LineConnections(objectId);
         if (partList == null)
         {
-            Debug.Log("The act level scene returned empty result");
             partList = new List<string>();
         }
     }
