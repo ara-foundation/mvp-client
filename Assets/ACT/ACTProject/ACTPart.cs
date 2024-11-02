@@ -209,12 +209,20 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         {
             ActivityState.ChangeMode(StateMode.None);
             Mode = ModeInScene.View;
+            if (Menu.activeSelf)
+            {
+                Menu.gameObject.SetActive(false);
+            }
         }
         else
         {
             Mode = ModeInScene.Edit;
 
-            ActivityState.Select(true);
+            ActivityState.ToggleSelect(true);
+            if (!Menu.activeSelf)
+            {
+                Menu.gameObject.SetActive(true);
+            }
         }
         MouseInput.enabled = on;
     }
@@ -244,6 +252,36 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         Edit.OnEditTechStack(true);
     }
 
+    public void EditBudget(BudgetEditedDelegate onEdited)
+    {
+        if (Edit == null)
+        {
+            Notification.Instance.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
+            return;
+        }
+
+        Edit.OnBudgetEdited += onEdited;
+        Edit.OnEditBudget(true);
+    }
+
+    public void EditMaintainer(MaintainerNameEditedDelegate onEdited)
+    {
+        if (Edit == null)
+        {
+            Notification.Instance.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
+            return;
+        }
+
+        if (!Menu.gameObject.activeSelf)
+        {
+            Menu.SetActive(true);
+        }
+
+        Edit.OnMaintainerNameEdited += onEdited;
+        Edit.OnEditMaintainer(true);
+    }
+
+
     public void SetLineMode(bool on)
     {
         if ((on && Mode == ModeInScene.DrawLine) || (!on && Mode == ModeInScene.View))
@@ -262,6 +300,11 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         MouseInput.enabled = on;
     }
 
+    /// <summary>
+    /// Fetch the part parameters for this part
+    /// </summary>
+    /// <returns>Returns two parameters, first boolean parameter indicates server response, 
+    /// the second parameter indicates was parts of its parent increased?</returns>
     public async Task<Tuple<bool, bool>> SaveModel()
     {
         if (!EnableController)
@@ -278,7 +321,8 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     /// Fetch the part parameters for the development id
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
+    /// <returns>Returns two parameters, first boolean parameter indicates server response, 
+    /// the second parameter indicates was parts of its parent increased?</returns>
     private async Task<Tuple<bool, bool>> SaveModel(ACTPartModel model)
     {
         string body = JsonConvert.SerializeObject(model);

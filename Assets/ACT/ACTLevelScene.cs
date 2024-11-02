@@ -88,7 +88,9 @@ public class ACTLevelScene : EditorBaseBehaviour
         BudgetStart = 5,
         BudgetEnd = 6,
         Maintainer = 7,
-        Tasks = 8,
+        Save = 8,
+        Congrats = 9,
+        Tasks = 10,
     }
     public List<Event> PrimitiveTutorialTexts;
     /// <summary>
@@ -389,6 +391,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         // Focus the camera on the part.
         // The drawback is that transform handler is also activated.
         _part.SetEditMode(true);
+        _part.SetData(_currentId, _currentLevelNum);
         _part.EditProjectName(OnProjectNameEdited);
 
         // Start tutorial
@@ -418,24 +421,65 @@ public class ACTLevelScene : EditorBaseBehaviour
 
         if (submitted)
         {
-            OnEditingEnd();
-            Debug.Log("TODO ActScene: Tech stack was set, let's now work on the budget. Add the budget UI controller");
-            //Sensever_window.Instance.ContinueSensever((int)TutorialStep.TechStackStart);
-            //_part.EditTechStack(OnTechStackEdited);
+            Sensever_window.Instance.ContinueSensever((int)TutorialStep.BudgetStart);
+            _part.EditBudget(OnBudgetEdited);
         }
         else
         {
-            Notification.Instance.Show("To continue set the project name first.");
+            Notification.Instance.Show("To continue set the tech stack first.");
             _part.EditTechStack(OnTechStackEdited);
             return;
         }
     }
 
-    private void OnEditingEnd()
+    private void OnBudgetEdited(decimal budget, bool submitted)
     {
         var _part = _editingPart as ACTPart;
+
+        if (submitted)
+        {
+            Sensever_window.Instance.ContinueSensever((int)TutorialStep.Maintainer);
+            _part.EditMaintainer(OnMaintainerEdited);
+        }
+        else
+        {
+            Notification.Instance.Show("To continue set the budget first.");
+            _part.EditBudget(OnBudgetEdited);
+            return;
+        }
+    }
+
+    private void OnMaintainerEdited(string name, bool submitted)
+    {
+        var _part = _editingPart as ACTPart;
+
+        if (submitted)
+        {
+            ACTLevels.Instance.OnSceneUpdate(OnSaveScene);
+            Sensever_window.Instance.ContinueSensever((int)TutorialStep.Save);
+        }
+        else
+        {
+            Notification.Instance.Show("To continue set the budget first.");
+            _part.EditBudget(OnBudgetEdited);
+            return;
+        }
+    }
+
+    private async void OnEditingEnd()
+    {
+        var _part = _editingPart as ACTPart;
+
+        _part.SetEditMode(false);
         _part.Interactive(true);
-        ACTLevels.Instance.OnSceneUpdate(OnSaveScene);
+        var saved = await _part.SaveModel();
+        if (!saved.Item1)
+        {
+            Notification.Instance.Show("Failed to save the part in the server. Please try again later :(");
+            return;
+        }
+
+        Sensever_window.Instance.ContinueSensever((int)TutorialStep.Congrats);
     }
 
     public void OnLineEditingEnd(DataGameObjectId dataGameObjectId, List<string> connection)
@@ -480,8 +524,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         var sceneSaved = await SaveScene(_currentId, _currentLevel);
         if (sceneSaved && _editingPart != null)
         {
-            var part = _editingPart as ACTPart;
-            await part.SaveModel();
+            OnEditingEnd();
         }
     }
 
@@ -577,13 +620,16 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     private void OnDialogueEnd(int showed)
     {
-        //Debug.Log($"Tutorial ended for {showed} is it this one {_editingStep}");
+        if (showed == (int)TutorialStep.Congrats)
+        {
+            Notification.Instance.Show("Todo: Your reward is 1$ Dollar worth ARA, you can claim them in the Sangha Page");
+            Debug.Log("Todo: After implementing tasks and sangha, reward the user with the items for this create reward popup");
+        }
     }
 
     private void OnDialogueStart(int started)
     {
         _editingStep = started;
-        //Debug.Log("Starting the dialogue text for " + (TutorialStep)started);
     }
 
     private bool HideSenseverInsteadContinue(int showedStep)
@@ -610,13 +656,26 @@ public class ACTLevelScene : EditorBaseBehaviour
             return true;
         } else if (showedStep == (int)TutorialStep.Maintainer)
         {
-            return false;
+            return true;
         } else 
         // The last step, therefore hide the tutorial
         if (showedStep == (int)TutorialStep.Tasks)
         {
             return true;
-        } else if (showedStep == (int)Sensever_dialogue.None)
+        }
+        else
+        // The last step, therefore hide the tutorial
+        if (showedStep == (int)TutorialStep.Congrats)
+        {
+            return true;
+        }
+        else
+        // The last step, therefore hide the tutorial
+        if (showedStep == (int)TutorialStep.Save)
+        {
+            return true;
+        }
+        else if (showedStep == (int)Sensever_dialogue.None)
         {
             return false;
         }

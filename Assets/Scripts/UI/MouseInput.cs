@@ -30,7 +30,7 @@ public class MouseInput : MonoBehaviour, IPointerClickHandler, IPointerEnterHand
 
     void OnSingleClick()
     {
-        ActivityState.Select();
+        ActivityState.ToggleSelect();
     }
 
     void OnDoubleClick()

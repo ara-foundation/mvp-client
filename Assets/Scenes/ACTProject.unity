@@ -3083,7 +3083,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6225881171699773568, guid: 797064feb7efe5240bf1b48e4fbb32ec, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -6256385.5
+      value: -6332626
       objectReference: {fileID: 0}
     - target: {fileID: 6225881171926023598, guid: 797064feb7efe5240bf1b48e4fbb32ec, type: 3}
       propertyPath: m_LocalScale.x
@@ -5660,6 +5660,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 77e4c2ebdea1e8a48a9b778b6c4eb671, type: 2}
   - {fileID: 11400000, guid: 3a758f98206f172439ded6059254cdb8, type: 2}
   - {fileID: 11400000, guid: 5f8271e0e0b60314eac02f27bce8cb3d, type: 2}
+  - {fileID: 11400000, guid: cea12cd869f3a454e8575ba8316f18c2, type: 2}
+  - {fileID: 11400000, guid: a74555210952ef74fb92fea0d599ccb3, type: 2}
   - {fileID: 11400000, guid: acb97e1ddcc1f8747aafff65a0e70a29, type: 2}
   manualTest: 1
   manualNewScene: 0

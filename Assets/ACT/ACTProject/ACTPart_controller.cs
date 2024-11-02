@@ -50,6 +50,13 @@ public class ACTPart_controller : MonoBehaviour
 
     public ACTPartModel Model { get { return _model; } }
 
+    void Start()
+    {
+        // Show a project name label, hide the project name editing field.
+        ToggleProjectNameEditing(edit: false);
+        ToggleMaintainerEditing(edit: false);
+    }
+
     //
     // Tasks are managed in the nested level so it's a part of ACTPart
     //
@@ -85,6 +92,10 @@ public class ACTPart_controller : MonoBehaviour
 
     public ACTPartModel SetProjectName(string projectName)
     {
+        if (this._model.projectName == null)
+        {
+            this._model.projectName = "";
+        }
         this._model.projectName = projectName;
         ProjectNameLabel.text = projectName;
         return this._model;
@@ -231,6 +242,10 @@ public class ACTPart_controller : MonoBehaviour
 
     public void SetData(ACTPartModel model)
     {
+        if (_model != null)
+        {
+            return;
+        }
         _model = model;
         if (string.IsNullOrEmpty(model.projectName))
         {

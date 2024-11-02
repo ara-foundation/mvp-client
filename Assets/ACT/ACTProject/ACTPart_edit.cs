@@ -37,18 +37,6 @@ public class ACTPart_edit : MonoBehaviour
         Controller = GetComponent<ACTPart_controller>();
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        // Show a project name label, hide the project name editing field.
-        Controller.ToggleProjectNameEditing(edit: false);
-        Controller.ToggleMaintainerEditing(edit: false);
-        /*if (Controller != null)
-        {
-            Controller.SetBudget(0);
-        }*/
-    }
-
     #region ProjectName
 
 
@@ -112,7 +100,7 @@ public class ACTPart_edit : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape) || string.IsNullOrEmpty(content))
         {
-            Controller.TechStackMenuButton.Focus();
+            Controller.TechStackMenuButton.ToggleFocus();
             OnTechStackEdited?.Invoke(content, false);
             OnTechStackEdited = null;
 
@@ -127,7 +115,7 @@ public class ACTPart_edit : MonoBehaviour
             Notification.Instance.Show("Tech Stack is empty");
             return;
         }
-        Controller.TechStackMenuButton.Focus();
+        Controller.TechStackMenuButton.ToggleFocus();
         OnTechStackEdited?.Invoke(techStack, true);
         OnTechStackEdited = null;
 
@@ -230,6 +218,10 @@ public class ACTPart_edit : MonoBehaviour
 
     public void OnCancelBudgetEdit()
     {
+        if (Controller.BudgetWindow.On)
+        {
+            Controller.BudgetWindow.Set(false);
+        }
         CameraFocus.Instance.SelectTargetThrough(Controller.BudgetCameraTarget, selecting: false);
 
         OnBudgetEdited?.Invoke((decimal)0, false);
@@ -238,6 +230,10 @@ public class ACTPart_edit : MonoBehaviour
 
     public void OnBudgetSubmitted()
     {
+        if (Controller.BudgetWindow.On)
+        {
+            Controller.BudgetWindow.Set(false);
+        }
         CameraFocus.Instance.SelectTargetThrough(Controller.BudgetCameraTarget, selecting: false);
 
         var budgetValue = Controller.BudgetSliderValue();

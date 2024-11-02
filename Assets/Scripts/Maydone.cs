@@ -107,6 +107,7 @@ public class Plan : ForumParams
     public string project_id;
     public string cost_usd;
 #nullable enable
+    public string? used_budget;
     public string? sangha_welcome;
 #nullable disable
 }

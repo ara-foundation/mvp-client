@@ -199,7 +199,14 @@ public class ActivityState : MonoBehaviour
         mode = updatedTo;
     }
 
-    public void Focus()
+    public void UnFocus()
+    {
+        // If already selected, then simply deselect
+        var toggleOn = mode != StateMode.Focused;
+        ChangeMode(StateMode.None);
+    }
+
+    public void ToggleFocus()
     {
         // If already selected, then simply deselect
         var toggleOn = mode != StateMode.Focused;
@@ -212,7 +219,7 @@ public class ActivityState : MonoBehaviour
         }
     }
 
-    public void Select()
+    public void ToggleSelect()
     {
         // If already selected, then simply deselect
         var toggleOn = mode != StateMode.Selected;
@@ -230,7 +237,7 @@ public class ActivityState : MonoBehaviour
         }
     }
 
-    public void Select(bool enabled)
+    public void ToggleSelect(bool enabled)
     {
         // If already selected, then simply deselect
         var toggledOn = mode == StateMode.Selected;

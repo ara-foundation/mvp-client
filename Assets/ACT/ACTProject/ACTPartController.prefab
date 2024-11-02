@@ -768,7 +768,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 737567229204222237}
         m_TargetAssemblyTypeName: ActivityState, Assembly-CSharp
-        m_MethodName: Focus
+        m_MethodName: UnFocus
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3028,9 +3028,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1340635662114033665}
-        m_TargetAssemblyTypeName: ACTPart_edit, Assembly-CSharp
-        m_MethodName: OnBudgetSubmitted
+      - m_Target: {fileID: 737567229204222237}
+        m_TargetAssemblyTypeName: ActivityState, Assembly-CSharp
+        m_MethodName: UnFocus
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3040,9 +3040,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 737567229204222237}
-        m_TargetAssemblyTypeName: ActivityState, Assembly-CSharp
-        m_MethodName: Focus
+      - m_Target: {fileID: 1340635662114033665}
+        m_TargetAssemblyTypeName: ACTPart_edit, Assembly-CSharp
+        m_MethodName: OnBudgetSubmitted
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7046,7 +7046,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2022737075949073419}
         m_TargetAssemblyTypeName: ActivityState, Assembly-CSharp
-        m_MethodName: Focus
+        m_MethodName: ToggleFocus
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7366,7 +7366,7 @@ CanvasGroup:
   m_Alpha: 0
   m_Interactable: 0
   m_BlocksRaycasts: 0
-  m_IgnoreParentGroups: 0
+  m_IgnoreParentGroups: 1
 --- !u!1 &7541530149047257763
 GameObject:
   m_ObjectHideFlags: 0
