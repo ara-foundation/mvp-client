@@ -39,7 +39,7 @@ public class ActivityState : MonoBehaviour
 
     public ActivityGroup ActivityGroup;
     [SerializeField]
-    public UnityEngine.Object[] reactors;
+    private UnityEngine.Object[] reactors;
 
     private bool lateChange;
     private StateMode lateChangeMode;
@@ -50,6 +50,26 @@ public class ActivityState : MonoBehaviour
         if (ActivityGroup != null)
         {
             ActivityGroup.SetActivityState(this);
+        }
+    }
+
+    public void AddReactor(UnityEngine.Object reactor)
+    {
+        if (reactors == null)
+        {
+            reactors = new UnityEngine.Object[1] { reactor };
+        } else
+        {
+            var pushedReactors = new UnityEngine.Object[reactors.Length + 1];
+
+            for (int i = 0; i < pushedReactors.Length -1; i++)
+            {
+                pushedReactors[i] = reactors[i];
+            }
+
+            pushedReactors[pushedReactors.Length - 1] = reactor;
+
+            reactors = pushedReactors;
         }
     }
 
