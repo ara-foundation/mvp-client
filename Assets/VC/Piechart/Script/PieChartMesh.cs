@@ -7,7 +7,7 @@ namespace PieChart.ViitorCloud
 {
     public class PieChartMesh : MonoBehaviour
     {
-        float[] mData;
+        decimal[] mData;
 
         int mSlices;
         float mRotationAngle;
@@ -40,7 +40,7 @@ namespace PieChart.ViitorCloud
         public PieChartMeshController.AnimationType animationType;
 
 
-        public void Init(float[] data, Material mainMaterial, float speed, GameObject otherobject, PieChartMeshController.AnimationType animationType)
+        public void Init(decimal[] data, Material mainMaterial, float speed, GameObject otherobject, PieChartMeshController.AnimationType animationType)
         {
             this.animationType = animationType;
             if (animationType == PieChartMeshController.AnimationType.UpDown || animationType == PieChartMeshController.AnimationType.UpDownAndRotation)
@@ -59,7 +59,7 @@ namespace PieChart.ViitorCloud
             Init(data);
         }
 
-        public void Init(float[] data)
+        public void Init(decimal[] data)
         {
             mSlices = 100;
             mRotationAngle = 90f;
@@ -68,7 +68,7 @@ namespace PieChart.ViitorCloud
             mData = data;
         }
 
-        public void Draw(float[] data)
+        public void Draw(decimal[] data)
         {
             mData = data;
             StopAllCoroutines();
@@ -118,8 +118,8 @@ namespace PieChart.ViitorCloud
             }
 
             // Calculate sum of data values
-            float sumOfData = 0;
-            foreach (float value in mData)
+            decimal sumOfData = 0;
+            foreach (decimal value in mData)
             {
                 sumOfData += value;
             }
@@ -493,7 +493,7 @@ namespace PieChart.ViitorCloud
 
 
         }
-        public float[] Data { get { return mData; } set { mData = value; } }
+        public decimal[] Data { get { return mData; } set { mData = value; } }
 
         public int Slices { get { return mSlices; } set { mSlices = value; } }
 

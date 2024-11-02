@@ -18,7 +18,7 @@ namespace PieChart.ViitorCloud
         [SerializeField] private PieChartMesh mPieChart;
 
         bool randomData;
-        List<float> Data =new List<float>(); 
+        List<decimal> Data =new List<decimal>(); 
         //public float speedofRotation;
         float delay = 0.1f;
         public Material mainMaterial;
@@ -97,9 +97,9 @@ namespace PieChart.ViitorCloud
             }
 
 
-            if (customColor.Count != segment)
+            if (customColor.Count < segment)
             {
-                Debug.LogError("Generating Random Color. \n\n ColorList Count != segment");
+                Debug.LogError($"Generating Random Color. ColorListCount({customColor.Count}) != segment({segment})");
                 customColor = GenerateRandomColors(segment).ToList();
             }
 
@@ -193,7 +193,7 @@ namespace PieChart.ViitorCloud
         /// Data of the pie
         /// </summary>
         /// <param name="data"></param>
-        public void SetData(float[] data)
+        public void SetData(decimal[] data)
         {
             this.Data = data.ToList();
         }
@@ -208,12 +208,12 @@ namespace PieChart.ViitorCloud
 
 
 
-        float[] GenerateRandomValues(int length)
+        decimal[] GenerateRandomValues(int length)
         {
-            float[] targets = new float[length];
+            decimal[] targets = new decimal[length];
             for (int i = 0; i < length; i++)
             {
-                targets[i] = Random.Range(1f, 100f);
+                targets[i] = new decimal(Random.Range(1f, 100f));
             }
             return targets;
         }

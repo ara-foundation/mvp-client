@@ -1,7 +1,9 @@
 using Lean.Gui;
+using Nethereum.Web3;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,7 +13,7 @@ public class ACTPart_edit : MonoBehaviour
 {
     public delegate void ProjectNameEditedDelegate(string name, bool submitted);
     public delegate void TechStackEditedDelegate(string name, bool submitted);
-    public delegate void BudgetEditedDelegate(double amount, bool submitted);
+    public delegate void BudgetEditedDelegate(decimal amount, bool submitted);
     public delegate void MaintainerNameEditedDelegate(string name, bool submitted);
     public delegate void ModelEditedDelegate(ACTPartModel model);
 
@@ -137,6 +139,66 @@ public class ACTPart_edit : MonoBehaviour
     #region Budget
 
     /// <summary>
+    /// Returns the budget, and used budgets. 
+    /// For level one, the budget is taken from the ACTSession.
+    /// </summary>
+    /// <returns></returns>
+    private Tuple<decimal, decimal> GetBudgets()
+    {
+        if (Controller.Model.level == 0)
+        {
+            Debug.LogError("Budget works with Controller.Model.level only");
+            return Tuple.Create(new decimal(0), new decimal(0));
+        }
+
+        if (Controller.Model.level > 1)
+        {
+            Debug.LogError("Budget supported by first level for now");
+            return Tuple.Create(new decimal(0), new decimal(0));
+        }
+
+        // First budget is taken from ACTSession.project.plan
+        var plan = ACTSession.Instance.Project.plan[0];
+        decimal costUsd = 0;
+        if (!string.IsNullOrEmpty(plan.cost_usd))
+            costUsd = Web3.Convert.FromWei(BigInteger.Parse(plan.cost_usd));
+        decimal usedBudget = 0;
+        if (!string.IsNullOrEmpty(plan.used_budget))
+            usedBudget = Web3.Convert.FromWei(BigInteger.Parse(plan.used_budget));
+
+        return Tuple.Create(costUsd, usedBudget);
+    }
+
+    private void SetUsedBudget(decimal updatedUsedBudget)
+    {
+        if(Controller.Model.level == 0)
+        {
+            Debug.LogError("Budget works with Controller.Model.level only");
+            return;
+        }
+
+        if (Controller.Model.level > 1)
+        {
+            Debug.LogError("Setting Budget supported by first level for now");
+            return;
+        }
+        if (updatedUsedBudget == 0)
+        {
+            return;
+        }
+
+        // First budget is taken from ACTSession.project.plan
+        var plan = ACTSession.Instance.Project.plan[0];
+        decimal usedBudget = 0;
+        if (!string.IsNullOrEmpty(plan.used_budget))
+            usedBudget = Web3.Convert.FromWei(BigInteger.Parse(plan.used_budget));
+        if (updatedUsedBudget != usedBudget)
+        {
+            plan.used_budget = Web3.Convert.ToWei(updatedUsedBudget).ToString();
+        }
+    }
+
+    /// <summary>
     /// Double click on the tech stack
     /// </summary>
     /// <param name="focused"></param>
@@ -147,23 +209,53 @@ public class ACTPart_edit : MonoBehaviour
         
         if (focused)
         {
-            Controller.BudgetPieChart.GenerateChart();
+            var budgets = GetBudgets();
+            Controller.SetBudgetBox(budgets.Item1, budgets.Item2);
         }
+    }
+
+    // For slider
+    public void OnBudgetEditEnd()
+    {
+        var budgetAllocation = Controller.BudgetSliderValue();
+        Controller.ChangeBudgetAllocation(budgetAllocation, updateInput: true, updateSlider: false);
+    }
+
+    // For input field
+    public void OnBudgetEditEnd(string budgetValue)
+    {
+        var budgetAllocation = decimal.Parse(budgetValue);
+        Controller.ChangeBudgetAllocation(budgetAllocation, updateInput: false, updateSlider: true);
     }
 
     public void OnCancelBudgetEdit()
     {
-        if (!EventSystem.current.alreadySelecting) EventSystem.current.SetSelectedGameObject(null);
+        CameraFocus.Instance.SelectTargetThrough(Controller.BudgetCameraTarget, selecting: false);
 
-        OnBudgetEdited?.Invoke(0, true);
+        OnBudgetEdited?.Invoke((decimal)0, false);
         OnBudgetEdited = null;
     }
 
     public void OnBudgetSubmitted()
     {
-        if (!EventSystem.current.alreadySelecting) EventSystem.current.SetSelectedGameObject(null);
+        CameraFocus.Instance.SelectTargetThrough(Controller.BudgetCameraTarget, selecting: false);
 
-        OnBudgetEdited?.Invoke(0, true);
+        var budgetValue = Controller.BudgetSliderValue();
+        var model = Controller.SetBudget(budgetValue);
+        if (model == null)
+        {
+            Notification.Instance.Show("Budget was not set validly");
+            OnBudgetEdited?.Invoke((decimal)0, false);
+            OnBudgetEdited = null;
+
+            return;
+        }
+
+        SetUsedBudget(budgetValue);
+
+        OnModelEdited?.Invoke(model);
+
+        OnBudgetEdited?.Invoke(budgetValue, true);
         OnBudgetEdited = null;
     }
 

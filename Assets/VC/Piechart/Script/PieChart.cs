@@ -14,7 +14,7 @@ namespace PieChart.ViitorCloud
 
         [Tooltip("The data for the pie\n" +
                  "The size of this list must exact the value of Segment.")]
-        public float[] Data;
+        public decimal[] Data;
 
         [Tooltip("Main Material that the mesh of the pie will use to rander")]
         public Material mainMaterial;
@@ -43,6 +43,7 @@ namespace PieChart.ViitorCloud
 
         public void GenerateChart()
         {
+            ClearChart();
             pieChartMeshController.SetData(Data);
             pieChartMeshController.SetColor(customColors);
             pieChartMeshController.SetDescription(dataDescription.ToArray());

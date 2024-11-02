@@ -46,8 +46,12 @@ public class ACTPartModel
     public string projectName;
     public string techStack;
     public int deadline;
-    public double budget;
+    public decimal budget;
     public string maintainer;
+
+#nullable enable
+    public decimal? usedBudget;
+#nullable disable
 
 }
 

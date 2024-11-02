@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-
+using UnityEngine.UI;
 
 public class ACTPart_controller : MonoBehaviour
 {
@@ -30,7 +30,17 @@ public class ACTPart_controller : MonoBehaviour
     [SerializeField] private TextMeshProUGUI BudgetMenuLabel;
     [SerializeField] public LeanWindow BudgetWindow;
     [SerializeField] public Transform BudgetCameraTarget;
-    [SerializeField] public PieChart.ViitorCloud.PieChart BudgetPieChart;
+    
+    [SerializeField] private TextMeshProUGUI BudgetMinLabel;
+    [SerializeField] private TextMeshProUGUI BudgetMaxLabel;
+    [SerializeField] private Slider BudgetSlider;
+    [SerializeField] private TMP_InputField BudgetInput;
+
+    private int availablePieIndex = 1;
+    private int allocatedPieIndex = 2;
+    private decimal maxAvailableBudget = 0;
+    private readonly decimal minAllocatedPie = new decimal(0.1);
+    [SerializeField] private PieChart.ViitorCloud.PieChart BudgetPieChart;
     [Space(20)]
     [Header("Maintainer")]
     [SerializeField] private TextMeshProUGUI MaintainerMenuLabel;
@@ -87,8 +97,108 @@ public class ACTPart_controller : MonoBehaviour
         return this._model;
     }
 
-    public ACTPartModel SetBudget(double budget)
+    public void SetBudgetBox(decimal budget, decimal usedBudget)
     {
+        var usedBudgetExceptThisModel = (usedBudget - _model.budget);
+        maxAvailableBudget = (budget - usedBudgetExceptThisModel - (_model.usedBudget ?? 0));
+
+        BudgetMinLabel.text = $"From $0 {{";
+        BudgetMaxLabel.text = $"}} To ${maxAvailableBudget}";
+        BudgetSlider.minValue = 0;
+        BudgetSlider.maxValue = (float)maxAvailableBudget;
+        bool generateInitialChart = BudgetSlider.value.Equals((float)_model.budget);
+        SetBudgetChart(budget, usedBudgetExceptThisModel, generateInitialChart);
+     
+        // It will call the ChangeBudgetAllocation event which on it's own will draw the chart and set the fields
+        if (!BudgetSlider.value.Equals((float)_model.budget)) {
+            BudgetSlider.value = (float)_model.budget;
+        }
+    }
+
+    public decimal BudgetSliderValue()
+    {
+        return (decimal)BudgetSlider.value;
+    }
+
+    public void ChangeBudgetAllocation(decimal budgetAllocation, bool updateInput, bool updateSlider)
+    {
+        if (budgetAllocation < minAllocatedPie)
+        {
+            budgetAllocation = minAllocatedPie;
+        } else if (budgetAllocation > maxAvailableBudget)
+        {
+            budgetAllocation = maxAvailableBudget;
+        }
+        BudgetPieChart.Data[availablePieIndex] = maxAvailableBudget - budgetAllocation; // available
+        BudgetPieChart.Data[allocatedPieIndex] = budgetAllocation;
+
+        if (updateInput)
+        {
+            BudgetInput.text = budgetAllocation.ToString();
+        }
+        if (updateSlider)
+        {
+            BudgetSlider.value = (float)budgetAllocation;
+        }
+
+        BudgetPieChart.animationType = PieChart.ViitorCloud.PieChartMeshController.AnimationType.NoAnimation;
+        BudgetPieChart.GenerateChart();
+    }
+
+    private void SetBudgetChart(decimal budget, decimal usedBudget, bool generateChart)
+    {
+        var allocatedPie = minAllocatedPie;
+        if (_model.budget != 0)
+        {
+            allocatedPie = _model.budget;
+        }
+        // pie chart
+        // total is entier budget
+        if (usedBudget == 0)
+        {
+            BudgetPieChart.Data = new decimal[2];
+            availablePieIndex = 0;
+            allocatedPieIndex = 1;
+        }
+        else
+        {
+            // the part already used some money, we are adjusting it.
+            if (_model.usedBudget > 0)
+            {
+                BudgetPieChart.Data = new decimal[4];
+                availablePieIndex = 2;
+                allocatedPieIndex = 3;
+            }
+            else
+            {
+                BudgetPieChart.Data = new decimal[3];
+                availablePieIndex = 1;
+                allocatedPieIndex = 2;
+            }
+
+            BudgetPieChart.Data[0] = usedBudget; // used budget, the remaining is what is available to this part.
+
+        }
+        BudgetPieChart.Data[availablePieIndex] = maxAvailableBudget - allocatedPie; // available
+        BudgetPieChart.Data[allocatedPieIndex] = allocatedPie; // as slider moves, move this value to along with previous pie
+
+        // set slider
+        // set min/max
+        // set link between slider and value in edit
+        BudgetPieChart.segments = BudgetPieChart.Data.Length;
+        if (generateChart)
+        {
+            BudgetPieChart.animationType = PieChart.ViitorCloud.PieChartMeshController.AnimationType.Rotation;
+            BudgetPieChart.GenerateChart();
+        }
+    }
+
+    public ACTPartModel SetBudget(decimal budget)
+    {
+        if (this._model.budget == budget)
+        {
+            return null;
+        }
         this._model.budget = budget;
         SetBudgetInternal(budget);
         return this._model;
@@ -101,12 +211,14 @@ public class ACTPart_controller : MonoBehaviour
         return this._model;
     }
 
-    private void SetBudgetInternal(double budget)
+    private void SetBudgetInternal(decimal budget)
     {
         if (BudgetMenuLabel != null)
         {
             BudgetMenuLabel.text = $"Budget: ${budget}";
         }
+
+        // also for the pie chart
     }
 
     private void SetMaintainerNameInternal(string maintainerName)
