@@ -105,12 +105,13 @@ public class Sensever_dialogue : MonoBehaviour
     /// <returns></returns>
     private bool ForceStopTexting()
     {
-        if (!EventController.IsTexting())
+        if (EventController.IsTexting())
         {
-            return false;
+            EventController.StopTexting();
+        } else
+        {
+            Debug.Log("Text shown already");
         }
-
-        EventController.StopTexting();
 
         return (HideInsteadContinue != null && HideInsteadContinue(showed));
     }
