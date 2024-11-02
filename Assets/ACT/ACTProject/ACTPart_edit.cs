@@ -157,7 +157,7 @@ public class ACTPart_edit : MonoBehaviour
         return Tuple.Create(costUsd, usedBudget);
     }
 
-    private void SetUsedBudget(decimal updatedUsedBudget)
+    private void SetUsedBudget(decimal addition)
     {
         if(Controller.Model.level == 0)
         {
@@ -170,7 +170,7 @@ public class ACTPart_edit : MonoBehaviour
             Debug.LogError("Setting Budget supported by first level for now");
             return;
         }
-        if (updatedUsedBudget == 0)
+        if (addition == 0)
         {
             return;
         }
@@ -180,10 +180,8 @@ public class ACTPart_edit : MonoBehaviour
         decimal usedBudget = 0;
         if (!string.IsNullOrEmpty(plan.used_budget))
             usedBudget = Web3.Convert.FromWei(BigInteger.Parse(plan.used_budget));
-        if (updatedUsedBudget != usedBudget)
-        {
-            plan.used_budget = Web3.Convert.ToWei(updatedUsedBudget).ToString();
-        }
+        usedBudget += addition;
+        plan.used_budget = Web3.Convert.ToWei(usedBudget).ToString();
     }
 
     /// <summary>
@@ -237,6 +235,8 @@ public class ACTPart_edit : MonoBehaviour
         CameraFocus.Instance.SelectTargetThrough(Controller.BudgetCameraTarget, selecting: false);
 
         var budgetValue = Controller.BudgetSliderValue();
+        var updatedUsedBudget = budgetValue - Controller.Model.budget;
+
         var model = Controller.SetBudget(budgetValue);
         if (model == null)
         {
@@ -247,7 +247,7 @@ public class ACTPart_edit : MonoBehaviour
             return;
         }
 
-        SetUsedBudget(budgetValue);
+        SetUsedBudget(updatedUsedBudget);
 
         OnModelEdited?.Invoke(model);
 
