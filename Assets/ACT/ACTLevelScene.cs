@@ -318,7 +318,6 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     private void SetPartData(ACTPart_interface actPart)
     {
-        Debug.Log($"Set Part Data {Models != null}");
         if (Models == null)
         {
             return;
@@ -399,13 +398,11 @@ public class ACTLevelScene : EditorBaseBehaviour
         
         if (submitted)
         {
-            Debug.Log("TODO ActScene: Project name was set, let's now work on the tech stack by continuing sensever. Also we must call UI change");
             Sensever_window.Instance.ContinueSensever((int)TutorialStep.TechStackStart);
             _part.EditTechStack(OnTechStackEdited);
         } else
         {
-            //Notification.Instance.Show("To continue set the project name first.");
-            Debug.LogWarning("To continue set the project name first.");
+            Notification.Instance.Show("To continue set the project name first.");
             _part.EditProjectName(OnProjectNameEdited);
             return;
         }
@@ -424,8 +421,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
         else
         {
-            //Notification.Instance.Show("To continue set the project name first.");
-            Debug.LogWarning("To continue set the tech stack first.");
+            Notification.Instance.Show("To continue set the project name first.");
             _part.EditTechStack(OnTechStackEdited);
             return;
         }
@@ -577,18 +573,17 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     private void OnDialogueEnd(int showed)
     {
-        Debug.Log($"Tutorial ended for {showed} is it this one {_editingStep}");
+        //Debug.Log($"Tutorial ended for {showed} is it this one {_editingStep}");
     }
 
     private void OnDialogueStart(int started)
     {
         _editingStep = started;
-        Debug.Log("Starting the dialogue text for " + (TutorialStep)started);
+        //Debug.Log("Starting the dialogue text for " + (TutorialStep)started);
     }
 
     private bool HideSenseverInsteadContinue(int showedStep)
     {
-        Debug.Log($"Hide Sensever instead continuing? {(TutorialStep)showedStep}");
         // Once we show the project name, let's hide the sensever tutorial until user completes the project name
         if (showedStep == (int)TutorialStep.ProjectName)
         {

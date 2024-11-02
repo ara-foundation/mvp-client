@@ -259,7 +259,6 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         {
             Mode = ModeInScene.DrawLine;
         }
-        Debug.Log($"Set line mode {on} for {gameObject.name}");
         MouseInput.enabled = on;
     }
 
@@ -333,7 +332,6 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 
     public void SetData(ACTPartModel model)
     {
-        Debug.Log($"Set act part data {Edit != null}");
         if (Edit != null)
         {
             var controller = Edit.gameObject.GetComponent<ACTPart_controller>();
@@ -346,8 +344,6 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 
     public void SetData(string developmentId, int level)
     {
-        Debug.Log($"Set empty act part data {Edit != null} object {ObjectId()}");
-
         var model = new ACTPartModel
         {
             parentObjId = null,
