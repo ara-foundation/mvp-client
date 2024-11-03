@@ -6,7 +6,7 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/0_Logos 2.unity
+    path: Assets/Scenes/Ara.unity
     guid: 438e47a5a1928e24d953245be6e99b28
   - enabled: 1
     path: Assets/Scenes/ACTProject.unity
