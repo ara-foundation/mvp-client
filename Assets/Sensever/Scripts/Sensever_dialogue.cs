@@ -25,33 +25,36 @@ public class Sensever_dialogue : MonoBehaviour
 
     #region StartSensever
 
+    /// <summary>
+    /// Start a tutorial with HideInsteadContinue checker
+    /// </summary>
+    /// <param name="textEndCallback"></param>
+    /// <param name="textStartCallback"></param>
+    /// <param name="hideInsteadContinue"></param>
     public void StartTutorial(Action<int> textEndCallback, Action<int> textStartCallback, Func<int, bool> hideInsteadContinue)
     {
         StartTutorial(textEndCallback, textStartCallback);
         HideInsteadContinue = hideInsteadContinue;
     }
 
+    /// <summary>
+    /// Start a tutorial without HideInsteadContinue
+    /// </summary>
+    /// <param name="textEndCallback"></param>
+    /// <param name="textStartCallback"></param>
     public void StartTutorial(Action<int> textEndCallback, Action<int> textStartCallback)
     {
         HideInsteadContinue = null;
         OnTextEndCallback = textEndCallback;
         OnTextStartCallback = textStartCallback;
-        showed = None;
-        OnClickContinue();
+
+        StartTexting(NextStep(None));
     }
 
-    public void ShowFirst()
-    {
-        if (TutorialTexts == null || TutorialTexts.Count == 0) {
-            Notification.Instance.Show("No tutorial was set to start");
-            return; 
-        }
-        OnTextEndCallback = null;
-        OnTextStartCallback = null;
-        showed = None;
-        OnClickContinue();
-    }
-
+    /// <summary>
+    /// Start animating the dialogoue at the step.
+    /// </summary>
+    /// <param name="step"></param>
     public void ShowAt(int step)
     {
         if (TutorialTexts == null || TutorialTexts.Count == 0)
@@ -60,10 +63,9 @@ public class Sensever_dialogue : MonoBehaviour
             return;
         }
         // Force Update is called here, to ensure that end call receives the callback about previous event.
-        // Otherwise, showat will place arbitrary showed parameter.
+        // Otherwise, show will place arbitrary showed parameter.
         ForceStopTexting();
-        showed = PrevStep(step);
-        OnClickContinue();
+        StartTexting(step);
     }
 
     #endregion
@@ -96,36 +98,27 @@ public class Sensever_dialogue : MonoBehaviour
 
     public void CancelTexting()
     {
-        EventController.StopTexting();
+        ForceStopTexting();
     }
 
     /// <summary>
     /// Returns a flag to hide instead continue if showed text is marked as such.
     /// </summary>
     /// <returns></returns>
-    private bool ForceStopTexting()
+    private void ForceStopTexting()
     {
         if (EventController.IsTexting())
         {
             EventController.StopTexting();
-        } else
-        {
-            Debug.Log("Text shown already");
         }
-
-        return (HideInsteadContinue != null && HideInsteadContinue(showed));
     }
 
-    public void OnClickContinue()
+    /// <summary>
+    /// Starts the texting animation
+    /// </summary>
+    private void StartTexting(int nextStep)
     {
-        var hideInsteadContinue = ForceStopTexting();
-        if (hideInsteadContinue)
-        {
-            Sensever_window.Instance.HideSensever();
-            return;
-        }
-        var nextStep = NextStep(showed);
-
+        showed = PrevStep(nextStep);
         OnTextStartCallback?.Invoke(nextStep);
         var text = TutorialTexts.ElementAtOrDefault(nextStep);
         if (text != null)
@@ -133,6 +126,18 @@ public class Sensever_dialogue : MonoBehaviour
             DisableButton();
             EventController.StartTexting(TutorialTexts[nextStep], OnTextAnimationEnd);
         }
+    }
+
+    public void OnClickContinue()
+    {
+        ForceStopTexting();
+        if (HideInsteadContinue != null && HideInsteadContinue(showed))
+        {
+            Sensever_window.Instance.HideSensever();
+            return;
+        }
+
+        StartTexting(NextStep(showed));
     }
 
     void DisableButton()
