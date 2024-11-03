@@ -124,7 +124,6 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
     }
 
-
     private async void OnEnable()
     {
         if (ACTSession.Instance)
@@ -210,6 +209,10 @@ public class ACTLevelScene : EditorBaseBehaviour
         _part.SetEditMode(true);
         _part.SetData(_currentDevelopmentId, _currentLevel, ACTSession.Instance.CurrentParentObjectId());
         _part.EditProjectName(OnProjectNameEdited);
+
+        // Start tutorial
+        _editingStep = Sensever_dialogue.None;
+        Sensever_window.Instance.ShowSensever(PrimitiveTutorialTexts, OnDialogueEnd, OnDialogueStart, HideSenseverInsteadContinue);
 
     }
 
