@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class ACTLevel: MonoBehaviour
@@ -99,7 +100,18 @@ public class ACTLevel: MonoBehaviour
             OnSave();
         } else
         {
-            Debug.Log("Go to the next scene");
+            ACTSession.Instance.RemoveLevelRange(level);
+            StartCoroutine(RiseUp());
         }
+    }
+
+    IEnumerator RiseUp()
+    {
+        Global.Instance.ShowLoadingScene();
+
+        yield return new WaitForSeconds(0.2f);
+
+        // https://docs.unity3d.com/ScriptReference/AsyncOperation-allowSceneActivation.html
+        SceneManager.LoadScene(1, LoadSceneMode.Single);
     }
 }

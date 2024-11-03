@@ -17,10 +17,10 @@ public class ACTSession : MonoBehaviour
     public int Level = 0;
     public string DevelopmentId { get { return Development._id; } }
 
-    private List<string> parentObjectId = new List<string>();
-    private List<ACTScene> scenes = new ();
-    private List<ACTPartModel[]> partsInScene = new ();
-    private List<string> names = new ();
+    private readonly List<string> parentObjectId = new();
+    private readonly List<ACTScene> scenes = new ();
+    private readonly List<ACTPartModel[]> partsInScene = new ();
+    private readonly List<string> names = new ();
 
     public static ACTSession Instance
     {
@@ -57,6 +57,31 @@ public class ACTSession : MonoBehaviour
         Level++;
         parentObjectId.Add(partId.ToStringRawValue());
         names.Add(name);
+    }
+
+    /// <summary>
+    /// Remove everything until the given level. The given level remains.
+    /// Everything deeper than that will be reset.
+    /// 
+    /// The given level must be at least 1 and there must be at least two levels
+    /// </summary>
+    /// <param name="remainingLevel"></param>
+    public void RemoveLevelRange(int remainingLevel)
+    {
+        if (remainingLevel < 1 || Level < 2)
+        {
+            Debug.Log($"Remaining till {remainingLevel} while it has {Level} so can't remove. RemainingLevel must be at least 1 and Level must be at least 2");
+            return;
+        }
+
+        int removeAmount = Level - remainingLevel;
+        Debug.Log($"Remove {removeAmount} levels from {remainingLevel} till {Level}");
+        parentObjectId.RemoveRange(remainingLevel, removeAmount);
+        scenes.RemoveRange(remainingLevel, removeAmount);
+        partsInScene.RemoveRange(remainingLevel, removeAmount);
+        names.RemoveRange(remainingLevel, removeAmount);
+
+        Level = remainingLevel;
     }
 
     public void Clear()
