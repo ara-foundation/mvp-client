@@ -178,6 +178,7 @@ public class ACTPart_controller : MonoBehaviour
             if (_model.usedBudget > 0)
             {
                 BudgetPieChart.Data = new decimal[4];
+                BudgetPieChart.Data[1] = (decimal)_model.usedBudget;
                 availablePieIndex = 2;
                 allocatedPieIndex = 3;
             }

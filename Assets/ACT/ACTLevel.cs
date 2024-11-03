@@ -20,14 +20,24 @@ public class ACTLevel: MonoBehaviour
     private Action OnSave;
     private bool selected;
     private string projectName;
+    private int level;
 
     public void Set(int level, bool selected, string projectName)
     {
+        this.level = level;
         this.projectName = projectName;
         this.selected = selected;
 
         SaveObj.SetActive(false);
-        Button.interactable = selected;
+        if (selected)
+        {
+            // Selected button is active only by Save() operation
+            Button.interactable = false;
+        } else
+        {
+            // Other buttons will make scene switch
+            Button.interactable = true;
+        }
         SelectedLabel.gameObject.SetActive(selected);
         DefaultLabel.gameObject.SetActive(!selected);
 

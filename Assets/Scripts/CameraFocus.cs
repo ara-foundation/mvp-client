@@ -23,6 +23,12 @@ public class CameraFocus : MonoBehaviour
         }
     }
 
+    public void ZoomIn(float depth = 1)
+    {
+        var zoomIn = cam.targetOffset.z + depth;
+        cam.targetOffset = new UnityEngine.Vector3(cam.targetOffset.x, cam.targetOffset.y, zoomIn);
+    }
+
     /// <summary>
     /// Call it for any object in the scene. For example for the input fields.
     /// </summary>

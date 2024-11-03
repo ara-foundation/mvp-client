@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static ACTPart_edit;
 
 [Serializable]
@@ -173,6 +174,40 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
 
     public void Focus(bool enabled)
     {
+        if (!enabled)
+        {
+            return;
+        }
+        if (!EnableController)
+        {
+            Debug.Log("No controller enabled");
+            return;
+        }
+        StartCoroutine(DiveInto());
+    }
+
+    IEnumerator DiveInto()
+    {
+        var model = Edit.gameObject.GetComponent<ACTPart_controller>().Model;
+
+        ACTSession.Instance.AddLevel(objectId, model.projectName);
+        Global.Instance.ShowLoadingScene();
+
+        CameraFocus.Instance.ZoomIn(2);
+
+        yield return 0;
+
+        AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
+
+        float progress = asyncOperation.progress;
+        while (!asyncOperation.isDone)
+        {
+            if (progress != asyncOperation.progress)
+            {
+                progress = asyncOperation.progress;
+            }
+            yield return null;
+        }
     }
 
     public void Highlight(bool enabled)
@@ -388,11 +423,11 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         }
     }
 
-    public void SetData(string developmentId, int level)
+    public void SetData(string developmentId, int level, string parentObjId)
     {
         var model = new ACTPartModel
         {
-            parentObjId = null,
+            parentObjId = parentObjId,
             objId = ObjectId(),
             developmentId = developmentId,
             level = level

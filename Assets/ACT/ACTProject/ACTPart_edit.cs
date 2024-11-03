@@ -139,49 +139,70 @@ public class ACTPart_edit : MonoBehaviour
             return Tuple.Create(new decimal(0), new decimal(0));
         }
 
-        if (Controller.Model.level > 1)
+        if (Controller.Model.level == 1)
         {
-            Debug.LogError("Budget supported by first level for now");
+            // First budget is taken from ACTSession.project.plan
+            var plan = ACTSession.Instance.Development.plan[0];
+            decimal costUsd = 0;
+            if (!string.IsNullOrEmpty(plan.cost_usd))
+                costUsd = Web3.Convert.FromWei(BigInteger.Parse(plan.cost_usd));
+            decimal usedBudget = 0;
+            if (!string.IsNullOrEmpty(plan.used_budget))
+                usedBudget = Web3.Convert.FromWei(BigInteger.Parse(plan.used_budget));
+
+            return Tuple.Create(costUsd, usedBudget);
+        }
+
+        var partModel = ACTSession.Instance.CurrentPart();
+        if (partModel == null)
+        {
+            Debug.LogError("Current part from ACTSession is empty");
             return Tuple.Create(new decimal(0), new decimal(0));
         }
 
-        // First budget is taken from ACTSession.project.plan
-        var plan = ACTSession.Instance.Project.plan[0];
-        decimal costUsd = 0;
-        if (!string.IsNullOrEmpty(plan.cost_usd))
-            costUsd = Web3.Convert.FromWei(BigInteger.Parse(plan.cost_usd));
-        decimal usedBudget = 0;
-        if (!string.IsNullOrEmpty(plan.used_budget))
-            usedBudget = Web3.Convert.FromWei(BigInteger.Parse(plan.used_budget));
-
-        return Tuple.Create(costUsd, usedBudget);
+        return Tuple.Create(partModel.budget, partModel.usedBudget ?? new decimal(0));
     }
 
     private void SetUsedBudget(decimal addition)
     {
-        if(Controller.Model.level == 0)
+        if (Controller.Model.level == 0)
         {
             Debug.LogError("Budget works with Controller.Model.level only");
             return;
         }
 
-        if (Controller.Model.level > 1)
-        {
-            Debug.LogError("Setting Budget supported by first level for now");
-            return;
-        }
         if (addition == 0)
         {
             return;
         }
 
-        // First budget is taken from ACTSession.project.plan
-        var plan = ACTSession.Instance.Project.plan[0];
-        decimal usedBudget = 0;
-        if (!string.IsNullOrEmpty(plan.used_budget))
-            usedBudget = Web3.Convert.FromWei(BigInteger.Parse(plan.used_budget));
-        usedBudget += addition;
-        plan.used_budget = Web3.Convert.ToWei(usedBudget).ToString();
+        if (Controller.Model.level == 1)
+        {
+            // First budget is taken from ACTSession.project.plan
+            var plan = ACTSession.Instance.Development.plan[0];
+            decimal usedBudget = 0;
+            if (!string.IsNullOrEmpty(plan.used_budget))
+                usedBudget = Web3.Convert.FromWei(BigInteger.Parse(plan.used_budget));
+            usedBudget += addition;
+            plan.used_budget = Web3.Convert.ToWei(usedBudget).ToString();
+            return;
+        }
+
+        var partModel = ACTSession.Instance.CurrentPart();
+        if (partModel == null)
+        {
+            Debug.LogError("Current part from ACTSession is empty");
+            return;
+        }
+
+        if (partModel.usedBudget > 0)
+        {
+            partModel.usedBudget += addition;
+        } else
+        {
+            partModel.usedBudget = addition;
+        }
+        ACTSession.Instance.CurrentPart(partModel);
     }
 
     /// <summary>

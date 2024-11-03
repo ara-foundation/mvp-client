@@ -40,12 +40,22 @@ public class ACTLevels: EditorBaseBehaviour
         {
             return;
         }
+
+        var lastLevelNum = ACTSession.Instance.Level;
+
         // for now we have only one element
-        var obj = Instantiate(ACTLevelPrefab, Content.transform);
-        var level = obj.GetComponent<ACTLevel>();
-        level.Set(ACTSession.Instance.Level, true, ACTSession.Instance.Project.project_v1[0].project_name);
-        Levels.Add(level);
-        currentLevel = level;
+        for (var i = 1; i <= lastLevelNum; i++)
+        {
+            var selected = i == lastLevelNum;
+            var obj = Instantiate(ACTLevelPrefab, Content.transform);
+            var level = obj.GetComponent<ACTLevel>();
+            level.Set(i, selected, ACTSession.Instance.Name(i));
+            Levels.Add(level);
+            if (selected)
+            {
+                currentLevel = level;
+            }
+        }
     }
 
     public void OnReturnBack()

@@ -11,5 +11,5 @@ public interface ACTPart_interface
     string ObjectId();
 
     void SetData(ACTPartModel model);
-    void SetData(string developmentId, int level);
+    void SetData(string developmentId, int level, string parentObjId);
 }

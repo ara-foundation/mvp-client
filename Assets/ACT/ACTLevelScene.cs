@@ -13,7 +13,7 @@ using System;
 using Ara.RuntimeEditor;
 
 [Serializable]
-public class Level
+public class ACTScene
 {
     public string sceneId;
 #nullable enable
@@ -60,8 +60,8 @@ public class ACTPartModel
 /// </summary>
 public class ACTLevelScene : EditorBaseBehaviour
 {
-    private List<ACTPart_interface> Parts = new ();
-    private ACTPartModel[] Models = new ACTPartModel[] { };
+    private readonly List<ACTPart_interface> Parts = new ();
+    private ACTPartModel[] PartData = new ACTPartModel[] { };
 
     public Camera Camera;
     public ActivityGroup ActivityGroup;
@@ -75,9 +75,9 @@ public class ACTLevelScene : EditorBaseBehaviour
     [SerializeField] private MouseInput BoxEnvironment;
     private static ACTLevelScene _instance;
 
-    private string _currentId = "";
-    private Level _currentLevel = null;
-    private int _currentLevelNum = 0;
+    private string _currentDevelopmentId = "";
+    private ACTScene _currentLevelScene = null;
+    private int _currentLevel = 0;
 
     #region PartParameterEditing
     public enum TutorialStep
@@ -108,12 +108,6 @@ public class ACTLevelScene : EditorBaseBehaviour
     private ACTPart_line _editingLinePart = null;
     #endregion
 
-    public bool manualTest = false;
-    [Tooltip("Loads a new empty scene, otherwise loads the predefined scene for a part")]
-    public bool manualNewScene = false;
-    private string manualProjectId = "67056baf24372ef24a58420c";
-    public string manualSceneId = "67056baf24372ef24a58420c";
-
     public static ACTLevelScene Instance
     {
         get
@@ -129,121 +123,28 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     private async void OnEnable()
     {
-        //Debug.Log("C:\\Users\\milay\\AppData\\LocalLow\\DefaultCompany\\mvp-client to check the list of scene ids");
         if (ACTSession.Instance)
         {
-            _currentId = ACTSession.Instance.Project._id;
-            _currentLevel = await FetchScene(_currentId);
-            _currentLevelNum = ACTSession.Instance.Level;
-            if (!_currentLevel.Exist())
+            _currentDevelopmentId = ACTSession.Instance.DevelopmentId;
+            _currentLevelScene = await ACTSession.Instance.CurrentScene();
+            _currentLevel = ACTSession.Instance.Level;
+            if (!_currentLevelScene.Exist())
             {
                 AraRuntimeEditor_manager.Instance.CreateNewScene();
             } else
             {
-                AraRuntimeEditor_manager.Instance.LoadScene(_currentLevel.sceneId, _currentLevel.dataScene);
+                AraRuntimeEditor_manager.Instance.LoadScene(_currentLevelScene.sceneId, _currentLevelScene.dataScene);
             }
         } else
         {
-            Debug.LogWarning("No ACTSession was given which comes from Ara scene. Enable the manualTest flag on this level scene on inspector to use a standalone version");
-
-            if (manualTest)
-            {
-                if (manualNewScene)
-                {
-                    AraRuntimeEditor_manager.Instance.CreateNewScene();
-                } else
-                {
-                    //AraRuntimeEditor_manager.Instance.LoadScene(manualSceneId);
-                }
-            }
+            Debug.LogError("No ACTSession was given which comes from Ara scene. Come from the Ara scene");
         }
     }
 
-    public void OnSceneLoaded()
+    public async void OnSceneLoaded()
     {
-        LoadParts(_currentId);
+        PartData = await ACTSession.Instance.CurrentParts();
     }
-
-    async void LoadParts(string developmentId, int level = 1, string parentObjId = "")
-    {
-        Models = await FetchParts(developmentId);
-    }
-
-    private async Task<Level> FetchScene(string id)
-    {
-        Level incorrectResult = new() { 
-            sceneId = "",
-        };
-
-        string url = NetworkParams.AraActUrl + "/act/scenes/" + id;
-
-        string res;
-        try
-        {
-            res = await WebClient.Get(url);
-        }
-        catch (Exception)
-        {
-            return incorrectResult;
-        }
-
-        if (string.IsNullOrEmpty(res))
-        {
-            return incorrectResult;
-        }
-
-        Level result;
-        try
-        {
-            result = JsonConvert.DeserializeObject<Level>(res);
-        }
-        catch (Exception)
-        {
-            return incorrectResult;
-        }
-        return result;
-    }
-
-    /// <summary>
-    /// Fetch the part parameters for the development id
-    /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    private async Task<ACTPartModel[]> FetchParts(string id)
-    {
-        ACTPartModel[] incorrectResult = new ACTPartModel[] { };
-
-        string url = NetworkParams.AraActUrl + "/act/parts/" + id;
-
-        string res;
-        try
-        {
-            res = await WebClient.Get(url);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError(ex);
-            return incorrectResult;
-        }
-
-        if (string.IsNullOrEmpty(res))
-        {
-            return incorrectResult;
-        }
-
-        ACTPartModel[] result;
-        try
-        {
-            result = JsonConvert.DeserializeObject<ACTPartModel[]>(res);
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e);
-            return incorrectResult;
-        }
-        return result;
-    }
-
     private void Awake()
     {
         if (PrimitivesWindow != null)
@@ -319,12 +220,12 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     private void SetPartData(ACTPart_interface actPart)
     {
-        if (Models == null)
+        if (PartData == null)
         {
             return;
         }
 
-        foreach (var model in Models)
+        foreach (var model in PartData)
         {
             if (model.objId.Equals(actPart.ObjectId()))
             {
@@ -333,7 +234,7 @@ public class ACTLevelScene : EditorBaseBehaviour
             }
         }
 
-        actPart.SetData(_currentId, _currentLevelNum);
+        actPart.SetData(_currentDevelopmentId, _currentLevel, ACTSession.Instance.CurrentParentObjectId());
     }
 
     public ACTPart_interface GetPart(string objectId)
@@ -386,7 +287,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         // Focus the camera on the part.
         // The drawback is that transform handler is also activated.
         _part.SetEditMode(true);
-        _part.SetData(_currentId, _currentLevelNum);
+        _part.SetData(_currentDevelopmentId, _currentLevel, ACTSession.Instance.CurrentParentObjectId());
         _part.EditProjectName(OnProjectNameEdited);
 
         // Start tutorial
@@ -474,61 +375,64 @@ public class ACTLevelScene : EditorBaseBehaviour
             return;
         }
 
-
-
         Sensever_window.Instance.ContinueSensever((int)TutorialStep.Congrats);
     }
 
     public void OnLineEditingEnd(DataGameObjectId dataGameObjectId, List<string> connection)
     {
-        if (_currentLevel == null)
+        if (_currentLevelScene == null)
         {
             return;
         }
-        if (_currentLevel.lines == null)
+        if (_currentLevelScene.lines == null)
         {
-            _currentLevel.lines = new();
+            _currentLevelScene.lines = new();
         }
-        _currentLevel.lines.Add(dataGameObjectId.ToStringRawValue(), connection);
+        _currentLevelScene.lines.Add(dataGameObjectId.ToStringRawValue(), connection);
 
         ACTLevels.Instance.OnSceneUpdate(OnSaveScene);
     }
 
     public List<string> LineConnections(DataGameObjectId dataGameObjectId)
     {
-        if (_currentLevel == null)
+        if (_currentLevelScene == null)
         {
             return null;
         }
 
-        if (_currentLevel.lines == null)
+        if (_currentLevelScene.lines == null)
         {
             return null;
         }
 
-        if (!_currentLevel.lines.ContainsKey(dataGameObjectId.ToStringRawValue())) {
+        if (!_currentLevelScene.lines.ContainsKey(dataGameObjectId.ToStringRawValue())) {
             return null;
         }
 
-        return _currentLevel.lines[dataGameObjectId.ToStringRawValue()];
+        return _currentLevelScene.lines[dataGameObjectId.ToStringRawValue()];
     }
 
     private async void OnSaveScene()
     {
-        _currentLevel.dataScene = RuntimeEditorController.GetSerializedDataScene();
-        _currentLevel.sceneId = AraRuntimeEditor_manager.Instance.GetSceneId(RuntimeEditorController.TabGuid).ToStringRawValue();
+        _currentLevelScene.dataScene = RuntimeEditorController.GetSerializedDataScene();
+        _currentLevelScene.sceneId = AraRuntimeEditor_manager.Instance.GetSceneId(RuntimeEditorController.TabGuid).ToStringRawValue();
 
-        var sceneSaved = await SaveScene(_currentId, _currentLevel);
+        var sceneSaved = await SaveScene(_currentDevelopmentId, _currentLevelScene);
         if (sceneSaved && _editingPart != null)
         {
             OnEditingEnd();
         }
     }
 
-    private async Task<bool> SaveScene(string _id, Level _level)
+    private async Task<bool> SaveScene(string _id, ACTScene _level)
     {
         var body = JsonConvert.SerializeObject(_level);
         string url = NetworkParams.AraActUrl + "/act/scenes/" + _id;
+        if (_currentLevel > 1)
+        {
+            url += $"/{_currentLevel}/{ACTSession.Instance.CurrentParentObjectId()}";
+            Debug.Log($"Save the nested scene at url: {url}");
+        }
 
         Tuple<long, string> res;
         try

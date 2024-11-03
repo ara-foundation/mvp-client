@@ -89,7 +89,7 @@ public class ACTPart_line : ACTPart, ACTPart_interface
 
     }
 
-    public new void SetData(string _devId, int _lvl)
+    public new void SetData(string _devId, int _lvl, string _parentObjId)
     {
 
     }
