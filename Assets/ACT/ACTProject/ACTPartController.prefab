@@ -6163,6 +6163,7 @@ MonoBehaviour:
   HintReactor: {fileID: 8913144910419053974}
   Menu: {fileID: 9781668932736683}
   SplinePositionerContent: {fileID: 5253288887981361773}
+  PartsAmount: {fileID: 3900851794390540356}
   ProjectNameContainer: {fileID: 90893580851851787}
   ProjectNameLabel: {fileID: 2188314803225250049}
   ProjectNameState: {fileID: 6870661532927401423}

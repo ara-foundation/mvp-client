@@ -15,6 +15,9 @@ public class ACTPart_controller : MonoBehaviour
     [SerializeField] public GameObject Menu;
     [SerializeField] public Transform SplinePositionerContent;
 
+    [Header("Parts or Tasks")]
+    [SerializeField] private TextMeshProUGUI PartsAmount;
+
     [Header("Project Name")]
     [SerializeField] public Transform ProjectNameContainer;
     [SerializeField] private TextMeshProUGUI ProjectNameLabel;
@@ -249,6 +252,12 @@ public class ACTPart_controller : MonoBehaviour
             return;
         }
         _model = model;
+        if (model.childObjsId != null && model.childObjsId.Length > 0) {
+            PartsAmount.text = $"Parts: {model.childObjsId.Length}";
+        } else
+        {
+            PartsAmount.text = "Parts: 0";
+        }
         if (string.IsNullOrEmpty(model.projectName))
         {
             ProjectNameLabel.text = "Part name";
