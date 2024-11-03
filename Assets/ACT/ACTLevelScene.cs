@@ -384,8 +384,30 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
 
         Sensever_window.Instance.ContinueSensever((int)TutorialStep.Congrats);
-    }
+        var partModel = ACTSession.Instance.CurrentPart();
+        if (partModel != null)
+        {
+            Debug.Log("The part has a parent part. Let's add the new object: ");
 
+            if (partModel.childObjsId == null)
+            {
+                partModel.childObjsId = new string[] { _part.ObjectId()};
+            }
+            else
+            {
+                var updatedChildObjsId = new string[partModel.childObjsId.Length + 1];
+                for (var i = 0; i < partModel.childObjsId.Length; i++)
+                {
+                    updatedChildObjsId[i] = partModel.childObjsId[i];
+                }
+                updatedChildObjsId[updatedChildObjsId.Length - 1] = _part.ObjectId();
+
+                partModel.childObjsId = updatedChildObjsId;
+            }
+
+            ACTSession.Instance.CurrentPart(partModel);
+        }
+    }
     public void OnLineEditingEnd(DataGameObjectId dataGameObjectId, List<string> connection)
     {
         if (_currentLevelScene == null)
