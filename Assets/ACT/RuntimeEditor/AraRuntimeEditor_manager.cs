@@ -54,52 +54,9 @@ namespace Ara.RuntimeEditor
             }
         }
 
-        [Header("Customize to adjust into the Ara client. Each scene will be a one tab")]
-        public bool showOneTab = false;
-
         private void Start()
         {
             RundoEngine.DataSerializer.AddDefaultReadConverter(new DataComponentReadJsonConverter());
-
-            //var sceneMetaDatas = PersistentDataScenes.LoadData();
-            //var editorPrefs = PersistentEditorPrefs.LoadData();
-
-            /*foreach (var metaData in  sceneMetaDatas)
-            {
-                Debug.Log($"Loaded scene: {metaData.Guid}, {metaData.Name}");
-            }
-            foreach (var openedScene in editorPrefs.OpenedScenes)
-            {
-                Debug.Log($"Loaded scene: {openedScene}");
-            }*/
-
-            // load scenes
-            /*foreach (var it in editorPrefs.OpenedScenes)
-            {
-                if (showOneTab && InstantiatedTabs.Count == 1)
-                {
-                    break;
-                }
-                foreach (var sceneMetaData in sceneMetaDatas)
-                {
-                    if (showOneTab && InstantiatedTabs.Count == 1)
-                    {
-                        break;
-                    }
-                    if (sceneMetaData.Guid.ToStringRawValue() == it)
-                    {
-                        var instance = RuntimeEditorRoot.Load(sceneMetaData, _tabsContent);
-                        InstantiatedTabs.Add(instance);
-                        Debug.Log($"The opened tab id: {instance.TabGuid} of '{instance.DataScene.DataSceneMetaData.Guid}' scene");
-                    }
-                }
-            }*/
-
-            //if (InstantiatedTabs.Count == 0)
-            //    AddTab();
-
-            //Debug.Log($"The empty scene id: {InstantiatedTabs[0].TabGuid}");
-            //SelectTab(InstantiatedTabs[0].TabGuid);
         }
 
 
@@ -181,6 +138,10 @@ namespace Ara.RuntimeEditor
 
         public PrefabIdBehaviour GetPrefab(TGuid<TPrefabId> prefabId)
         {
+            if (_prefabs == null)
+            {
+                _prefabs = GetPrefabs();
+            }
             foreach (var prefab in _prefabs)
                 if (prefab.Guid == prefabId)
                     return prefab;

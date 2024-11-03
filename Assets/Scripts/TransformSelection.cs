@@ -1,4 +1,5 @@
 using Ara.RuntimeEditor;
+using Lean.Gui;
 using RTS_Cam;
 using Rundo.RuntimeEditor.Behaviours;
 using System.Collections;
@@ -8,11 +9,19 @@ using UnityEngine;
 
 public class TransformSelection : MonoBehaviour
 {
+    [SerializeField] private LeanWindow TransformUI;
+
+    private void Start()
+    {
+        TransformUI.TurnOff();
+    }
+
     public void SelectTarget(Transform from, bool enabled)
     {
         var activeTab = AraRuntimeEditor_manager.Instance.GetActiveTab();
         if (activeTab == null)
         {
+            TransformUI.TurnOff();
             return;
         }
 
@@ -26,10 +35,12 @@ public class TransformSelection : MonoBehaviour
             var notOrphaned = from.TryGetComponent<DataGameObjectBehaviour>(out var dataGameObjectBehaviour);
             if (notOrphaned)
             {
+                TransformUI.TurnOn();
                 activeTab.SelectionBehaviour.AddToSelection(dataGameObjectBehaviour.gameObject);
             }
         } else
         {
+            TransformUI.TurnOff();
             activeTab.SelectionBehaviour.ClearSelection();
         }
     }
