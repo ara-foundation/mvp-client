@@ -60,7 +60,7 @@ public class ACTPartModel
 /// </summary>
 public class ACTLevelScene : EditorBaseBehaviour
 {
-    private readonly List<ACTPart_interface> Parts = new ();
+    private readonly List<ACTPart_interface> Parts = new();
     private ACTPartModel[] PartData = new ACTPartModel[] { };
 
     public Camera Camera;
@@ -69,7 +69,6 @@ public class ACTLevelScene : EditorBaseBehaviour
     public GameObject PartControllerPrefab;
     [SerializeField] public LeanWindow LoadingSceneModal;
     [SerializeField] private LeanWindow PrimitivesWindow;
-    [SerializeField] private LeanWindow LineWindow;
     [SerializeField] private GameObject BottomMenuPlane;
     [SerializeField] private GameObject LinePrefab;
     [SerializeField] private MouseInput BoxEnvironment;
@@ -92,7 +91,12 @@ public class ACTLevelScene : EditorBaseBehaviour
         Congrats = 9,
         Tasks = 10,
     }
+    public enum LineTutorialStep
+    {
+        Draw = 0,
+    }
     public List<Event> PrimitiveTutorialTexts;
+    public List<Event> LineTutorialTexts;
     /// <summary>
     /// When a AddPart method is called, and this flag is true. Then 
     /// start the editing mode.
@@ -131,11 +135,13 @@ public class ACTLevelScene : EditorBaseBehaviour
             if (!_currentLevelScene.Exist())
             {
                 AraRuntimeEditor_manager.Instance.CreateNewScene();
-            } else
+            }
+            else
             {
                 AraRuntimeEditor_manager.Instance.LoadScene(_currentLevelScene.sceneId, _currentLevelScene.dataScene);
             }
-        } else
+        }
+        else
         {
             Debug.LogError("No ACTSession was given which comes from Ara scene. Come from the Ara scene");
         }
@@ -151,13 +157,9 @@ public class ACTLevelScene : EditorBaseBehaviour
         {
             PrimitivesWindow.gameObject.SetActive(false);
         }
-        if (LineWindow != null)
-        {
-            LineWindow.gameObject.SetActive(false);
-        }
     }
 
-    void Update ()
+    void Update()
     {
         if (_lineMode)
         {
@@ -187,8 +189,28 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     public void OnLineWindowSelect(bool selected)
     {
-        LineWindow.gameObject.SetActive(selected);
-        LineWindow.Set(selected);
+        // Start tutorial
+        if (selected)
+        {
+            _editingStep = Sensever_dialogue.None;
+            Sensever_window.Instance.ShowSensever(LineTutorialTexts, OnLineDialogueEnd, OnLineDialogueStart, HideSenseverInsteadContinueForLine);
+        }
+        SetLineMode();
+    }
+
+    IEnumerator StartEditingPart(ACTPart_interface part)
+    {
+        yield return 0; // wait for the next frame
+
+        _editingPart = part;
+        var _part = _editingPart as ACTPart;
+
+        // Focus the camera on the part.
+        // The drawback is that transform handler is also activated.
+        _part.SetEditMode(true);
+        _part.SetData(_currentDevelopmentId, _currentLevel, ACTSession.Instance.CurrentParentObjectId());
+        _part.EditProjectName(OnProjectNameEdited);
+
     }
 
     public void AddPart(ACTPart_interface part)
@@ -200,7 +222,8 @@ public class ACTLevelScene : EditorBaseBehaviour
             {
                 _editingLinePart = part as ACTPart_line;
             }
-        } else
+        }
+        else
         {
             if (!Parts.Contains(part))
             {
@@ -210,7 +233,8 @@ public class ACTLevelScene : EditorBaseBehaviour
                 {
                     _nextPartForEditing = false;
                     StartCoroutine(StartEditingPart(part));
-                } else
+                }
+                else
                 {
                     SetPartData(part);
                 }
@@ -259,7 +283,8 @@ public class ACTLevelScene : EditorBaseBehaviour
             {
                 _editingLinePart = null;
             }
-        } else
+        }
+        else
         {
             if (Parts.Contains(part))
             {
@@ -277,33 +302,16 @@ public class ACTLevelScene : EditorBaseBehaviour
         BoxEnvironment.enabled = on;
     }
 
-    IEnumerator StartEditingPart(ACTPart_interface part)
-    {
-        yield return 0; // wait for the next frame
-
-        _editingPart = part;
-        var _part = _editingPart as ACTPart;
-
-        // Focus the camera on the part.
-        // The drawback is that transform handler is also activated.
-        _part.SetEditMode(true);
-        _part.SetData(_currentDevelopmentId, _currentLevel, ACTSession.Instance.CurrentParentObjectId());
-        _part.EditProjectName(OnProjectNameEdited);
-
-        // Start tutorial
-        _editingStep = Sensever_dialogue.None;
-        Sensever_window.Instance.ShowSensever(PrimitiveTutorialTexts, OnDialogueEnd, OnDialogueStart, HideSenseverInsteadContinue);
-    }
-
     private void OnProjectNameEdited(string name, bool submitted)
     {
         var _part = _editingPart as ACTPart;
-        
+
         if (submitted)
         {
             Sensever_window.Instance.ContinueSensever((int)TutorialStep.TechStackStart);
             _part.EditTechStack(OnTechStackEdited);
-        } else
+        }
+        else
         {
             Notification.Instance.Show("To continue set the project name first.");
             _part.EditProjectName(OnProjectNameEdited);
@@ -405,7 +413,8 @@ public class ACTLevelScene : EditorBaseBehaviour
             return null;
         }
 
-        if (!_currentLevelScene.lines.ContainsKey(dataGameObjectId.ToStringRawValue())) {
+        if (!_currentLevelScene.lines.ContainsKey(dataGameObjectId.ToStringRawValue()))
+        {
             return null;
         }
 
@@ -494,7 +503,7 @@ public class ACTLevelScene : EditorBaseBehaviour
 
             _editingLineData.GetComponent<DataGameObjectBehaviour>().DataComponentPrefab.OverridePrefabComponent = true;
             _editingLineData.GetComponent<DataTransformBehaviour>().DataComponentPrefab.OverridePrefabComponent = true;
-            
+
             // Sends to the Rundo to add the line.
             // The instantiniated game object will call the ACTPart_interface.Activate method.
             // The ACTPart_interface.Activate calls ACTLevelScene.AddPart back.
@@ -533,32 +542,46 @@ public class ACTLevelScene : EditorBaseBehaviour
         _editingStep = started;
     }
 
+    private void OnLineDialogueEnd(int _)
+    {
+    }
+
+    private void OnLineDialogueStart(int _)
+    {
+    }
+
     private bool HideSenseverInsteadContinue(int showedStep)
     {
         // Once we show the project name, let's hide the sensever tutorial until user completes the project name
         if (showedStep == (int)TutorialStep.ProjectName)
         {
             return true;
-        } else 
+        }
+        else
         // Tech stack has multiple data, therefore show them all.
         if (showedStep >= (int)TutorialStep.TechStackStart && showedStep < (int)TutorialStep.TechStackEnd)
         {
             return false;
-        } else 
+        }
+        else
         // Once we show the tech stack, let's hide the sensever tutorial until user completes the tech stack
         if (showedStep == (int)TutorialStep.TechStackEnd)
         {
             return true;
-        } else if (showedStep >= (int)TutorialStep.BudgetStart && showedStep < (int)TutorialStep.BudgetEnd)
+        }
+        else if (showedStep >= (int)TutorialStep.BudgetStart && showedStep < (int)TutorialStep.BudgetEnd)
         {
             return false;
-        } else if (showedStep == (int)TutorialStep.BudgetEnd)
+        }
+        else if (showedStep == (int)TutorialStep.BudgetEnd)
         {
             return true;
-        } else if (showedStep == (int)TutorialStep.Maintainer)
+        }
+        else if (showedStep == (int)TutorialStep.Maintainer)
         {
             return true;
-        } else 
+        }
+        else
         // The last step, therefore hide the tutorial
         if (showedStep == (int)TutorialStep.Tasks)
         {
@@ -581,5 +604,10 @@ public class ACTLevelScene : EditorBaseBehaviour
             return false;
         }
         throw new System.Exception("Invalid step");
+    }
+
+    private bool HideSenseverInsteadContinueForLine(int _)
+    {
+        return true;
     }
 }
