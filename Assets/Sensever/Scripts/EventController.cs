@@ -10,13 +10,13 @@ public class EventController : MonoBehaviour
     private string actualText = "";
 
     public TextMeshProUGUI logTextBox;
-    public Event actualEvent;
+    public TutorialText actualEvent;
     public PauseInfo pauseInfo;
 
     private Action OnEndCallback;
     private Coroutine runningCoroutine;
 
-    public void StartTexting(Event eventToText, Action onEndCallback)
+    public void StartTexting(TutorialText eventToText, Action onEndCallback)
     {
         actualEvent = eventToText;
         index = 0;

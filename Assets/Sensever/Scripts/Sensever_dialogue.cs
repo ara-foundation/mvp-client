@@ -14,7 +14,7 @@ public class Sensever_dialogue : MonoBehaviour
     public bool AllowSkip = false;
     [Space(20)]
     [Header("Tutorial Text (Set by the caller, here to debug)")]
-    public List<Event> TutorialTexts;
+    public List<TutorialText> TutorialTexts;
     private int showed;
     private Action<int> OnTextEndCallback;
     private Action<int> OnTextStartCallback;

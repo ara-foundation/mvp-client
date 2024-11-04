@@ -15,7 +15,7 @@ public class SenseverDialogue : MonoBehaviour
     public bool AllowSkip = false;
     [Space(20)]
     [Header("Tutorial Text")]
-    public List<Event> TutorialTexts;
+    public List<TutorialText> TutorialTexts;
     private Auroa_Tutorial.TutorialStep showed;
     private Action<Auroa_Tutorial.TutorialStep> OnTextEndCallback;
     private Action<Auroa_Tutorial.TutorialStep> OnTextStartCallback;

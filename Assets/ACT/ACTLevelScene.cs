@@ -95,8 +95,8 @@ public class ACTLevelScene : EditorBaseBehaviour
     {
         Draw = 0,
     }
-    public List<Event> PrimitiveTutorialTexts;
-    public List<Event> LineTutorialTexts;
+    public List<TutorialText> PrimitiveTutorialTexts;
+    public List<TutorialText> LineTutorialTexts;
     /// <summary>
     /// When a AddPart method is called, and this flag is true. Then 
     /// start the editing mode.

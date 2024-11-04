@@ -39,7 +39,7 @@ public class Sensever_window: MonoBehaviour
         SenseverMesh.SetActive(false);
     }
 
-    public void ShowSensever(List<Event> texts, Action<int> textEndCallback, Action<int> textStartCallback, Func<int, bool> hideInsteadContinue)
+    public void ShowSensever(List<TutorialText> texts, Action<int> textEndCallback, Action<int> textStartCallback, Func<int, bool> hideInsteadContinue)
     {
         nextStep = Sensever_dialogue.None;
         SenseverDialogue.TutorialTexts = texts;
