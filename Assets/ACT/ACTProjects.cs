@@ -55,6 +55,7 @@ public class ACTProjects : MonoBehaviour
 
     public Camera MainCamera;
     public Camera ACTProjectsCamera;
+    [SerializeField] private Canvas UICanvas;
     [SerializeField] private GameObject[] Objects;
 
     [SerializeField] private GameObject ACTProjectPrefab;
@@ -82,6 +83,8 @@ public class ACTProjects : MonoBehaviour
         if (ACTProjectsCamera && !ACTProjectsCamera.gameObject.activeSelf)
         {
             ACTProjectsCamera.gameObject.SetActive(true);
+            UICanvas.worldCamera = ACTProjectsCamera;
+            AraFrontend.Instance.MainCamera = ACTProjectsCamera;
         }
         
         for (var i = 0; i < Objects.Length; i++)
@@ -104,7 +107,9 @@ public class ACTProjects : MonoBehaviour
         }
         if (MainCamera && !MainCamera.gameObject.activeSelf)
         {
+            UICanvas.worldCamera = MainCamera;
             MainCamera.gameObject.SetActive(true);
+            AraFrontend.Instance.MainCamera = MainCamera;
         }
 
         for (var i = 0; i < Objects.Length; i++)

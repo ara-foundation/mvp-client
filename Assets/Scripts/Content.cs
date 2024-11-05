@@ -17,4 +17,10 @@ public class Content : MonoBehaviour
         var res = Instantiate(child, transform);
         return res;
     }
+
+    public T Add<T>(GameObject child) where T : Component
+    {
+        var res = Add(child);
+        return res.GetComponent<T>();
+    }
 }

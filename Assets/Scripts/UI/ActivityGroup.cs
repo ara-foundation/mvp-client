@@ -38,6 +38,21 @@ public class ActivityGroup : MonoBehaviour
         UnselectAllOthers(from);
     }
 
+    /// <summary>
+    /// If any activity state is selected, then it will find it and call unselect
+    /// </summary>
+    public void UnSelectAll()
+    {
+        foreach (var activityState in activityStates)
+        {
+            Debug.Log($"Unselect the state of {activityState.gameObject.name} which is {activityState.Mode}");
+            if (activityState != null && activityState.Mode == StateMode.Selected) {
+                activityState.ToggleSelect(enabled: false);
+                break;
+            }
+        }
+    }
+
     private void UnselectAllOthers(ActivityState from)
     {
         foreach (var activtyState in activityStates)

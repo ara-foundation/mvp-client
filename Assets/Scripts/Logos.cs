@@ -9,7 +9,7 @@ public class Logos : MonoBehaviour
 {
     [SerializeField] private GameObject ideaPlaceholder;
     [SerializeField] private GameObject ideaCard;
-    [SerializeField] private GameObject content;
+    [SerializeField] private Content content;
 
     private static Logos _instance;
 
@@ -28,20 +28,27 @@ public class Logos : MonoBehaviour
     // Start is called before the first frame update
     async void OnEnable()
     {
-        await LoadIdeas();
+        if (content != null)
+        {
+            await LoadIdeas();
+        }
     }
 
     public async Task LoadIdeas()
     {
-        ClearContent();
+        content.Clear();
         var result = await FetchIdeas();
         if (result != null && result.data != null && result.data.Count > 0)
         {
-            Instantiate(ideaPlaceholder, content.transform);
+            if (content == null)
+            {
+                Debug.Log("Content was removed for logos");
+                return;
+            }
+            content.Add(ideaPlaceholder);
             foreach (var data in result.data)
             {
-                var res = Instantiate(ideaCard, content.transform);
-                CardLogos cardLogos = res.GetComponent<CardLogos>();
+                var cardLogos = content.Add<CardLogos>(ideaCard);
                 cardLogos.Show(data);
             }
         }
@@ -50,14 +57,6 @@ public class Logos : MonoBehaviour
             Notification.Instance.Show("Failed to fetch logos ideas from the ARA Server");
             Debug.LogWarning("Failed to fetch ideas from Ara Server");
         }
-    }
-
-    private void ClearContent()
-    {
-        foreach (Transform child in content.transform)
-        {
-            Destroy(child.gameObject);
-        };
     }
 
     private async Task<AraIdeas> FetchIdeas()

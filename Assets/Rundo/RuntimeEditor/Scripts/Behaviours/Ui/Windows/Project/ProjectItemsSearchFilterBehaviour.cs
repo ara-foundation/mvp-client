@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Rundo.RuntimeEditor.Behaviours.UI
 {
@@ -17,6 +18,7 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
     public struct ProjectItemMetaData
     {
         public GameObject GameObject;
+        public List<DIOSData.Type> DiosType;
         public string FolderName;
     }
 }
