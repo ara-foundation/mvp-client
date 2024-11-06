@@ -21,6 +21,8 @@ public class AraFrontend : MonoBehaviour
     [SerializeField] private InputSelectionWindow SelectionWindow;
     [SerializeField] private ActivityGroup MenuButtons;
 
+    [SerializeField] private WebBusWindow WebBusWindow;
+
     [Header("Selected Item")]
     [Space(20)]
     [SerializeField] private SelectedItem InputSelectedItem;
@@ -134,24 +136,7 @@ public class AraFrontend : MonoBehaviour
                 }
             }
 
-            /*var obj = eventSystemRaysastResults[0].gameObject;
-            if (obj.TryGetComponent<Button>(out _) || obj.TryGetComponent<LeanButton>(out _))
-            {
-                Debug.Log($"Clicked on the button {obj.name}");
-                return false;
-            }
-            if (obj.transform.parent != null)
-            {
-                var parent = obj.transform.parent;
-                if (parent.TryGetComponent<Button>(out _) || parent.TryGetComponent<LeanButton>(out _))
-                {
-                    Debug.Log($"The {obj.name} parent {parent.name} is a button. this is likely a text or icon of button");
-                    return false;
-                }
-            }*/
-
             var count = eventSystemRaysastResults.Count;
-            //Debug.Log($"{System.DateTime.Now} {count} objects under:");
             for (var i = 0; i < count; i++)
             {
                 var diosData = DIOSData.GameObjectDataType(eventSystemRaysastResults[i].gameObject);
@@ -170,7 +155,6 @@ public class AraFrontend : MonoBehaviour
                     {
                         types += $"{j}/{diosData.Count}={diosData[j].ToString()} ";
                     }
-                    //Debug.Log($"\t{i+1}/{count}: object under mouse {go.name} as dios {types} types {Environment.NewLine}");
                 }
             }
             return true;
@@ -181,27 +165,42 @@ public class AraFrontend : MonoBehaviour
 
     public void OnItemSelect(ProjectItemMetaData metaData, ActionType actionType)
     {
-        ClearSelection();
-        MenuButtons.UnSelectAll();
+        Debug.Log($"Selected an item for {actionType}");
+        
         if (actionType == ActionType.Input)
         {
             InputSelectedItem.Show(metaData);
+
+            Debug.Log($"Is output shown, if yes, then open the item: {OutputSelectedItem.IsShowing()}");
+            if (OutputSelectedItem.IsShowing())
+            {
+                WebBusWindow.Instance.ShowInput(metaData);
+            }
         } else if (actionType == ActionType.Output)
         {
             OutputPlaceholder.SetActive(false);
             OutputSelectedItem.Show(metaData);
+
+            if (InputSelectedItem.IsShowing())
+            {
+                WebBusWindow.Instance.ShowOutput(metaData);
+            }
         } else if (actionType == ActionType.Timer)
         {
             TimerSelectedItem.Show(metaData);
         }
+
+        // Make it last, otherwise OnInput/OnOutput will not catch in WebBusWindow
+        ClearSelection();
+        MenuButtons.UnSelectAll();
     }
 
-    private void OnDeselectInputItem(ProjectItemMetaData metaData)
+    public void OnDeselectInputItem(ProjectItemMetaData metaData)
     {
         InputSelectedItem.Hide();
     }
 
-    private void OnDeselectOutputItem(ProjectItemMetaData metaData)
+    public void OnDeselectOutputItem(ProjectItemMetaData metaData)
     {
         OutputSelectedItem.Hide();
         OutputPlaceholder.SetActive(false);
@@ -226,7 +225,7 @@ public class AraFrontend : MonoBehaviour
     {
         if (InputSelectedItem.IsShowing())
         {
-            OnDeselectInputItem(InputSelectedItem.Data);
+            WebBusWindow.Instance.ShowInput(InputSelectedItem.Data);
             return;
         }
         if (!select)
@@ -234,6 +233,7 @@ public class AraFrontend : MonoBehaviour
             SelectionWindow.TurnOff(ifOn: true);
         }
         if (currentRaysastResults == null || currentRaysastResults.Count == 0) {
+            WebBusWindow.Instance.ShowWindow();
             Debug.Log("No objects were selected, show the input list");
         } else
         {
@@ -250,7 +250,7 @@ public class AraFrontend : MonoBehaviour
     {
         if (OutputSelectedItem.IsShowing())
         {
-            OnDeselectOutputItem(OutputSelectedItem.Data);
+            WebBusWindow.Instance.ShowOutput(OutputSelectedItem.Data);
             return;
         }
         if (!select)
@@ -260,6 +260,7 @@ public class AraFrontend : MonoBehaviour
         }
         if (currentRaysastResults == null || currentRaysastResults.Count == 0)
         {
+            WebBusWindow.Instance.ShowWindow();
             Debug.Log("No objects were selected, show the input list");
         }
         else

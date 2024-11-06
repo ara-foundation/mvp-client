@@ -4,8 +4,14 @@ using UnityEngine;
 
 public class Content : MonoBehaviour
 {
+    public bool testMode = false;
+
     public void Clear()
     {
+        if (testMode)
+        {
+            return;
+        }
         foreach (Transform child in transform)
         {
             Destroy(child.gameObject);
