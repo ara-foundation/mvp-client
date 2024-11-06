@@ -20,5 +20,6 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
         public GameObject GameObject;
         public List<DIOSData.Type> DiosType;
         public string FolderName;
+        public Texture2D Screenshot;
     }
 }

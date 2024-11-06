@@ -13,15 +13,15 @@ public class SelectionWindowItem : EditorBaseBehaviour
 
     private Action<ProjectItemMetaData> OnSelectCallback;
 
-    public ProjectItemMetaData ProjectItemMetaData { get; private set; }
+    public ProjectItemMetaData Data;
         
     private void Start()
     {
         _button.onClick.AddListener(() =>
         {
-            if (ProjectItemMetaData.GameObject != null)
+            if (Data.GameObject != null)
             {
-                OnSelectCallback?.Invoke(ProjectItemMetaData);
+                OnSelectCallback?.Invoke(Data);
                     /*if (ProjectItemMetaData.GameObject.TryGetComponent<PrefabIdBehaviour>(out var prefabIdBehaviour))
                     {
                         var dataGameObject = DataScene.InstantiateDataGameObjectFromPrefab(prefabIdBehaviour);
@@ -38,24 +38,25 @@ public class SelectionWindowItem : EditorBaseBehaviour
     public void SetData(ProjectItemMetaData projectItemMetaData, Action<ProjectItemMetaData> OnSelectCallback)
     {
         this.OnSelectCallback = OnSelectCallback;
-        ProjectItemMetaData = projectItemMetaData;
+        Data = projectItemMetaData;
 
-        if (ProjectItemMetaData.GameObject != null)
+        if (Data.GameObject != null)
         {
             if (projectItemMetaData.DiosType != null && projectItemMetaData.DiosType.Count > 0)
             {
                 _prefabName.text = DIOSData.TypeAndName(projectItemMetaData.GameObject, projectItemMetaData.DiosType[0]);
             } else
             {
-                _prefabName.text = ProjectItemMetaData.GameObject.name;
+                _prefabName.text = Data.GameObject.name;
             }
         }
         else
-            _prefabName.text = ProjectItemMetaData.FolderName;
+            _prefabName.text = Data.FolderName;
     }
 
     public void UpdateScreenshot(Texture2D screenshot)
     {
         _icon.texture = screenshot;
+        Data.Screenshot = screenshot;
     }
 }

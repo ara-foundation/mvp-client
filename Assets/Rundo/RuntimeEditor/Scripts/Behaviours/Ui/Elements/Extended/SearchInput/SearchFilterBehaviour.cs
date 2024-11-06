@@ -41,7 +41,7 @@ namespace Rundo.RuntimeEditor.Behaviours
                 if (IsExpression == false ||
                     _expressionEvaluatorBehaviour.Evaluate(literal => FilterFunction(literal, it)))
                     _searchResult.Add(it);
-            
+
             _searchResultCallback.Invoke(_searchResult);
         }
 
@@ -53,6 +53,12 @@ namespace Rundo.RuntimeEditor.Behaviours
             _data.AddRange(data);
             _searchResultCallback = searchResult;
             _invalidateSearch = true;
+        }
+
+        public void ClearData()
+        {
+            _data.Clear();
+            _searchResult.Clear();
         }
 
         protected abstract bool FilterFunction(string literal, T data);

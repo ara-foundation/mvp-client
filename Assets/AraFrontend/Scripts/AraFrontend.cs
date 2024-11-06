@@ -21,6 +21,13 @@ public class AraFrontend : MonoBehaviour
     [SerializeField] private InputSelectionWindow SelectionWindow;
     [SerializeField] private ActivityGroup MenuButtons;
 
+    [Header("Selected Item")]
+    [Space(20)]
+    [SerializeField] private SelectedItem InputSelectedItem;
+    [SerializeField] private SelectedItem OutputSelectedItem;
+    [SerializeField] private GameObject OutputPlaceholder;
+    [SerializeField] private SelectedItem TimerSelectedItem;
+
     [Serializable]
     public enum ActionType
     {
@@ -67,6 +74,11 @@ public class AraFrontend : MonoBehaviour
     {
         MainCamera = Camera.main;
         SelectionWindow.TurnOff(ifOn: false);
+
+        InputSelectedItem.Hide();
+        OutputSelectedItem.Hide();
+        OutputPlaceholder.SetActive(true);
+        TimerSelectedItem.Hide();
     }
 
     // Update is called once per frame
@@ -107,6 +119,8 @@ public class AraFrontend : MonoBehaviour
             }    
         }
 
+        currentRaysastResults.Clear();
+
         if (replaceCurrent)
         {
             // no ignored mask
@@ -137,16 +151,16 @@ public class AraFrontend : MonoBehaviour
             }*/
 
             var count = eventSystemRaysastResults.Count;
-            Debug.Log($"{System.DateTime.Now} {count} objects under:");
+            //Debug.Log($"{System.DateTime.Now} {count} objects under:");
             for (var i = 0; i < count; i++)
             {
                 var diosData = DIOSData.GameObjectDataType(eventSystemRaysastResults[i].gameObject);
                 if (diosData.Count == 1 && diosData[0] == DIOSData.Type.Zero)
                 {
-                    Debug.Log($"{eventSystemRaysastResults[i].gameObject.name} is not a dios data skip");
+                    Debug.LogWarning($"{eventSystemRaysastResults[i].gameObject.name} is not a dios data skip");
                 } else if (diosData.Count == 1 && diosData[0] == DIOSData.Type.NoData)
                 {
-                    Debug.Log($"{eventSystemRaysastResults[i].gameObject.name} has no data?");
+                    Debug.LogWarning($"{eventSystemRaysastResults[i].gameObject.name} has no data?");
                 } else
                 {
                     var go = eventSystemRaysastResults[i].gameObject;
@@ -156,13 +170,10 @@ public class AraFrontend : MonoBehaviour
                     {
                         types += $"{j}/{diosData.Count}={diosData[j].ToString()} ";
                     }
-                    Debug.Log($"\t{i+1}/{count}: object under mouse {go.name} as dios {types} types {Environment.NewLine}");
+                    //Debug.Log($"\t{i+1}/{count}: object under mouse {go.name} as dios {types} types {Environment.NewLine}");
                 }
             }
             return true;
-        } else
-        {
-            currentRaysastResults.Clear();
         }
 
         return false;
@@ -170,11 +181,36 @@ public class AraFrontend : MonoBehaviour
 
     public void OnItemSelect(ProjectItemMetaData metaData, ActionType actionType)
     {
-        Notification.Instance.Show($"Item {metaData.GameObject.name} of {metaData.DiosType[0].ToString()} was selected for {actionType}");
         ClearSelection();
         MenuButtons.UnSelectAll();
+        if (actionType == ActionType.Input)
+        {
+            InputSelectedItem.Show(metaData);
+        } else if (actionType == ActionType.Output)
+        {
+            OutputPlaceholder.SetActive(false);
+            OutputSelectedItem.Show(metaData);
+        } else if (actionType == ActionType.Timer)
+        {
+            TimerSelectedItem.Show(metaData);
+        }
     }
 
+    private void OnDeselectInputItem(ProjectItemMetaData metaData)
+    {
+        InputSelectedItem.Hide();
+    }
+
+    private void OnDeselectOutputItem(ProjectItemMetaData metaData)
+    {
+        OutputSelectedItem.Hide();
+        OutputPlaceholder.SetActive(false);
+    }
+
+    private void OnDeselectTimerItem(ProjectItemMetaData metaData)
+    {
+        TimerSelectedItem.Hide();
+    }
 
     //Gets all event system raycast results of current mouse or touch position.
     static List<RaycastResult> GetEventSystemRaycastResults()
@@ -188,11 +224,14 @@ public class AraFrontend : MonoBehaviour
 
     public void OnInput(bool select)
     {
-        Debug.Log($"OnInput {select}");
+        if (InputSelectedItem.IsShowing())
+        {
+            OnDeselectInputItem(InputSelectedItem.Data);
+            return;
+        }
         if (!select)
         {
             SelectionWindow.TurnOff(ifOn: true);
-            return;
         }
         if (currentRaysastResults == null || currentRaysastResults.Count == 0) {
             Debug.Log("No objects were selected, show the input list");
@@ -209,6 +248,11 @@ public class AraFrontend : MonoBehaviour
 
     public void OnOutput(bool select)
     {
+        if (OutputSelectedItem.IsShowing())
+        {
+            OnDeselectOutputItem(OutputSelectedItem.Data);
+            return;
+        }
         if (!select)
         {
             SelectionWindow.TurnOff(ifOn: true);
@@ -227,6 +271,11 @@ public class AraFrontend : MonoBehaviour
 
     public void OnTimer(bool select)
     {
+        if (TimerSelectedItem.IsShowing())
+        {
+            OnDeselectTimerItem(TimerSelectedItem.Data);
+            return;
+        }
         if (!select)
         {
             SelectionWindow.TurnOff(ifOn: true);

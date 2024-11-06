@@ -62,13 +62,13 @@ public class InputSelectionWindow : MonoBehaviour
 
     public void TurnOff(bool ifOn)
     {
-        Debug.Log($"Received a signol to turn off window: {ifOn} is on now? {Window.On}");
         if (ifOn && !Window.On)
         {
             Debug.Log("Window is not open, but received a signal to close it");
             return;
         }
         Window.TurnOff();
+        _projectItemsSearchFilterBehaviour.ClearData();
     }
 
     private void OnItemSelect(ProjectItemMetaData metaData)
@@ -92,7 +92,6 @@ public class InputSelectionWindow : MonoBehaviour
                 _screenshotsQueue.Enqueue(item);
             } else {
                 var extracted = DIOSData.Extract(it);
-                Debug.Log($"The {it.GameObject.name} metadata has {it.DiosType.Count} dios types. Extracted to {extracted.Count} metadata");
                 foreach (var ex in extracted)
                 {
                     var item = _content.Add<SelectionWindowItem>(_prefabsWindowItemPrefab);
@@ -116,7 +115,7 @@ public class InputSelectionWindow : MonoBehaviour
             {
                 var item = _screenshotsQueue.Dequeue();
 
-                var go = item.ProjectItemMetaData.GameObject;
+                var go = item.Data.GameObject;
                 if (go != null)
                 {
                     if (_screenshotsCache.TryGetValue(go, out var screenshot))
