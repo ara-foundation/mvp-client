@@ -24,13 +24,17 @@ public class WebBusWindow : MonoBehaviour
         }
     }
 
+    private void Awake()
+    {
+        SelectedOutputItem.ShowDefault();
+        SelectedInputItem.ShowDefault();
+    }
+
     public void ShowWindow()
     {
         if (!LeanWindow.On)
         {
             LeanWindow.TurnOn();
-            SelectedOutputItem.ShowDefault();
-            SelectedInputItem.ShowDefault();
         }
     }
 

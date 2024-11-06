@@ -45,7 +45,6 @@ public class ActivityGroup : MonoBehaviour
     {
         foreach (var activityState in activityStates)
         {
-            Debug.Log($"Unselect the state of {activityState.gameObject.name} which is {activityState.Mode}");
             if (activityState != null && activityState.Mode == StateMode.Selected) {
                 activityState.ToggleSelect(enabled: false);
                 break;

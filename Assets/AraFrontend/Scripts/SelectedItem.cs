@@ -33,6 +33,7 @@ public class SelectedItem : MonoBehaviour
 
     public void ShowDefault()
     {
+        Data.GameObject = null;
         _prefabName.text = "No data selected";
         _icon.texture = DefaultTexture;
         _button.gameObject.SetActive(false);
