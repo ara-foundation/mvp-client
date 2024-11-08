@@ -1,7 +1,4 @@
 using Rundo.RuntimeEditor.Behaviours.UI;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -44,6 +41,24 @@ public class SelectedItem : MonoBehaviour
         Show(projectItemMetaData);
         _button.gameObject.SetActive(btnEnabled);
     } 
+
+    public string DIOSTypeString()
+    {
+        if (IsShowing())
+        {
+            return $"{Data.DiosType[0]}";
+        }
+        return null;
+    }
+
+    public int DIOSTypeInt()
+    {
+        if (IsShowing())
+        {
+            return (int)Data.DiosType[0];
+        }
+        return (int)DIOSData.Type.NoData;
+    }
 
     public void Show(ProjectItemMetaData projectItemMetaData)
     {

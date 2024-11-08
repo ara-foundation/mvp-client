@@ -233,7 +233,7 @@ public class AraFrontend : MonoBehaviour
             SelectionWindow.TurnOff(ifOn: true);
         }
         if (currentRaysastResults == null || currentRaysastResults.Count == 0) {
-            WebBusWindow.Instance.ShowWindow();
+            WebBusWindow.Instance.ShowWindow(loadData: true);
             Debug.Log("No objects were selected, show the input list");
         } else
         {
@@ -260,7 +260,7 @@ public class AraFrontend : MonoBehaviour
         }
         if (currentRaysastResults == null || currentRaysastResults.Count == 0)
         {
-            WebBusWindow.Instance.ShowWindow();
+            WebBusWindow.Instance.ShowWindow(loadData: true);
             Debug.Log("No objects were selected, show the input list");
         }
         else
