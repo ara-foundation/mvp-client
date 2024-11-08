@@ -445,6 +445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cafe2f0b39bbbd9408a12c17ed63e103, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testMode: 0
 --- !u!114 &5309908373634465608
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -656,7 +657,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95e1fb89b3be05e49915890f0d959489, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultTexture: {fileID: 0}
+  DefaultTexture: {fileID: 2800000, guid: 286c2cb03bfd28f41b8ae04128359460, type: 3}
   _prefabName: {fileID: 7255639053590119157}
   _icon: {fileID: 4759245211300540962}
   _button: {fileID: 5831095082197254232}
