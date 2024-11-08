@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
@@ -25,6 +26,8 @@ public class CardDIOSTransfer : MonoBehaviour
 
     // Ara Idea represented in the Ara Server
     private DIOSTransfer serverContent;
+
+    public Func<DIOSTransfer, bool> UseCallback;
 
     public void Show(DIOSTransfer diosTransfer)
     {
@@ -79,5 +82,10 @@ public class CardDIOSTransfer : MonoBehaviour
         }
 
         IOFullContent.text = content;
+    }
+
+    public void OnUse()
+    {
+        var used = UseCallback(serverContent);
     }
 }

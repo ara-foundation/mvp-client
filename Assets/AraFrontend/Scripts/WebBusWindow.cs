@@ -104,6 +104,7 @@ public class WebBusWindow : MonoBehaviour
             foreach (var transfer in DIOSTransfers)
             {
                 var card = TransferContent.Add<CardDIOSTransfer>(DIOSTransferPrefab);
+                card.UseCallback += OnUseTransfer;
                 card.Show(transfer);
             }
         }
@@ -125,6 +126,12 @@ public class WebBusWindow : MonoBehaviour
 
         TransferContent.Clear();
         searched = string.Empty;
+    }
+
+    public bool OnUseTransfer(DIOSTransfer transfer)
+    {
+        Notification.Instance.Show("Ara didn't implement use yet. :(");
+        return false;
     }
 
     private async Task<DIOSTransfer[]> FetchDiosTransfers(string value)
