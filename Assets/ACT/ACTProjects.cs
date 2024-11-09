@@ -106,9 +106,18 @@ public class ACTProjects : MonoBehaviour
         }
         if (MainCamera && !MainCamera.gameObject.activeSelf)
         {
-            UICanvas.worldCamera = MainCamera;
-            MainCamera.gameObject.SetActive(true);
-            AraFrontend.Instance.MainCamera = MainCamera;
+            if (UICanvas != null)
+            {
+                UICanvas.worldCamera = MainCamera;
+            }
+            if (MainCamera.gameObject != null)
+            {
+                MainCamera.gameObject.SetActive(true);
+            }
+            if (AraFrontend.Instance != null)
+            {
+                AraFrontend.Instance.MainCamera = MainCamera;
+            }
         }
 
         for (var i = 0; i < Objects.Length; i++)
