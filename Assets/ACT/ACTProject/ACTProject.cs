@@ -56,8 +56,7 @@ public class ACTProject : MonoBehaviour, IStateReactor
     IEnumerator DiveInto()
     {
         ACTSession.Instance.SetFirstLevel(actWithProject);
-        ACTProjects.Instance.LoadingSceneModal.Set(true);
-
+        Global.Instance.ShowLoadingScene();
         var rts = ACTProjects.Instance.ACTProjectsCamera.gameObject.GetComponent<RTS_Camera>();
         var zoomIn = rts.targetOffset.z + 1;
         rts.targetOffset = new UnityEngine.Vector3(rts.targetOffset.x, rts.targetOffset.y, zoomIn);

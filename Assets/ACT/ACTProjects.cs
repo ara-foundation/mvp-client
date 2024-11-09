@@ -48,7 +48,6 @@ public class ACTProjects : MonoBehaviour
 {
     private static ACTProjects _instance;
 
-    [SerializeField] public LeanWindow LoadingSceneModal;
     public ActivityGroup ActivityGroup;
 
     public static string TargetTag = "target"; // objects must have this element
