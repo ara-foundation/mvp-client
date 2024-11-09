@@ -89,15 +89,18 @@ namespace Rundo.RuntimeEditor.Behaviours
 
         private void Start()
         {
+            StopPlayScene();
             if (_isLazyLoad)
             {
                 LoadScene();
+            } else
+            {
+
             }
-            CreateWorld();
-            StopPlayScene();
             if (_isNewScene)
             {
                 CreateScene();
+                CreateWorld();
             }
         }
 
@@ -139,8 +142,9 @@ namespace Rundo.RuntimeEditor.Behaviours
         public void CreateScene()
         {
             SetScene(RundoEngine.DataFactory.Instantiate<DataScene>());
+            ACTLevelScene.Instance.OnSceneLoaded();
         }
-        
+
         public void DeleteScene()
         {
             if (_dataScene != null)
