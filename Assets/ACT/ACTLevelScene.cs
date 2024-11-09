@@ -128,15 +128,19 @@ public class ACTLevelScene : EditorBaseBehaviour
     {
         if (ACTSession.Instance)
         {
+            Global.Instance.ShowStartingScene();
             _currentDevelopmentId = ACTSession.Instance.DevelopmentId;
             _currentLevelScene = await ACTSession.Instance.CurrentScene();
             _currentLevel = ACTSession.Instance.Level;
+
             if (!_currentLevelScene.Exist())
             {
+                Global.Instance.ProgressLoadingTitle("Creating empty scene...");
                 AraRuntimeEditor_manager.Instance.CreateNewScene();
             }
             else
             {
+                Global.Instance.ProgressLoadingTitle("Loading scene from server...");
                 AraRuntimeEditor_manager.Instance.LoadScene(_currentLevelScene.sceneId, _currentLevelScene.dataScene);
             }
         }
@@ -148,7 +152,10 @@ public class ACTLevelScene : EditorBaseBehaviour
 
     public async void OnSceneLoaded()
     {
+        Global.Instance.ProgressLoadingTitle("Loading the parts into scene");
         PartData = await ACTSession.Instance.CurrentParts();
+
+        Global.Instance.HideLoadingScene();
     }
     private void Awake()
     {
