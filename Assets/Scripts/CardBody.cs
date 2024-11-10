@@ -6,7 +6,7 @@ using UnityEngine.UI;
 [ExecuteInEditMode]
 public class CardBody : MonoBehaviour
 {
-    [SerializeField] private Outline _outline;
+    [SerializeField] private UnityEngine.UI.Outline _outline;
     [SerializeField]
     private GameObject[] Fixed = { };
     [SerializeField]
@@ -16,7 +16,7 @@ public class CardBody : MonoBehaviour
 
     private void OnEnable()
     {
-        _outline = GetComponent<Outline>();
+        _outline = GetComponent<UnityEngine.UI.Outline>();
         _image = GetComponent<Image>();
     }
 
@@ -72,6 +72,7 @@ public class CardBody : MonoBehaviour
             return;
         }
 
+        
         _outline.enabled = onlyHeader;
 
         for (int i = 2; i<Fixed.Length; i++)
