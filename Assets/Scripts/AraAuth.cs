@@ -403,6 +403,36 @@ public class AraAuth : MonoBehaviour
         }
     }
 
+    public async void OnWallet()
+    {
+        Debug.LogWarning("Temporary, send the tokens to the Ara deployer:");
+        var stableAddress = "0x5DBE02aDC7720cb15e5e4B4dd44c7Fa14ddA8CCd";   // LiveMarket Maintainer
+        var to = "0x80Cbc1f7fd60B7026C0088e5eD58Fc6Ce1180141";
+        var amount = BigInteger.Parse("100000000000000000000000");
+        var StableCoin = await ThirdwebManager.Instance.GetContract(stableAddress, NetworkParams.networkId, NetworkParams.Erc20Abi);
+
+        Notification.Instance.Show($"transfer maintainer token to the metamask wallet...");
+
+        try
+        {
+            ThirdwebTransaction transaction = await ThirdwebContract.Prepare(AraAuth.Instance.Wallet, StableCoin, "transfer", BigInteger.Zero, to, amount);
+            var limit = await Maydone_NewPlan.EstimateGasLimit(transaction);
+            if (limit <= 0)
+            {
+                throw new Exception("failed to estimate a gas limit");
+            }
+
+            var receipt = await Maydone_NewPlan.Send(transaction);
+            Notification.Instance.Show($"Transfer tx: ${receipt}; Now minting your ownership tokens...");
+        }
+        catch (Exception ex)
+        {
+            Notification.Instance.Show(ex.Message);
+            return;
+        }
+
+    }
+
     private async Task<UserParams> Login(UserParams userParams)
     {
         var body = JsonUtility.ToJson(userParams.loginParams);
