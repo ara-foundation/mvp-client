@@ -1,0 +1,11 @@
+Model Information:
+* title:	Minion
+* source:	https://sketchfab.com/3d-models/minion-a39ab1785bb0416585173b2ddf2a487f
+* author:	WelsEvil (https://sketchfab.com/WelsEvil)
+
+Model License:
+* license type:	CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)
+* requirements:	Author must be credited. No commercial use.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Minion" (https://sketchfab.com/3d-models/minion-a39ab1785bb0416585173b2ddf2a487f) by WelsEvil (https://sketchfab.com/WelsEvil) licensed under CC-BY-NC-4.0 (http://creativecommons.org/licenses/by-nc/4.0/)

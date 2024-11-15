@@ -55,3 +55,7 @@ Model License:
 
 If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
 This work is based on "Burst" (https://sketchfab.com/3d-models/burst-79ada2c9baac41f88d2cfa4d8b29b29f) by John.Dee2 (https://sketchfab.com/John.Dee2) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+
+
+### Minion for ACT Part's Task button
+"Minion" (https://skfb.ly/69wDN) by WelsEvil is licensed under Creative Commons Attribution-NonCommercial (http://creativecommons.org/licenses/by-nc/4.0/).
