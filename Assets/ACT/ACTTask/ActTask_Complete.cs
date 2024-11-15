@@ -50,6 +50,16 @@ public class ActTask_Complete : MonoBehaviour
             return;
         }
 
+        if (ACTSession.Instance != null)
+        {
+            var devId = ACTSession.Instance.DevelopmentId;
+            var lvl = ACTSession.Instance.Level;
+            var partId = ACTSession.Instance.CurrentParentObjectId();
+
+            Debug.Log($"Adding {validatedTasks.Count} tasks to devId={devId}/lvl={lvl}/partId={partId}");
+        }
+
         Debug.Log($"Send {validatedTasks.Count} tasks to the blockchain");
+        tasksToComplete.TasksAdded();
     }
 }

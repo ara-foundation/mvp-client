@@ -24,56 +24,19 @@ public class ActTask_TasksToComplete : MonoBehaviour
     [SerializeField] private GameObject TaskFormPrefab;
 
     [Header("Other Task Windows")]
+    [SerializeField] private ActivityState TaskButton;
     [SerializeField] private ActTask_NewTask NewTaskWindow;
     [SerializeField] private ActTask_Complete CompleteWindow;
 
     private List<ActTask_TaskForm> TaskFormList = new();
 
-    [Header("Buttons")]
-    [SerializeField] private Button AddButton;
-    [SerializeField] private TextMeshProUGUI AddButtonLabel;
-    public readonly string AddButtonSingle = "Add A Task";
-    public readonly string AddButtonRecord = "Add All Tasks";
-    [Space(5)]
-    [Header("Recorder")]
-    [SerializeField] private Button PlayRecordButton;
-    [SerializeField] private Button StopRecordButton;
-    [SerializeField] private TextMeshProUGUI ProgressLabel;
-    public bool streamSegments = true;
-    public WhisperManager whisper;
-    public MicrophoneRecord microphoneRecord;
-    private string _buffer;
-
-    [Header("Input Field")]
-    [SerializeField] private TMP_InputField TasksInput;
-    [SerializeField] private Button ClearRecordButton;
-
     [HideInInspector]
     public Action<string, bool> AddTaskCallback;
-
-    private void Awake()
-    {
-        CompleteWindow.tasksToComplete = this;
-    }
-
-    private void OnVadChanged(bool isSpeechDetected)
-    {
-        var status = "no audio";
-        if (isSpeechDetected)
-        {
-            status = "audio detected";
-        }
-        ProgressLabel.text = $"Recording [{status}]";
-    }
-
-    private void OnProgressHandler(int progress)
-    {
-        ProgressLabel.text = $"Parsing the speech: {progress}%";
-    }
 
     // Start is called before the first frame update
     void Start()
     {
+        CompleteWindow.tasksToComplete = this;
         NewTaskWindow.AddTaskCallback += OnNewTask;
         ResetToDefault();
     }
@@ -184,23 +147,13 @@ public class ActTask_TasksToComplete : MonoBehaviour
         taskForm.Show(this, TaskFormList.Count, title, description);
     }
 
-    private void SetAddButtonLabel()
+    public void TasksAdded()
     {
-        if (_singleMode)
-        {
-            AddButtonLabel.text = AddButtonSingle;
-        } else
-        {
-            AddButtonLabel.text = AddButtonRecord;
-        }
+        Notification.Instance.Show("Tasks were added to the blockchain!");
+        TaskButton.ToggleSelect(enabled: false);
+        ResetToDefault();
     }
 
-    private void ToggleRecordButton(bool play)
-    {
-        PlayRecordButton.gameObject.SetActive(play);
-        PlayRecordButton.interactable = play;
-        StopRecordButton.gameObject.SetActive(!play);
-    }
 
     public void ResetToDefault()
     {
@@ -208,78 +161,4 @@ public class ActTask_TasksToComplete : MonoBehaviour
         Content.Clear();
     }
 
-    private void OnNewSegment(WhisperSegment segment)
-    {
-        if (!streamSegments)
-            return;
-
-        _buffer += segment.Text;
-        TasksInput.text = _buffer + "...";
-        //UiUtils.ScrollDown(scroll);
-    }
-
-    public void OnStopRecord()
-    {
-        Debug.Log($"Stop the record, is microphone is recording? {microphoneRecord.IsRecording}");
-        if (microphoneRecord.IsRecording)
-        {
-            microphoneRecord.StopRecord();
-        }
-    }
-
-    public void OnStartRecord()
-    {
-        AddButton.interactable = false;
-        _singleMode = false;
-        TasksInput.text = "";
-        ClearRecordButton.gameObject.SetActive(false);
-        OnVadChanged(isSpeechDetected: false);
-        microphoneRecord.StartRecord();
-        ToggleRecordButton(play: false);
-        SetAddButtonLabel();
-    }
-
-    public void OnAdd()
-    {
-        if (string.IsNullOrEmpty(TasksInput.text))
-        {
-            Notification.Instance.Show("Task body is empty");
-            return;
-        }
-
-        AddTaskCallback?.Invoke(TasksInput.text, _singleMode);
-        Debug.Log($"tasks {TasksInput.text}, is single mode? {_singleMode}");
-        ResetToDefault();
-    }
-
-    private async void OnMicrophoneStop(AudioChunk recordedAudio)
-    {
-        Debug.Log($"OnMicrophone stop");
-        _buffer = "";
-
-        ToggleRecordButton(play: true);
-        PlayRecordButton.interactable = false;
-
-        var sw = new Stopwatch();
-        sw.Start();
-
-        var res = await whisper.GetTextAsync(recordedAudio.Data, recordedAudio.Frequency, recordedAudio.Channels);
-        if (res == null)
-            return;
-
-        ClearRecordButton.gameObject.SetActive(true);
-        AddButton.interactable = true;
-        PlayRecordButton.interactable = true;
-
-        var time = sw.ElapsedMilliseconds;
-        var rate = recordedAudio.Length / (time * 0.001f);
-        ProgressLabel.text = $"Time: {time} ms\nRate: {rate:F1}x";
-
-        var text = res.Result;
-        //if (printLanguage)
-        //    text += $"\n\nLanguage: {res.Language}";
-
-        TasksInput.text = text;
-        //UiUtils.ScrollDown(scroll);
-    }
 }
