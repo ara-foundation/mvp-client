@@ -6,8 +6,8 @@ public static class NetworkParams
     //public static int networkId = 97; // BNB Testnet
     public static int networkId = 137; // Polygon Mainnet
 
-    //public static string AraActUrl = "http://localhost:3000";
-    public static string AraActUrl = "https://ara-act-dc51162b3a11.herokuapp.com";
+    public static string AraActUrl = "http://localhost:3000";
+    //public static string AraActUrl = "https://ara-act-dc51162b3a11.herokuapp.com";
 
     //public static string SenseverUrl = "http://localhost:8088";
     public static string SenseverUrl = "https://sensever-backend-c04efceb3ac3.herokuapp.com";
