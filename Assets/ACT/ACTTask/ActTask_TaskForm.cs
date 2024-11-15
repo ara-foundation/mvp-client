@@ -90,6 +90,11 @@ public class ActTask_TaskForm : MonoBehaviour
 
     #region formchange
 
+    public void OnEdited()
+    {
+        this.tasksToComplete.TaskEdited(this);
+    }
+
     public void OnTitleChange(string data)
     {
         _taskForm.title = data;

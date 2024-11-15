@@ -25,6 +25,7 @@ public class ActTask_TasksToComplete : MonoBehaviour
 
     [Header("Other Task Windows")]
     [SerializeField] private ActTask_NewTask NewTaskWindow;
+    [SerializeField] private ActTask_Complete CompleteWindow;
 
     private List<ActTask_TaskForm> TaskFormList = new();
 
@@ -50,6 +51,10 @@ public class ActTask_TasksToComplete : MonoBehaviour
     [HideInInspector]
     public Action<string, bool> AddTaskCallback;
 
+    private void Awake()
+    {
+        CompleteWindow.tasksToComplete = this;
+    }
 
     private void OnVadChanged(bool isSpeechDetected)
     {
@@ -131,6 +136,45 @@ public class ActTask_TasksToComplete : MonoBehaviour
         {
             TaskFormList[i].ResetNumber(i+1);
         }
+
+        if (TaskFormList.Count == 0)
+        {
+            CompleteWindow.ResetToDefault();
+        }
+    }
+
+    public void TaskEdited(ActTask_TaskForm task)
+    {
+        var valid = task.TaskForm().Validate();
+        if (string.IsNullOrEmpty(valid))
+        {
+            CompleteWindow.SetStatus(true);
+        } else
+        {
+            CompleteWindow.SetStatus(false);
+        }
+    }
+
+    /// <summary>
+    /// Validate all tasks
+    /// </summary>
+    /// <returns></returns>
+    public List<TaskForm> ValidatedTasks()
+    {
+        var validatedTasks = new List<TaskForm>();
+        for (var i = 0; i < TaskFormList.Count; i++)
+        {
+            var taskForm = TaskFormList[i].TaskForm();
+            var err = taskForm.Validate();
+            if (!string.IsNullOrEmpty(err))
+            {
+                Notification.Instance.Show($"#{i+1} task: {err}");
+                return null;
+            }
+            validatedTasks.Add(taskForm);
+        }
+
+        return validatedTasks;
     }
 
     private void AddNewTask(string title, string description)
