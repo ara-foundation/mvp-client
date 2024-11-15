@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,13 +10,23 @@ using Whisper;
 using Whisper.Utils;
 using Debug = UnityEngine.Debug;
 
-public class ActTask_NewTask : MonoBehaviour
+public class ActTask_TasksToComplete : MonoBehaviour
 {
     /// <summary>
     /// When user adds a task by typing, then its in single mode.
     /// When user adds a task by recording his audio, then its in record mode.
     /// </summary>
     private bool _singleMode = true;
+
+    [Header("Tasks To Complete Window")]
+    [SerializeField] private GameObject LoadingLayer;
+    [SerializeField] private Content Content;
+    [SerializeField] private GameObject TaskFormPrefab;
+
+    [Header("Other Task Windows")]
+    [SerializeField] private ActTask_NewTask NewTaskWindow;
+
+    private List<ActTask_TaskForm> TaskFormList = new();
 
     [Header("Buttons")]
     [SerializeField] private Button AddButton;
@@ -39,18 +50,6 @@ public class ActTask_NewTask : MonoBehaviour
     [HideInInspector]
     public Action<string, bool> AddTaskCallback;
 
-    private void Awake()
-    {
-        whisper.OnNewSegment += OnNewSegment;
-        whisper.OnProgress += OnProgressHandler;
-        whisper.language = "en";
-        whisper.translateToEnglish = false;
-        whisper.dropOldBuffer = true;
-
-        microphoneRecord.OnVadChanged += OnVadChanged;
-
-        microphoneRecord.OnRecordStop += OnMicrophoneStop;
-    }
 
     private void OnVadChanged(bool isSpeechDetected)
     {
@@ -70,7 +69,75 @@ public class ActTask_NewTask : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        NewTaskWindow.AddTaskCallback += OnNewTask;
         ResetToDefault();
+    }
+
+    // Add a new task
+    private void OnNewTask(string data, bool single)
+    {
+        if (single)
+        {
+            var title = "";
+            var description = "";
+            var rows = data.Split(".");
+            if (rows.Length < 2)
+            {
+                rows = data.Split(';');
+                if (rows.Length < 2)
+                {
+                    rows = data.Split('!');
+                    if (rows.Length < 2)
+                    {
+                        rows = data.Split('?');
+                    }
+                }
+            }
+            if (rows.Length < 2)
+            {
+                title = $"Task #{TaskFormList.Count + 1}";
+                description = data;
+            } else
+            {
+                title = rows.First();
+                description = string.Join(".", rows.Skip(1));
+            }
+            Debug.Log($"'{data}' has {rows.Length} data");
+
+            AddNewTask(title, description);
+        } else
+        {
+            Debug.LogWarning("Sorry not yet implemented to parse all (show loading layer)");
+        }
+    }
+
+    // Delete the task
+    public void DeleteTask(ActTask_TaskForm task)
+    {
+        if (!TaskFormList.Contains(task))
+        {
+            Debug.Log("Task to delete not found");
+            return;
+        }
+
+        Destroy(task.gameObject);
+        if (!TaskFormList.Remove(task))
+        {
+            Debug.Log("Task was not removed");
+            return;
+        }
+
+        for (var i = 0; i < TaskFormList.Count; i++)
+        {
+            TaskFormList[i].ResetNumber(i+1);
+        }
+    }
+
+    private void AddNewTask(string title, string description)
+    {
+        var taskForm = Content.Add<ActTask_TaskForm>(TaskFormPrefab);
+        TaskFormList.Add(taskForm);
+        taskForm.Show(this, TaskFormList.Count, title, description);
     }
 
     private void SetAddButtonLabel()
@@ -93,19 +160,8 @@ public class ActTask_NewTask : MonoBehaviour
 
     public void ResetToDefault()
     {
-        if (microphoneRecord.IsRecording)
-        {
-            OnStopRecord();
-        }
-
-        AddButton.interactable = true;
-        _singleMode = true;
-        SetAddButtonLabel();
-        ToggleRecordButton(play: true);
-        TasksInput.text = "";
-
-        ProgressLabel.text = "";
-        ClearRecordButton.gameObject.SetActive(false);
+        LoadingLayer.SetActive(false);
+        Content.Clear();
     }
 
     private void OnNewSegment(WhisperSegment segment)
