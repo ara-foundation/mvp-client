@@ -2,6 +2,7 @@ using Lean.Gui;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -54,8 +55,13 @@ public class ACTPart_controller : MonoBehaviour
     [SerializeField] public ActivityState MaintainerState;
     [SerializeField] public GameObject MaintainerInputFieldContainer;
     [SerializeField] public Transform MaintainerCameraTarget;
+    [Space(20)]
+    [Header("Maintainer")]
+    [SerializeField] private ActivityState TasksActivityState;
 
     public ACTPartModel Model { get { return _model; } }
+
+    private TaskForm[] tasks;
 
     void Start()
     {
@@ -297,10 +303,10 @@ public class ACTPart_controller : MonoBehaviour
 
     IEnumerator PopulateTaskDependency()
     {
-        Debug.Log($"Populate task dependency for developmentId={_model.developmentId} level={_model.level} parentObjectId={_model.objId}");
         Task<TaskForm[]> task = ACTSession.Instance.FetchTasks(_model.developmentId, _model.level, _model.objId);
         yield return new WaitUntil(() => task.IsCompleted);
 
+        tasks = task.Result;
         TasksAmount.text = "Tasks: " + task.Result.Length;
         SetProgressBar(task.Result);
     }
@@ -323,5 +329,30 @@ public class ACTPart_controller : MonoBehaviour
             completedPercentage = completed / percent;
         }
         TasksProgressLabel.text = $"{completedPercentage}%";
+    }
+
+    public void OnShowTasks(bool selected)
+    {
+        if (!selected)
+        {
+            return;
+        }
+        if (tasks == null || tasks.Length == 0)
+        {
+            Notification.Instance.Show("Project has no tasks yet.");
+            return;
+        }
+
+        Drawer_Tasks.Instance.OnHideCallback += OnDrawerHide;
+        Drawer_Tasks.Instance.Show(tasks.ToList(), gameObject.GetInstanceID());
+    }
+
+    private void OnDrawerHide(int callerId)
+    {
+        if (callerId == gameObject.GetInstanceID())
+        {
+            TasksActivityState.ToggleSelect(false);
+            Drawer_Tasks.Instance.OnHideCallback -= OnDrawerHide;
+        }
     }
 }
