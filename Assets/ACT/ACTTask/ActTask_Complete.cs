@@ -42,7 +42,7 @@ public class ActTask_Complete : MonoBehaviour
         }
     }
 
-    public void OnSubmit()
+    public async void OnSubmit()
     {
         var validatedTasks = tasksToComplete.ValidatedTasks();
         if (validatedTasks == null || validatedTasks.Count == 0)

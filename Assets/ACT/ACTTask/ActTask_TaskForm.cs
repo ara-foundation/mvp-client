@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class TaskForm
 {
+    public string _id;
     public string title;
     public string description;
     public string deadline;

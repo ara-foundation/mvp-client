@@ -4,6 +4,7 @@ using RTS_Cam;
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -94,20 +95,45 @@ public class ACTProject : MonoBehaviour, IStateReactor
         SetTechStackTooltip();
         BudgetMenuLabel.text = "Budget: $" + GetBudget();
         MaintainerMenuLabel.text = "Maintainer: " + Maintainer();
-        TasksMenuLabel.text = "Tasks: " + CountTasks();
-        SetProgressBar();
+        Debug.Log("Populate the task dependency...");
+        StartCoroutine(PopulateTaskDependency());
     }
 
-    private void SetProgressBar()
+    IEnumerator PopulateTaskDependency()
     {
-        Debug.LogWarning("Todo! Progress bar is implemented after tasks");
-        ProgressLabel.text = "0%";
+        Debug.Log($"Fetch tasks for development id: {actWithProject._id}");
+        Task<TaskForm[]> task = ACTSession.Instance.FetchTasks(actWithProject._id);
+        yield return new WaitUntil(() => task.IsCompleted);
+
+        Debug.Log($"Task amount {task.Result.Length}");
+
+        TasksMenuLabel.text = "Tasks: " + task.Result.Length;
+        SetProgressBar(task.Result);
     }
 
-    private int CountTasks()
+    private void SetProgressBar(TaskForm[] tasks)
     {
-        Debug.LogWarning("Todo! Task is not enabled yet. We will do it after setting everything with the server and levels");
-        return 0;
+        if (tasks.Length == 0)
+        {
+            ProgressLabel.text = "0%";
+            return;
+        }
+        double completed = 0;
+        for (var i = 0; i < tasks.Length; i++)
+        {
+            if (tasks[i].IsCompleted())
+            {
+                completed++;
+            }
+        }
+        double percent = ((double)tasks.Length) / 100.0;
+
+        double completedPercentage = 0;
+        if (percent > 0)
+        {
+            completedPercentage = completed / percent;
+        }
+        ProgressLabel.text = $"{completedPercentage}%";
     }
 
     private string Maintainer()

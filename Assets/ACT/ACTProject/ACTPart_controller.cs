@@ -2,6 +2,7 @@ using Lean.Gui;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -17,6 +18,8 @@ public class ACTPart_controller : MonoBehaviour
 
     [Header("Parts or Tasks")]
     [SerializeField] private TextMeshProUGUI PartsAmount;
+    [SerializeField] private TextMeshProUGUI TasksAmount;
+    [SerializeField] private TextMeshProUGUI TasksProgressLabel;
 
     [Header("Project Name")]
     [SerializeField] public Transform ProjectNameContainer;
@@ -289,5 +292,36 @@ public class ACTPart_controller : MonoBehaviour
         {
             SetMaintainerNameInternal(model.maintainer);
         }
+        StartCoroutine(PopulateTaskDependency());
+    }
+
+    IEnumerator PopulateTaskDependency()
+    {
+        Debug.Log($"Populate task dependency for developmentId={_model.developmentId} level={_model.level} parentObjectId={_model.objId}");
+        Task<TaskForm[]> task = ACTSession.Instance.FetchTasks(_model.developmentId, _model.level, _model.objId);
+        yield return new WaitUntil(() => task.IsCompleted);
+
+        TasksAmount.text = "Tasks: " + task.Result.Length;
+        SetProgressBar(task.Result);
+    }
+
+    private void SetProgressBar(TaskForm[] tasks)
+    {
+        int completed = 0;
+        for (var i = 0; i < tasks.Length; i++)
+        {
+            if (tasks[i].IsCompleted())
+            {
+                completed++;
+            }
+        }
+        double percent = (double)tasks.Length / 100.0;
+
+        double completedPercentage = 0;
+        if (percent > 0)
+        {
+            completedPercentage = completed / percent;
+        }
+        TasksProgressLabel.text = $"{completedPercentage}%";
     }
 }
