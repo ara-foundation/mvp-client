@@ -13,6 +13,10 @@ public class TaskForm
     public string deadline;
     public decimal price_usd;
     public decimal est_hours;
+    public string developmentId;
+    public int level;
+    public string parentObjId;
+    public string status;
 
     public string Validate()
     {
@@ -41,8 +45,31 @@ public class TaskForm
         {
             return "Estimated hours is empty";
         }
+       
 
         return null;
+    }
+
+    public bool IsTodo()
+    {
+
+        return status != null && status.Equals("todo");
+    }
+
+    public bool IsDoing()
+    {
+
+        return status != null && status.Equals("doing");
+    }
+
+    public bool IsTest()
+    {
+        return status != null && status.Equals("test");
+    }
+
+    public bool IsCompleted()
+    {
+        return status != null && status.Equals("completed");
     }
 }
 
@@ -51,14 +78,17 @@ public class ActTask_TaskForm : MonoBehaviour
     private TaskForm _taskForm;
     private ActTask_TasksToComplete tasksToComplete;
 
+    public bool viewMode;
+    [Header("Side")]
     [SerializeField] private TextMeshProUGUI Number;
+    [SerializeField] private Button DeleteButton;
     [Header("Form")]
     [SerializeField] private TMP_InputField Title;
     [SerializeField] private TMP_InputField Description;
     [SerializeField] private TMP_InputField Deadline;
     [SerializeField] private TMP_InputField PriceUsd;
     [SerializeField] private TMP_InputField EstHours;
-    [SerializeField] private Button DeleteButton;
+    [SerializeField] private TextMeshProUGUI Status;
 
     public void Show(ActTask_TasksToComplete tasksToComplete, int number, string title, string description)
     {
@@ -68,9 +98,50 @@ public class ActTask_TaskForm : MonoBehaviour
         {
             title = title,
             description = description,
+            status = "todo",
         };
-        Title.text = title;
-        Description.text = description;
+        Populate();
+        viewMode = false;
+        ApplyViewMode();
+    }
+
+    public void Show(int number, TaskForm taskForm, bool viewMode = true)
+    {
+        this.tasksToComplete = null;
+        Number.text = number.ToString();
+        _taskForm = taskForm;
+        Populate();
+        this.viewMode = viewMode;
+        ApplyViewMode();
+    }
+
+    private void Populate()
+    {
+        Title.text = _taskForm.title;
+        Description.text = _taskForm.description;
+        Status.text = _taskForm.status;
+        if (!string.IsNullOrEmpty(_taskForm.deadline))
+        {
+            Deadline.text = _taskForm.deadline;
+        }
+        if (_taskForm.price_usd > 0)
+        {
+            PriceUsd.text = _taskForm.price_usd.ToString();
+        }
+        if (_taskForm.est_hours > 0)
+        {
+            EstHours.text = _taskForm.est_hours.ToString();
+        }
+    }
+
+    private void ApplyViewMode()
+    {
+        DeleteButton.gameObject.SetActive(!viewMode);
+        Title.interactable = viewMode;
+        Description.interactable = viewMode;
+        Deadline.interactable = viewMode;
+        PriceUsd.interactable = viewMode;
+        EstHours.interactable = viewMode;
     }
 
     public void OnDelete()
