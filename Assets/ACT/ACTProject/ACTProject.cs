@@ -3,6 +3,7 @@ using Nethereum.Web3;
 using RTS_Cam;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using TMPro;
@@ -23,8 +24,10 @@ public class ACTProject : MonoBehaviour, IStateReactor
     [SerializeField] private TextMeshProUGUI MaintainerMenuLabel;
     [SerializeField] private TextMeshProUGUI TasksMenuLabel;
     [SerializeField] private TextMeshProUGUI ProgressLabel;
+    [SerializeField] private ActivityState TasksActivityState;
 
     private ActWithProjectAndPlan actWithProject;
+    private TaskForm[] tasks;
 
     // Start is called before the first frame update
     void Start()
@@ -49,7 +52,6 @@ public class ACTProject : MonoBehaviour, IStateReactor
         {
             return;
         }
-
 
         StartCoroutine(DiveInto());
     }
@@ -95,8 +97,32 @@ public class ACTProject : MonoBehaviour, IStateReactor
         SetTechStackTooltip();
         BudgetMenuLabel.text = "Budget: $" + GetBudget();
         MaintainerMenuLabel.text = "Maintainer: " + Maintainer();
-        Debug.Log("Populate the task dependency...");
         StartCoroutine(PopulateTaskDependency());
+    }
+
+    public void OnShowTasks(bool selected)
+    {
+        if (!selected)
+        {
+            return;
+        }
+        if (tasks == null || tasks.Length == 0)
+        {
+            Notification.Instance.Show("Project has no tasks yet.");
+            return;
+        }
+
+        Drawer_Tasks.Instance.OnHideCallback += OnDrawerHide;
+        Drawer_Tasks.Instance.Show(tasks.ToList(), gameObject.GetInstanceID());
+    }
+
+    private void OnDrawerHide(int callerId)
+    {
+        if (callerId == gameObject.GetInstanceID())
+        {
+            TasksActivityState.ToggleSelect(false);
+            Drawer_Tasks.Instance.OnHideCallback -= OnDrawerHide;
+        }
     }
 
     IEnumerator PopulateTaskDependency()
@@ -105,8 +131,7 @@ public class ACTProject : MonoBehaviour, IStateReactor
         Task<TaskForm[]> task = ACTSession.Instance.FetchTasks(actWithProject._id);
         yield return new WaitUntil(() => task.IsCompleted);
 
-        Debug.Log($"Task amount {task.Result.Length}");
-
+        tasks = task.Result;
         TasksMenuLabel.text = "Tasks: " + task.Result.Length;
         SetProgressBar(task.Result);
     }

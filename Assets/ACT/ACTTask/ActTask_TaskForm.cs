@@ -164,7 +164,7 @@ public class ActTask_TaskForm : MonoBehaviour
 
     public void OnEdited()
     {
-        this.tasksToComplete.TaskEdited(this);
+        this.tasksToComplete?.TaskEdited(this);
     }
 
     public void OnTitleChange(string data)

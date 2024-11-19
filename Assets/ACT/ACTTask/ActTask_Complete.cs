@@ -53,13 +53,37 @@ public class ActTask_Complete : MonoBehaviour
         if (ACTSession.Instance != null)
         {
             var devId = ACTSession.Instance.DevelopmentId;
-            var lvl = ACTSession.Instance.Level;
+            // Tasks are always set within the scene, but for its parent.
+            // Therefore, the level is upgraded.
+            var lvl = ACTSession.Instance.Level - 1;
             var partId = ACTSession.Instance.CurrentParentObjectId();
 
-            Debug.Log($"Adding {validatedTasks.Count} tasks to devId={devId}/lvl={lvl}/partId={partId}");
-        }
+            if (lvl < 0)
+            {
+                Notification.Instance.Show("lvl can not be a negative number to submit the task");
+                return;
+            }
 
-        Debug.Log($"Send {validatedTasks.Count} tasks to the blockchain");
-        tasksToComplete.TasksAdded();
+            foreach (var task in validatedTasks)
+            {
+                task.developmentId = devId;
+                task.level = lvl;
+                task.parentObjId = partId;
+            }
+
+            Global.Instance.ShowStartingScene("Saving the data...");
+
+            bool saved = await ACTSession.Instance.SaveTasks(validatedTasks.ToArray(), devId, lvl, partId);
+
+            Global.Instance.HideLoadingScene();
+
+            if (saved)
+            {
+                tasksToComplete.TasksAdded();
+            }
+        } else
+        {
+            Notification.Instance.Show("No ACTSession in the scene");
+        }
     }
 }

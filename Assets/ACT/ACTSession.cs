@@ -176,7 +176,7 @@ public class ACTSession : MonoBehaviour
         {
             return partsInScene[level - 1];
         }
-        var parts = await FetchParts();
+        var parts = await FetchParts(DevelopmentId, level, parentObjectId[level - 1]);
 
         partsInScene.Add(parts);
 
@@ -211,7 +211,7 @@ public class ACTSession : MonoBehaviour
     /// </summary>
     /// <param name="developmentId"></param>
     /// <returns></returns>
-    private async Task<ACTPartModel[]> FetchParts()
+    private async Task<ACTPartModel[]> FetchParts(string developmentId, int level, string parentObjectId)
     {
         ACTPartModel[] incorrectResult = new ACTPartModel[] { };
         if (Level == 0)
@@ -219,10 +219,10 @@ public class ACTSession : MonoBehaviour
             return incorrectResult;
         }
 
-        string url = NetworkParams.AraActUrl + "/act/parts/" + DevelopmentId;
-        if (Level > 1)
+        string url = NetworkParams.AraActUrl + "/act/parts/" + developmentId;
+        if (level > 1)
         {
-            url += $"/{Level}/{parentObjectId[Level - 1]}";
+            url += $"/{level}/{parentObjectId}";
             Debug.Log($"Fetching the nested parts url={url}");
         }
 
@@ -298,5 +298,79 @@ public class ACTSession : MonoBehaviour
             return incorrectResult;
         }
         return result;
+    }
+
+    public async Task<TaskForm[]> FetchTasks(string developmentId, int level = 1, string _parentObjectId = null)
+    {
+        TaskForm[] incorrectResult = new TaskForm[] { };
+        if (level == 0)
+        {
+            return incorrectResult;
+        }
+
+        string url = NetworkParams.AraActUrl + "/act/tasks/" + developmentId;
+        if (!string.IsNullOrEmpty(_parentObjectId))
+        {
+            url += $"/{level}/{_parentObjectId}";
+        }
+
+        string res;
+        try
+        {
+            res = await WebClient.Get(url);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex);
+            return incorrectResult;
+        }
+
+        if (string.IsNullOrEmpty(res))
+        {
+            Debug.Log($"empty result for {url}");
+            return incorrectResult;
+        }
+
+        TaskForm[] result;
+        try
+        {
+            result = JsonConvert.DeserializeObject<TaskForm[]>(res);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            return incorrectResult;
+        }
+        return result;
+    }
+
+    public async Task<bool> SaveTasks(TaskForm[] tasks, string developmentId, int level = 1, string _parentObjectId = null)
+    {
+        string body = JsonConvert.SerializeObject(tasks);
+        string url = NetworkParams.AraActUrl + "/act/tasks/" + developmentId;
+        if (!string.IsNullOrEmpty(_parentObjectId))
+        {
+            url += $"/{level}/{_parentObjectId}";
+        }
+
+        Tuple<long, string> res;
+        try
+        {
+            res = await WebClient.Post(url, body);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex);
+            Notification.Instance.Show("Web request error: " + ex.Message);
+            return false;
+        }
+
+        if (res.Item1 != 200)
+        {
+            Notification.Instance.Show("Server error: " + res.Item2);
+            return false;
+        }
+
+        return true;
     }
 }
