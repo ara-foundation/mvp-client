@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>WTelegramClient</id>
+    <version>4.2.3</version>
+    <authors>Wizou</authors>
+    <license type="expression">MIT</license>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
+    <icon>logo.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://wiz0u.github.io/WTelegramClient</projectUrl>
+    <description>Telegram Client API (MTProto) library written 100% in C# and .NET Standard | Latest API layer: 193
+
+Release Notes:
+- API Layer 193: fullscreen mini-apps, Bot API 8.0
+- Improved HTTP mode
+- Added helpers Message.ReplyHeader .TopicID.
+- Added helper method Channels_GetAllForumTopics</description>
+    <releaseNotes>- API Layer 193: fullscreen mini-apps, Bot API 8.0
+- Improved HTTP mode
+- Added helpers Message.ReplyHeader .TopicID.
+- Added helper method Channels_GetAllForumTopics</releaseNotes>
+    <copyright>Copyright © Olivier Marcoux 2021-2024</copyright>
+    <tags>Telegram MTProto Client Api UserBot</tags>
+    <repository type="git" url="https://github.com/wiz0u/WTelegramClient.git" commit="9208d0b92c09da36b235a67517ed27a29adfe4df" />
+    <dependencies>
+      <group targetFramework="net5.0">
+        <dependency id="System.Collections.Immutable" version="6.0.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework="net8.0" />
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="IndexRange" version="1.0.3" exclude="Build,Analyzers" />
+        <dependency id="System.Collections.Immutable" version="6.0.0" exclude="Build,Analyzers" />
+        <dependency id="System.Memory" version="4.5.5" exclude="Build,Analyzers" />
+        <dependency id="System.Text.Json" version="6.0.10" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>
