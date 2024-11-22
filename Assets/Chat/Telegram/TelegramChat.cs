@@ -1,9 +1,12 @@
 using Lean.Gui;
+using Org.BouncyCastle.Utilities;
 using Org.BouncyCastle.Utilities.Zlib;
 using QRCoder;
 using QRCoder.Unity;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using TL;
 using TMPro;
 using UnityEngine;
@@ -13,7 +16,17 @@ using WTelegram;
 
 public class TelegramChat : MonoBehaviour
 {
+    public enum ChatType
+    {
+        Direct = 0,
+        Broadcast = 1,
+        Group = 2,
+        Sangha = 3,
+    }
+
     private const string TG_SESSION_KEY = "tg_phone";
+    private const string TG_CONTACT_KEY = "tg_contact";
+    private const string TG_CONTACT_HASH_KEY = "tg_contact_hash";
     private const string API_HASH = "2100d1ef8459a3a22820652a2e6d1a86";
     private const int API_ID = 26296279;
 
@@ -25,6 +38,13 @@ public class TelegramChat : MonoBehaviour
     [SerializeField] private RawImage ProfilePicture;
     [SerializeField] private TextMeshProUGUI Greetings;
     [SerializeField] private TextMeshProUGUI Username;
+    [Space(10)]
+    [Header("Chats")]
+    [SerializeField] private TextMeshProUGUI ChatsTitle;
+    [SerializeField] private Content ChatsContent;
+    [SerializeField] private GameObject ChatItemPrefab;
+
+    private List<TelegramChat_ChatItem> _chatItems = new();
 
     readonly string DefaultComment = "Open Telegram on your phone. Go Settings -> Devices and scan qr code to login.";
     readonly string SingleSignOn = "Telegram doesn't allow login. Steps to do:" +
@@ -36,6 +56,7 @@ public class TelegramChat : MonoBehaviour
     void OnEnable()
     {
         ToggleLoginPanel(enabled: false);
+        ChatsContent.Clear();
 
         Login();
     }
@@ -58,7 +79,6 @@ public class TelegramChat : MonoBehaviour
                 user = await client.LoginWithQRCode(OnQrDisplay);
                 PlayerPrefs.SetString(TG_SESSION_KEY, user.phone);
                 Debug.Log($"Login session saved for '{user.phone}'");
-                ShowProfile();
             }
             catch (WTException e)
             {
@@ -86,15 +106,85 @@ public class TelegramChat : MonoBehaviour
                     }
                 }
                 user = client.User;
-
-                ShowProfile();
             }
             catch (WTException e)
             {
                 LoginComment.text = $"Login Error: {e.Message}";
             }
-            
         }
+        ShowProfile();
+        LoadChats();
+    }
+
+    async void LoadContacts()
+    {
+        var contactHash = ContactHash();
+        Debug.Log($"(hash={contactHash}) Fetching contact list...");
+
+        var contacts = await client.Contacts_GetContacts(contactHash);
+
+        if (contacts == null)
+        {
+            Debug.Log("Contact list was not modified");
+            return;
+        }
+        ContactHash(contacts.contacts);
+
+        Debug.Log($"(hash={contactHash}) There are {contacts.saved_count} contacts...");
+        for( int i = 0; i < contacts.contacts.Length; i++)
+        {
+            var contact = contacts.contacts[i];
+            Debug.Log($"{i+1}/{contacts.saved_count}: userId={contact.user_id}");
+        }
+    }
+
+    /// <summary>
+    /// https://wiz0u.github.io/WTelegramClient/#terminology
+    /// </summary>
+    async void LoadChats()
+    {
+        var chats = await client.Messages_GetAllChats();
+        if (chats == null)
+        {
+            Debug.LogWarning("No chats found");
+            return;
+        }
+
+        ChatsTitle.text = $"Chats ({chats.chats.Count})";
+        foreach (var i in chats.chats.Keys)
+        {
+            var chat = chats.chats[i];
+            if (!chat.IsActive)
+            {
+                continue;
+            }
+            var chatItem = ChatsContent.Add<TelegramChat_ChatItem>(ChatItemPrefab);
+            chatItem.Show(chat);
+            _chatItems.Add(chatItem);
+        }
+    }
+
+    long ContactHash()
+    {
+        return long.Parse(PlayerPrefs.GetString(TG_CONTACT_HASH_KEY, "0"));
+    }
+
+    void ContactHash(Contact[] contacts)
+    {
+        long hash = 0;
+        foreach (var contact in contacts)
+        {
+            hash ^= contact.user_id >> 21;
+            hash ^= contact.user_id << 35;
+            hash ^= contact.user_id >> 4;
+            hash += contact.user_id;
+        }
+        ContactHash(hash);
+    }
+
+    void ContactHash(long hash)
+    {
+        PlayerPrefs.SetString(TG_CONTACT_HASH_KEY, hash.ToString());
     }
 
     async void ShowProfile()

@@ -7,7 +7,7 @@ using UnityEditor;
 
 [CustomEditor(typeof(GradientMaker))]
 
-class GradientMakerInspector : Editor {
+class GradientMakerInspector : UnityEditor.Editor {
 
 	public static GameObject gradMaker = null;
 	

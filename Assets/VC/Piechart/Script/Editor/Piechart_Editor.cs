@@ -6,7 +6,7 @@ using UnityEngine;
 namespace PieChart.ViitorCloud
 {
     [CustomEditor(typeof(PieChart))]
-    public class PieChart_Editor : Editor
+    public class PieChart_Editor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
