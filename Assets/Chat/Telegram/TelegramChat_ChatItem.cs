@@ -46,7 +46,6 @@ public class TelegramChat_ChatItem : MonoBehaviour
             Debug.Log($"The {_chat.Title} doesn't have a photo {_chat.Photo == null}");
             return;
         }
-        Debug.Log($"Show the stripped thumb: {_chat.Photo.stripped_thumb.Length} bytes for {_chat.Title}");
         DefaultThumb.gameObject.SetActive(false);
         ProfileThumb.gameObject.SetActive(true);
 
