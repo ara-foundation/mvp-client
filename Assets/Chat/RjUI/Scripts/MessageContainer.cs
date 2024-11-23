@@ -26,14 +26,28 @@ public class MessageContainer : MonoBehaviour
     presenter.OnMessageDelete += DeleteMessage;
   }
 
+    private bool IsSameOwner(Message msg1, Message msg2)
+    {
+        if (msg1.Sender == null && msg2.Sender == null)
+        {
+            return true;
+        }
+        if (msg1.Sender == null || msg2.Sender == null)
+        {
+            return false;
+        }
+
+        return msg1.Sender.ID == msg2.Sender.ID;
+    }
+
   private MessagePresenter InstantiatePresenter(Message message)
   {
-    MessagePresenter presenter = Chat.IsOwner(message.Sender)
+    MessagePresenter presenter = Chat.IsOwner(message)
       ? Instantiate(ChatOwnerMessagePrefab, ContainerObject).GetComponent<MessagePresenter>()
       : Instantiate(MessagePrefab, ContainerObject).GetComponent<MessagePresenter>();
 
     MessagePresenter lastMessage = _presenters.LastOrDefault();
-    if (lastMessage && lastMessage.Message.Sender == message.Sender)
+    if (lastMessage && IsSameOwner(lastMessage.Message, message))
       lastMessage.Redraw(asLast: false);
 
     presenter.Message = message;
@@ -71,7 +85,7 @@ public class MessageContainer : MonoBehaviour
       previous.Redraw(asLast: true);
 
     bool ShouldRedrawPrevious() =>
-      previous && (!next || next && next.Message.Sender != presenter.Message.Sender);
+      previous && (!next || next && !IsSameOwner(next.Message, presenter.Message));
   }
 
   private bool ValidIndex(int index) => 

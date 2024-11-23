@@ -40,13 +40,20 @@ public class MessagePresenter : MonoBehaviour
   private void Reset() => 
     DeleteButton = GetComponentInChildren<Button>();
 
-  private async void UpdatePresenter()
-  {
-    Nickname.SetText(Message.Sender.MainUsername);
-    Content.SetText(Message.Content);
-    SendTime.SetText(Message.SendTime.ToString(TimeFormat, _cultureInfoProvider));
-    PortraitImage.texture = await TelegramChat.Instance.FetchPhoto(Message.Sender);
-  }
+    private async void UpdatePresenter()
+    {
+        if (Message.Sender != null)
+        {
+            Nickname.SetText(Message.Sender.MainUsername);
+            PortraitImage.texture = await TelegramChat.Instance.FetchPhoto(Message.Sender);
+        } else
+        {
+            Nickname.SetText(Message.Owner.MainUsername);
+            PortraitImage.texture = await TelegramChat.Instance.FetchPhoto(Message.Owner);
+        }
+        Content.SetText(Message.Content);
+        SendTime.SetText(Message.SendTime.ToString(TimeFormat, _cultureInfoProvider));
+    }
 
   private void OnDeleteButtonClick()
   {

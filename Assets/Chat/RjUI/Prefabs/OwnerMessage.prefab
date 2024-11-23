@@ -227,7 +227,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 45.700073, y: 50}
-  m_SizeDelta: {x: 60, y: 14}
+  m_SizeDelta: {x: 60, y: 18}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &7636861006147757130
 CanvasRenderer:
@@ -257,7 +257,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '14:02:07
+  m_text: '12/12/2000 14:02:07
 
 '
   m_isRightToLeft: 0
@@ -268,8 +268,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4287201919
-  m_fontColor: {r: 0.49803925, g: 0.50980395, b: 0.5372549, a: 1}
+    rgba: 4290755770
+  m_fontColor: {r: 0.7296902, g: 0.7360661, b: 0.7509433, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -286,10 +286,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 12
-  m_fontSizeBase: 12
+  m_fontSize: 9
+  m_fontSizeBase: 9
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 6
   m_fontSizeMax: 12
   m_fontStyle: 0
