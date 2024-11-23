@@ -13,9 +13,9 @@ public class MessagePresenter : MonoBehaviour
   public Button DeleteButton;
   public GameObject Tail;
   public GameObject PortraitObject;
-  public Image PortraitImage;
+  public RawImage PortraitImage;
 
-  private const string TimeFormat = "HH:mm:ss";
+  private const string TimeFormat = "DD/MM/YYYY HH:mm:ss";
   private readonly CultureInfo _cultureInfoProvider = new CultureInfo("ru-RU");
   public event Action<Message> OnMessageDelete;
 
@@ -40,12 +40,12 @@ public class MessagePresenter : MonoBehaviour
   private void Reset() => 
     DeleteButton = GetComponentInChildren<Button>();
 
-  private void UpdatePresenter()
+  private async void UpdatePresenter()
   {
-    Nickname.SetText(Message.Sender);
+    Nickname.SetText(Message.Sender.MainUsername);
     Content.SetText(Message.Content);
     SendTime.SetText(Message.SendTime.ToString(TimeFormat, _cultureInfoProvider));
-    PortraitImage.sprite = PortraitProvider.ForMember(Message.Sender);
+    PortraitImage.texture = await TelegramChat.Instance.FetchPhoto(Message.Sender);
   }
 
   private void OnDeleteButtonClick()

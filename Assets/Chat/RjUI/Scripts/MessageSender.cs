@@ -22,7 +22,7 @@ public class MessageSender : MonoBehaviour
     if(string.IsNullOrEmpty(MessageField.text)) 
       return;
     
-    var message = new Message(Chat.RandomMember, MessageField.text);
+    var message = new Message(null, MessageField.text);
     Chat.ReceiveMessage(message);
     MessageField.text = string.Empty;
   }

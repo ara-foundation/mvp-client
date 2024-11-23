@@ -16,12 +16,16 @@ public class TelegramChat_ChatItem : MonoBehaviour
     [SerializeField] private RawImage ProfileThumb;
     [SerializeField] private RawImage DefaultThumb;
     [SerializeField] private List<LeanToggle> ChatTypes;
+    [SerializeField] private ActivityState ActivityState;
 
     private ChatBase _chat;
     private User _user;
+    private int _topMessage;
 
-    public void Show(ChatBase chat)
+    public void Show(ChatBase chat, ActivityGroup activityGroup, int topMessage)
     {
+        _topMessage = topMessage;
+        ActivityState.SetActivityGroup(activityGroup);
         _chat = chat;
 
         var chatType = ChatType(chat);
@@ -39,8 +43,10 @@ public class TelegramChat_ChatItem : MonoBehaviour
         ShowProfileThumb(_chat);
     }
 
-    public void Show(User user)
+    public void Show(User user, ActivityGroup activityGroup, int topMessage)
     {
+        _topMessage = topMessage;
+        ActivityState.SetActivityGroup(activityGroup);
         _user = user;
 
         var chatType = TelegramChat.ChatType.Direct;
@@ -96,5 +102,20 @@ public class TelegramChat_ChatItem : MonoBehaviour
             return TelegramChat.ChatType.Group;
         }
         return TelegramChat.ChatType.Direct;
+    }
+
+    public void OnSelect(bool selected)
+    {
+        if (!selected)
+        {
+            return;
+        }
+        if (_chat != null)
+        {
+            TelegramChat.Instance.ChatWith(_chat, _topMessage);
+        } else if (_user != null)
+        {
+            TelegramChat.Instance.ChatWith(_user, _topMessage);
+        }
     }
 }

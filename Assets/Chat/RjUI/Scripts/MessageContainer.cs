@@ -28,7 +28,7 @@ public class MessageContainer : MonoBehaviour
 
   private MessagePresenter InstantiatePresenter(Message message)
   {
-    MessagePresenter presenter = message.Sender == Chat.Owner
+    MessagePresenter presenter = Chat.IsOwner(message.Sender)
       ? Instantiate(ChatOwnerMessagePrefab, ContainerObject).GetComponent<MessagePresenter>()
       : Instantiate(MessagePrefab, ContainerObject).GetComponent<MessagePresenter>();
 

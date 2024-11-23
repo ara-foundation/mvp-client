@@ -45,6 +45,10 @@ public class TelegramChat : MonoBehaviour
     [SerializeField] private TextMeshProUGUI ChatsTitle;
     [SerializeField] private Content ChatsContent;
     [SerializeField] private GameObject ChatItemPrefab;
+    [SerializeField] private ActivityGroup ChatsActivityGroup;
+    [Space(10)]
+    [Header("Chat")]
+    [SerializeField] private Chat Chat;
 
     private List<TelegramChat_ChatItem> _chatItems = new();
 
@@ -130,6 +134,7 @@ public class TelegramChat : MonoBehaviour
         }
         ShowProfile();
         LoadChats();
+        Chat.SetOwner(user);
     }
 
     async void LoadContacts()
@@ -171,15 +176,16 @@ public class TelegramChat : MonoBehaviour
         {
             switch (dialogs.UserOrChat(dialog))
             {
-                case User user when user.IsActive: Console.WriteLine("User " + user); break;
+                case User user when user.IsActive:
+                    var userItem = ChatsContent.Add<TelegramChat_ChatItem>(ChatItemPrefab);
+                    userItem.Show(user, ChatsActivityGroup, dialog.TopMessage);
+                    _chatItems.Add(userItem); break;
                 case ChatBase chat when chat.IsActive:
                     var chatItem = ChatsContent.Add<TelegramChat_ChatItem>(ChatItemPrefab);
-                    chatItem.Show(chat);
+                    chatItem.Show(chat, ChatsActivityGroup, dialog.TopMessage);
                     _chatItems.Add(chatItem);
                     break;
             }
-            
-            
         }
     }
 
@@ -190,6 +196,7 @@ public class TelegramChat : MonoBehaviour
 
     void ContactHash(Contact[] contacts)
     {
+        Debug.LogWarning("Save the contacts by its hash, and if the TG returns null, fetch from cache");
         long hash = 0;
         foreach (var contact in contacts)
         {
@@ -215,6 +222,31 @@ public class TelegramChat : MonoBehaviour
         Username.text = $"@{user.username}";
     }
 
+    public async Task<Texture2D> FetchPhoto(IPeerInfo _peer, int _width = 100, int _height = 100)
+    {
+        Texture2D texture = new(_width, _height);
+
+        var key = TG_PHOTO_PREFIX + _peer.ID;
+
+        if (PlayerPrefs.HasKey(key))
+        {
+            var photoHex = PlayerPrefs.GetString(key);
+            var photo = StringToByteArray(photoHex);
+            texture.LoadImage(photo);
+            return texture;
+        }
+        using MemoryStream photoStream = new();
+
+        var storageType = await client.DownloadProfilePhotoAsync(_peer, photoStream);
+
+        var photoBytes = photoStream.ToArray();
+        PlayerPrefs.SetString(key, ByteArrayToString(photoBytes));
+
+        texture.LoadImage(photoBytes);
+
+        return texture;
+    }
+
     public async Task<Texture2D> FetchPhoto(User _user, int _width = 100, int _height = 100)
     {
         Texture2D texture = new(_width, _height);
@@ -231,7 +263,6 @@ public class TelegramChat : MonoBehaviour
         using MemoryStream photoStream = new();
 
         var storageType = await client.DownloadProfilePhotoAsync(_user, photoStream);
-        Debug.Log($"Photo filetype: {storageType}");
 
         var photoBytes = photoStream.ToArray();
         PlayerPrefs.SetString(key, ByteArrayToString(photoBytes));
@@ -257,7 +288,6 @@ public class TelegramChat : MonoBehaviour
         using MemoryStream photoStream = new();
 
         var storageType = await client.DownloadProfilePhotoAsync(_chat, photoStream);
-        Debug.Log($"Photo filetype: {storageType}");
 
         var photoBytes = photoStream.ToArray();
         PlayerPrefs.SetString(key, ByteArrayToString(photoBytes));
@@ -306,5 +336,15 @@ public class TelegramChat : MonoBehaviour
         Texture2D qrCodeAsTexture2D = qrCode.GetGraphic(20);
 
         QRCodeImage.texture = qrCodeAsTexture2D;
+    }
+
+    public void ChatWith(User _user, int topMessage)
+    {
+        Chat.Show(client, _user, topMessage);
+    }
+
+    public void ChatWith(ChatBase _chat, int topMessage)
+    {
+        Chat.Show(client, _chat, topMessage);
     }
 }

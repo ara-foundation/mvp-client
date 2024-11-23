@@ -1,13 +1,14 @@
 ﻿using System;
+using TL;
 
 [Serializable]
 public class Message
 {
-  public string Sender;
+  public IPeerInfo Sender;
   public string Content;
   public DateTime SendTime;
 
-  public Message(string sender, string content)
+  public Message(IPeerInfo sender, string content)
   {
     Sender = sender;
     Content = content;
