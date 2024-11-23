@@ -15,7 +15,7 @@ public class MessagePresenter : MonoBehaviour
   public GameObject PortraitObject;
   public RawImage PortraitImage;
 
-  private const string TimeFormat = "DD/MM/YYYY HH:mm:ss";
+  private const string TimeFormat = "dd/MM/yyy HH:mm:ss";
   private readonly CultureInfo _cultureInfoProvider = new CultureInfo("ru-RU");
   public event Action<Message> OnMessageDelete;
 
