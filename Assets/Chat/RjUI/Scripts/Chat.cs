@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lean.Gui;
+using System;
 using System.Collections.Generic;
 using TL;
 using TMPro;
@@ -10,6 +11,7 @@ public class Chat : MonoBehaviour
     [SerializeField] private TextMeshProUGUI Title;
     [SerializeField] private TextMeshProUGUI MembersLabel;
     [SerializeField] private Content Content;
+    [SerializeField] private LeanWindow LoadingWindow;
 
     private User _owner;
     public List<string> Members = new();
@@ -18,6 +20,16 @@ public class Chat : MonoBehaviour
     private Client _client;
     private User _user;
     private ChatBase _chat;
+    private InputPeer _peer;
+
+    /**********************************************************/
+    /* Loading more chats */
+    /**********************************************************/
+    private int messageLimit = 20;
+    private int addOffset = -1;
+    private int oldestOffsetId = 0;
+    private bool _loading = false;
+    private bool _loaded = false;
 
     public async void ReceiveMessage(Message message)
     {
@@ -41,7 +53,11 @@ public class Chat : MonoBehaviour
 
     private void Reset() => 
         Container = FindObjectOfType<MessageContainer>();
-    
+
+    private void Start()
+    {
+        LoadingWindow.TurnOff();    
+    }
 
     public void SetOwner(User owner)
     {
@@ -80,13 +96,40 @@ public class Chat : MonoBehaviour
         ShowMessages(client, chat.ToInputPeer(), topMessage);
     }
 
-    async void ShowMessages(Client client, InputPeer peer, int topMessage)
+    void ShowMessages(Client client, InputPeer peer, int topMessage)
     {
         _client = client;
-        // Latest messages:
-        // https://corefork.telegram.org/api/offsets
-        var messages = await client.Messages_GetHistory(peer, offset_id: topMessage, add_offset: -1, limit: 40);
+        _peer = peer;
+        oldestOffsetId = topMessage;
+        LoadMessages(old: false);
+    }
+
+    /// <summary>
+    /// Latest messages:
+    /// https://corefork.telegram.org/api/offsets
+    /// </summary>
+    async void LoadMessages(bool old)
+    {
+        var add_offset = addOffset;
+        if (old)
+        {
+            add_offset = 0;
+        }
+        var messages = await _client.Messages_GetHistory(_peer, oldestOffsetId, add_offset: add_offset, limit: messageLimit);
+        
         Array.Reverse(messages.Messages);
+
+        if (messages.Messages.Length > 0)
+        {
+            var firstMsg = messages.Messages[0];
+            oldestOffsetId = firstMsg.ID;
+        }
+
+        if (old)
+        {
+            Array.Reverse(messages.Messages);
+        }
+
         foreach (var msgBase in messages.Messages)
         {
             var from = messages.UserOrChat(msgBase.From ?? msgBase.Peer); // from can be User/Chat/Channel
@@ -98,11 +141,42 @@ public class Chat : MonoBehaviour
             //    content = ms.action.GetType().Name[13..];
 
             var message = new Message(from, content, msgBase.Date);
-            Container.AddMessage(message);
+            if (old)
+            {
+                Container.AddMessageAtFront(message);
+            } else
+            {
+                Container.AddMessage(message);
+            }
         }
-
-        Debug.LogWarning("When scrolled up, load the message uppercase");
     }
 
+    public void OnScrolled(Vector2 vector2)
+    {
+        if (vector2.y >= 1)
+        {
+            if (_loading)
+            {
+                return;
+            }
 
+            _loading = true;
+            _loaded = false;
+
+            LoadingWindow.TurnOn();
+
+            LoadMessages(old: true);
+
+            LoadingWindow.TurnOff();
+
+            _loaded = true;
+        } else 
+        {
+            if (_loading && _loaded)
+            {
+                _loading = false;
+                _loaded = false;
+            }
+        } 
+    } 
 }
