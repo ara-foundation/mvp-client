@@ -58,6 +58,7 @@ public class TelegramChat : MonoBehaviour
 
     private Client client;
     private User user;
+    private UpdateManager manager;
 
     private static TelegramChat _instance;
 
@@ -135,7 +136,43 @@ public class TelegramChat : MonoBehaviour
         ShowProfile();
         LoadChats();
         Chat.SetOwner(user);
+        manager = client.WithUpdateManager(Client_OnUpdate/*, "Updates.state"*/);
     }
+
+    // if not using async/await, we could just return Task.CompletedTask
+    private async Task Client_OnUpdate(Update update)
+    {
+        Debug.Log("Update the message");
+        switch (update)
+        {
+            case UpdateNewMessage unm: await HandleMessage(unm.message); break;
+            case UpdateEditMessage uem: await HandleMessage(uem.message, true); break;
+            // Note: UpdateNewChannelMessage and UpdateEditChannelMessage are also handled by above cases
+            case UpdateDeleteChannelMessages udcm: Console.WriteLine($"{udcm.messages.Length} message(s) deleted in {TlChat(udcm.channel_id)}"); break;
+            case UpdateDeleteMessages udm: Console.WriteLine($"{udm.messages.Length} message(s) deleted"); break;
+            case UpdateUserTyping uut: Console.WriteLine($"{User(uut.user_id)} is {uut.action}"); break;
+            case UpdateChatUserTyping ucut: Console.WriteLine($"{Peer(ucut.from_id)} is {ucut.action} in {TlChat(ucut.chat_id)}"); break;
+            case UpdateChannelUserTyping ucut2: Console.WriteLine($"{Peer(ucut2.from_id)} is {ucut2.action} in {TlChat(ucut2.channel_id)}"); break;
+            case UpdateChatParticipants { participants: ChatParticipants cp }: Console.WriteLine($"{cp.participants.Length} participants in {TlChat(cp.chat_id)}"); break;
+            case UpdateUserStatus uus: Console.WriteLine($"{User(uus.user_id)} is now {uus.status.GetType().Name[10..]}"); break;
+            case UpdateUserName uun: Console.WriteLine($"{User(uun.user_id)} has changed profile name: {uun.first_name} {uun.last_name}"); break;
+            case UpdateUser uu: Console.WriteLine($"{User(uu.user_id)} has changed infos/photo"); break;
+            default: Console.WriteLine(update.GetType().Name); break; // there are much more update types than the above example cases
+        }
+    }
+
+    // in this example method, we're not using async/await, so we just return Task.CompletedTask
+    private Task HandleMessage(MessageBase msgBase, bool edit = false)
+    {
+        if (edit) Console.Write("(Edit): ");
+        var from = manager.UserOrChat(msgBase.From);
+        Chat.OnMessageAdd(from, msgBase);
+        return Task.CompletedTask;
+    }
+
+    private string User(long id) => manager.Users.TryGetValue(id, out var user) ? user.ToString() : $"User {id}";
+    private string TlChat(long id) => manager.Chats.TryGetValue(id, out var chat) ? chat.ToString() : $"Chat {id}";
+    private string Peer(Peer peer) => manager.UserOrChat(peer)?.ToString() ?? $"Peer {peer?.ID}";
 
     async void LoadContacts()
     {

@@ -1,6 +1,7 @@
 ﻿using Lean.Gui;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TL;
 using TMPro;
 using UnityEngine;
@@ -72,7 +73,24 @@ public class Chat : MonoBehaviour
             return message.Sender.ID == _owner.ID;
         }
         return true;
-    } 
+    }
+    
+    public void OnMessageAdd(IPeerInfo from, MessageBase msgBase)
+    {
+        Debug.Log($"Peer id = {_peer.ID}, msg = {msgBase.Peer.ID}");
+        if (_peer == null)
+        {
+            return;
+        }
+        if (_peer.ID != msgBase.Peer.ID)
+        {
+            Debug.Log("Not for this message");
+            return;
+        }
+        Debug.Log("Add message");
+
+        AddMessage(from, msgBase, atFront: false);
+    }
 
     public void Show(Client client, User user, int topMessage)
     {
@@ -148,6 +166,35 @@ public class Chat : MonoBehaviour
             {
                 Container.AddMessage(message);
             }
+        }
+    }
+
+    void AddMessage(IPeerInfo from, MessageBase msgBase, bool atFront)
+    {
+        Debug.Log($"From is done? {from == null}");
+        var content = "";
+        if (msgBase is TL.Message msg) // msg.media includes media attachment
+            content = msg.message;
+        // message service to see are we mentioned, etc
+        //else if (msgBase is MessageService ms)
+        //    content = ms.action.GetType().Name[13..];
+        Message message;
+        if (from == null)
+        {
+            Debug.Log("From is null");
+            message = new Message(_owner, content, msgBase.Date);
+        } else
+        {
+            Debug.Log("Yes");
+            message = new Message(from, content, msgBase.Date);
+        }
+        if (atFront)
+        {
+            Container.AddMessageAtFront(message);
+        }
+        else
+        {
+            Container.AddMessage(message);
         }
     }
 

@@ -38,4 +38,12 @@ public class Message
         Sender = null;
         Content = content;
     }
+
+    public Message(User owner, string content, DateTime sendTime)
+    {
+        Owner = owner;
+        Sender = null;
+        Content = content;
+        SendTime = sendTime;
+    }
 }
