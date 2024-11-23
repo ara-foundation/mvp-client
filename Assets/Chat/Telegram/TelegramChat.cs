@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using TL;
 using TMPro;
 using UnityEngine;
@@ -26,6 +27,7 @@ public class TelegramChat : MonoBehaviour
 
     private const string TG_SESSION_KEY = "tg_phone";
     private const string TG_CONTACT_KEY = "tg_contact";
+    private const string TG_PHOTO_PREFIX = "tg_photo_";
     private const string TG_CONTACT_HASH_KEY = "tg_contact_hash";
     private const string API_HASH = "2100d1ef8459a3a22820652a2e6d1a86";
     private const int API_ID = 26296279;
@@ -52,6 +54,20 @@ public class TelegramChat : MonoBehaviour
 
     private Client client;
     private User user;
+
+    private static TelegramChat _instance;
+
+    public static TelegramChat Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<TelegramChat>();
+            }
+            return _instance;
+        }
+    }
 
     void OnEnable()
     {
@@ -143,24 +159,27 @@ public class TelegramChat : MonoBehaviour
     /// </summary>
     async void LoadChats()
     {
-        var chats = await client.Messages_GetAllChats();
-        if (chats == null)
+        var dialogs = await client.Messages_GetAllDialogs();
+        if (dialogs == null)
         {
-            Debug.LogWarning("No chats found");
+            Debug.LogWarning("No dialogs found");
             return;
         }
 
-        ChatsTitle.text = $"Chats ({chats.chats.Count})";
-        foreach (var i in chats.chats.Keys)
+        ChatsTitle.text = $"Chats ({dialogs.dialogs.Length})";
+        foreach (var dialog in dialogs.dialogs)
         {
-            var chat = chats.chats[i];
-            if (!chat.IsActive)
+            switch (dialogs.UserOrChat(dialog))
             {
-                continue;
+                case User user when user.IsActive: Console.WriteLine("User " + user); break;
+                case ChatBase chat when chat.IsActive:
+                    var chatItem = ChatsContent.Add<TelegramChat_ChatItem>(ChatItemPrefab);
+                    chatItem.Show(chat);
+                    _chatItems.Add(chatItem);
+                    break;
             }
-            var chatItem = ChatsContent.Add<TelegramChat_ChatItem>(ChatItemPrefab);
-            chatItem.Show(chat);
-            _chatItems.Add(chatItem);
+            
+            
         }
     }
 
@@ -191,17 +210,75 @@ public class TelegramChat : MonoBehaviour
     {
         ToggleProfilePanel(enabled: true);
 
-        using MemoryStream photoStream = new();
-
-        var storageType = await client.DownloadProfilePhotoAsync(user, photoStream);
-        Debug.Log($"Photo filetype: {storageType}");
-
-        Texture2D tex = new(100, 100);
-        tex.LoadImage(photoStream.ToArray());
-        ProfilePicture.texture = tex;
-
+        ProfilePicture.texture = await FetchPhoto(user, _width: 100, _height: 100);
         Greetings.text = $"Hello, {user.first_name} {user.last_name}!";
         Username.text = $"@{user.username}";
+    }
+
+    public async Task<Texture2D> FetchPhoto(User _user, int _width = 100, int _height = 100)
+    {
+        Texture2D texture = new(_width, _height);
+        
+        var key = TG_PHOTO_PREFIX + _user.id;
+        
+        if (PlayerPrefs.HasKey(key))
+        {
+            var photoHex = PlayerPrefs.GetString(key);
+            var photo = StringToByteArray(photoHex);
+            texture.LoadImage(photo);
+            return texture;
+        }
+        using MemoryStream photoStream = new();
+
+        var storageType = await client.DownloadProfilePhotoAsync(_user, photoStream);
+        Debug.Log($"Photo filetype: {storageType}");
+
+        var photoBytes = photoStream.ToArray();
+        PlayerPrefs.SetString(key, ByteArrayToString(photoBytes));
+        
+        texture.LoadImage(photoBytes);
+
+        return texture;
+    }
+
+    public async Task<Texture2D> FetchPhoto(ChatBase _chat, int _width = 100, int _height = 100)
+    {
+        Texture2D texture = new(_width, _height);
+
+        var key = TG_PHOTO_PREFIX + _chat.ID;
+
+        if (PlayerPrefs.HasKey(key))
+        {
+            var photoHex = PlayerPrefs.GetString(key);
+            var photo = StringToByteArray(photoHex);
+            texture.LoadImage(photo);
+            return texture;
+        }
+        using MemoryStream photoStream = new();
+
+        var storageType = await client.DownloadProfilePhotoAsync(_chat, photoStream);
+        Debug.Log($"Photo filetype: {storageType}");
+
+        var photoBytes = photoStream.ToArray();
+        PlayerPrefs.SetString(key, ByteArrayToString(photoBytes));
+
+        texture.LoadImage(photoBytes);
+
+        return texture;
+    }
+
+    public static string ByteArrayToString(byte[] ba)
+    {
+        return BitConverter.ToString(ba).Replace("-", "");
+    }
+
+    public static byte[] StringToByteArray(String hex)
+    {
+        int NumberChars = hex.Length;
+        byte[] bytes = new byte[NumberChars / 2];
+        for (int i = 0; i < NumberChars; i += 2)
+            bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+        return bytes;
     }
 
     void ToggleProfilePanel(bool enabled)

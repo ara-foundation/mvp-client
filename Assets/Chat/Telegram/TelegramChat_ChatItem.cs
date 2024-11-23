@@ -1,4 +1,5 @@
 using Lean.Gui;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -17,6 +18,7 @@ public class TelegramChat_ChatItem : MonoBehaviour
     [SerializeField] private List<LeanToggle> ChatTypes;
 
     private ChatBase _chat;
+    private User _user;
 
     public void Show(ChatBase chat)
     {
@@ -34,16 +36,27 @@ public class TelegramChat_ChatItem : MonoBehaviour
         {
             Username.gameObject.SetActive(false);
         }
-        ShowProfileThumb();
+        ShowProfileThumb(_chat);
     }
 
-    void ShowProfileThumb()
+    public void Show(User user)
     {
-        if (_chat.Photo == null || _chat.Photo.stripped_thumb == null)
+        _user = user;
+
+        var chatType = TelegramChat.ChatType.Direct;
+        ChatTypes[(int)chatType].TurnOn();
+
+        Title.text = user.first_name  + " " + user.last_name;
+        Username.gameObject.SetActive(true);
+        Username.text = $"@{user.username}";
+        ShowProfileThumb(user);
+    }
+
+    async void ShowProfileThumb(ChatBase _chat)
+    {
+        if (_chat.Photo == null)
         {
-            DefaultThumb.gameObject.SetActive(true);
             ProfileThumb.gameObject.SetActive(false);
-            Debug.Log($"The {_chat.Title} doesn't have a photo {_chat.Photo == null}");
             return;
         }
         DefaultThumb.gameObject.SetActive(false);
@@ -51,9 +64,24 @@ public class TelegramChat_ChatItem : MonoBehaviour
 
         var width = (int)ProfileThumb.rectTransform.rect.width;
         var height = (int)ProfileThumb.rectTransform.rect.height;
-        Texture2D tex = new(5, 5);
-        tex.LoadImage(_chat.Photo.stripped_thumb);
+        Texture2D tex = await TelegramChat.Instance.FetchPhoto(_chat, width, height);
+        ProfileThumb.texture = tex;
+    }
 
+    async void ShowProfileThumb(User user)
+    {
+        if (user.photo == null)
+        {
+            DefaultThumb.gameObject.SetActive(true);
+            ProfileThumb.gameObject.SetActive(false);
+            return;
+        }
+        DefaultThumb.gameObject.SetActive(false);
+        ProfileThumb.gameObject.SetActive(true);
+
+        var width = (int)ProfileThumb.rectTransform.rect.width;
+        var height = (int)ProfileThumb.rectTransform.rect.height;
+        Texture2D tex = await TelegramChat.Instance.FetchPhoto(user, width, height);
         ProfileThumb.texture = tex;
     }
 
