@@ -20,6 +20,11 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
                 {
                     if (ProjectItemMetaData.GameObject.TryGetComponent<PrefabIdBehaviour>(out var prefabIdBehaviour))
                     {
+                        if (DataScene == null)
+                        {
+                            Notification.Instance.Show("Scene is not loaded! Can't set items in the scene yet");
+                            return;
+                        }
                         var dataGameObject = DataScene.InstantiateDataGameObjectFromPrefab(prefabIdBehaviour);
 
                         dataGameObject.GetComponent<DataGameObjectBehaviour>().DataComponentPrefab.OverridePrefabComponent = true;
