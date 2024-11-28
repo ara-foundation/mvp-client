@@ -131,7 +131,7 @@ public class ActTask_TasksToComplete : MonoBehaviour
             var err = taskForm.Validate();
             if (!string.IsNullOrEmpty(err))
             {
-                Notification.Instance.Show($"#{i+1} task: {err}");
+                Notification.Show($"#{i+1} task: {err}");
                 return null;
             }
             validatedTasks.Add(taskForm);
@@ -149,7 +149,7 @@ public class ActTask_TasksToComplete : MonoBehaviour
 
     public void TasksAdded()
     {
-        Notification.Instance.Show("Tasks were added to the blockchain!");
+        Notification.Show("Tasks were added to the blockchain!");
         TaskButton.ToggleSelect(enabled: false);
         ResetToDefault();
     }

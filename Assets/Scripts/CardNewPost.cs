@@ -44,13 +44,13 @@ public class CardNewPost : MonoBehaviour
 
         if (IdeaTitle.text.Length == 0)
         {
-            Notification.Instance.Show("Write your idea's title");
+            Notification.Show("Write your idea's title");
             return;
         }
 
         if (IdeaContent.text.Length == 0)
         {
-            Notification.Instance.Show("Write at least few sentences");
+            Notification.Show("Write at least few sentences");
             return;
         }
 
@@ -73,7 +73,7 @@ public class CardNewPost : MonoBehaviour
         if (!_switchToAurora)
         {
             _switchToAurora = false;
-            Notification.Instance.Show("Idea was posted. Refreshing ideas to see result");
+            Notification.Show("Idea was posted. Refreshing ideas to see result");
             await Logos.Instance.LoadIdeas();
         } else
         {
@@ -93,13 +93,13 @@ public class CardNewPost : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Notification.Show($"Error: web client exception {ex.Message}");
             Debug.LogError(ex);
             return null;
         }
         if (res.Item1 != 200)
         {
-            Notification.Instance.Show($"Error: {res.Item2}");
+            Notification.Show($"Error: {res.Item2}");
             return null;
         }
 
@@ -111,7 +111,7 @@ public class CardNewPost : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError(e);
-            Notification.Instance.Show($"Error: deserialization exception {e.Message}");
+            Notification.Show($"Error: deserialization exception {e.Message}");
             return null;
 
         }

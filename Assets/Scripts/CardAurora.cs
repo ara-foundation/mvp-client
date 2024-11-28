@@ -115,7 +115,7 @@ public class CardAurora : MonoBehaviour
         var logos = await Logos.Instance.FetchIdea(userScenario.logos_id);
         if (logos == null)
         {
-            Notification.Instance.Show("Error: failed to get logos idea from the server");
+            Notification.Show("Error: failed to get logos idea from the server");
             return;
         }
         Debug.Log("Idea was fetched, open the new plan.");

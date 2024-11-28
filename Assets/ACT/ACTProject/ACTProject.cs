@@ -108,7 +108,7 @@ public class ACTProject : MonoBehaviour, IStateReactor
         }
         if (tasks == null || tasks.Length == 0)
         {
-            Notification.Instance.Show("Project has no tasks yet.");
+            Notification.Show("Project has no tasks yet.");
             return;
         }
 

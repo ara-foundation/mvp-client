@@ -22,7 +22,7 @@ namespace Rundo.RuntimeEditor.Behaviours.UI
                     {
                         if (DataScene == null)
                         {
-                            Notification.Instance.Show("Scene is not loaded! Can't set items in the scene yet");
+                            Notification.Show("Scene is not loaded! Can't set items in the scene yet");
                             return;
                         }
                         var dataGameObject = DataScene.InstantiateDataGameObjectFromPrefab(prefabIdBehaviour);

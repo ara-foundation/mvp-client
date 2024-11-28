@@ -184,7 +184,7 @@ public class Aurora : MonoBehaviour
         TopBarAurora.TurnOn();
         if (AuroraNewUserScenario == null)
         {
-            Notification.Instance.Show("Internal Error: Stupid Medet forgive him for his mistake, he is a human after all");
+            Notification.Show("Internal Error: Stupid Medet forgive him for his mistake, he is a human after all");
         }
 
         AuroraNewUserScenario.Show(logos);

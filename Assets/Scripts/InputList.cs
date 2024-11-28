@@ -52,10 +52,10 @@ public class InputList : MonoBehaviour
         var removed = AddedListElems.Remove(inputListElem);
         if (removed)
         {
-            Notification.Instance.Show("Removed element");
+            Notification.Show("Removed element");
         } else
         {
-            Notification.Instance.Show("Failed to remove the element");
+            Notification.Show("Failed to remove the element");
         }
         return removed;
     }

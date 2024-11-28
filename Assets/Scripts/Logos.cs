@@ -54,7 +54,7 @@ public class Logos : MonoBehaviour
         }
         else
         {
-            Notification.Instance.Show("Failed to fetch logos ideas from the ARA Server");
+            Notification.Show("Failed to fetch logos ideas from the ARA Server");
             Debug.LogWarning("Failed to fetch ideas from Ara Server");
         }
     }

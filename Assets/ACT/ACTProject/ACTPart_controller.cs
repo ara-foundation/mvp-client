@@ -339,7 +339,7 @@ public class ACTPart_controller : MonoBehaviour
         }
         if (tasks == null || tasks.Length == 0)
         {
-            Notification.Instance.Show("Project has no tasks yet.");
+            Notification.Show("Project has no tasks yet.");
             return;
         }
 

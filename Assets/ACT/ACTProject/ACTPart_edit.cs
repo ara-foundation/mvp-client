@@ -112,7 +112,7 @@ public class ACTPart_edit : MonoBehaviour
         var techStack = Controller.TechStack();
         if (string.IsNullOrEmpty(techStack))
         {
-            Notification.Instance.Show("Tech Stack is empty");
+            Notification.Show("Tech Stack is empty");
             return;
         }
         Controller.TechStackMenuButton.ToggleFocus();
@@ -261,7 +261,7 @@ public class ACTPart_edit : MonoBehaviour
         var model = Controller.SetBudget(budgetValue);
         if (model == null)
         {
-            Notification.Instance.Show("Budget was not set validly");
+            Notification.Show("Budget was not set validly");
             OnBudgetEdited?.Invoke((decimal)0, false);
             OnBudgetEdited = null;
 

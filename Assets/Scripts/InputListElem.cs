@@ -53,7 +53,7 @@ public class InputListElem : MonoBehaviour
         var content = InputContent.text;
         if (content.Length == 0)
         {
-            Notification.Instance.Show("Error: please type the message");
+            Notification.Show("Error: please type the message");
             return;
         }
 

@@ -121,7 +121,7 @@ public class TelegramChat : MonoBehaviour
                     var loggedIn = await client.Login(PlayerPrefs.GetString(TG_SESSION_KEY));
                     if (loggedIn != null)
                     {
-                        Notification.Instance?.Show($"To resume a session need {loggedIn}");
+                        Notification.Show($"To resume a session need {loggedIn}");
                         Debug.LogError($"To resume a session need {loggedIn}");
                         return;
                     }

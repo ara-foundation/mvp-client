@@ -60,7 +60,7 @@ public class ActTask_Complete : MonoBehaviour
 
             if (lvl < 0)
             {
-                Notification.Instance.Show("lvl can not be a negative number to submit the task");
+                Notification.Show("lvl can not be a negative number to submit the task");
                 return;
             }
 
@@ -83,7 +83,7 @@ public class ActTask_Complete : MonoBehaviour
             }
         } else
         {
-            Notification.Instance.Show("No ACTSession in the scene");
+            Notification.Show("No ACTSession in the scene");
         }
     }
 }

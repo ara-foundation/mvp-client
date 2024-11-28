@@ -50,7 +50,7 @@ public class CardMaydone: MonoBehaviour
         logos = await Logos.Instance.FetchIdea(planWithProject.project_v1[0].lungta.logos_id);
         if (logos == null)
         {
-            Notification.Instance.Show("Error: failed to get logos idea from the server");
+            Notification.Show("Error: failed to get logos idea from the server");
             return;
         }
         logosCard.gameObject.SetActive(true);
@@ -110,7 +110,7 @@ public class CardMaydone: MonoBehaviour
     {
         if (InvestSlider.value == 0)
         {
-            Notification.Instance.Show("Error: no investment amount");
+            Notification.Show("Error: no investment amount");
             return;
         }
         if (!AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
@@ -134,7 +134,7 @@ public class CardMaydone: MonoBehaviour
 
         if (allowance < amount)
         {
-            Notification.Instance.Show($"Getting a permission to spend {InvestSlider.value} from your wallet.");
+            Notification.Show($"Getting a permission to spend {InvestSlider.value} from your wallet.");
             var approveAmount = Web3.Convert.ToWei(100000000, NetworkParams.StableCollateralDecimals);
 
             try
@@ -147,10 +147,10 @@ public class CardMaydone: MonoBehaviour
                 }
 
                 var receipt = await Maydone_NewPlan.Send(transaction);
-                Notification.Instance.Show($"Approval tx: ${receipt}; Now minting your ownership tokens...");
+                Notification.Show($"Approval tx: ${receipt}; Now minting your ownership tokens...");
             } catch (Exception ex)
             {
-                Notification.Instance.Show(ex.Message);
+                Notification.Show(ex.Message);
                 EnableAction();
                 return;
             }
@@ -172,12 +172,12 @@ public class CardMaydone: MonoBehaviour
 
             var receipt = await Maydone_NewPlan.Send(transaction);
 
-            Notification.Instance.Show($"Transaction: {receipt} deployed! You received your tokens.");
+            Notification.Show($"Transaction: {receipt} deployed! You received your tokens.");
         }
         catch (Exception ex)
         {
             Debug.LogError(ex);
-            Notification.Instance.Show($"Failed to send transaction: {ex}");
+            Notification.Show($"Failed to send transaction: {ex}");
         }
         EnableAction();
         InvestSlider.value = 0;

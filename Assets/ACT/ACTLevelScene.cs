@@ -322,7 +322,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
         else
         {
-            Notification.Instance.Show("To continue set the project name first.");
+            Notification.Show("To continue set the project name first.");
             _part.EditProjectName(OnProjectNameEdited);
             return;
         }
@@ -339,7 +339,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
         else
         {
-            Notification.Instance.Show("To continue set the tech stack first.");
+            Notification.Show("To continue set the tech stack first.");
             _part.EditTechStack(OnTechStackEdited);
             return;
         }
@@ -356,7 +356,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
         else
         {
-            Notification.Instance.Show("To continue set the budget first.");
+            Notification.Show("To continue set the budget first.");
             _part.EditBudget(OnBudgetEdited);
             return;
         }
@@ -373,7 +373,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
         else
         {
-            Notification.Instance.Show("To continue set the budget first.");
+            Notification.Show("To continue set the budget first.");
             _part.EditBudget(OnBudgetEdited);
             return;
         }
@@ -388,7 +388,7 @@ public class ACTLevelScene : EditorBaseBehaviour
         var saved = await _part.SaveModel();
         if (!saved.Item1)
         {
-            Notification.Instance.Show("Failed to save the part in the server. Please try again later :(");
+            Notification.Show("Failed to save the part in the server. Please try again later :(");
             return;
         }
 
@@ -481,17 +481,17 @@ public class ACTLevelScene : EditorBaseBehaviour
         }
         catch (Exception ex)
         {
-            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Notification.Show($"Error: web client exception {ex.Message}");
             Debug.LogError(ex);
             return false;
         }
         if (res.Item1 != 200)
         {
-            Notification.Instance.Show($"Error: {res.Item2}");
+            Notification.Show($"Error: {res.Item2}");
             return false;
         }
 
-        Notification.Instance.Show($"Scene was saved successfully!");
+        Notification.Show($"Scene was saved successfully!");
         return true;
     }
 
@@ -563,8 +563,8 @@ public class ACTLevelScene : EditorBaseBehaviour
     {
         if (showed == (int)TutorialStep.Congrats)
         {
-            Notification.Instance.Show("Todo: Your reward is 1$ Dollar worth ARA, you can claim them in the Sangha Page");
-            Debug.Log("Todo: After implementing tasks and sangha, reward the user with the items for this create reward popup");
+            Notification.Show("Todo: Your reward is 1$ Dollar worth ARA, you can claim them in the Sangha Page");
+            Debug.LogWarning("Todo: After implementing tasks and sangha, reward the user with the items for this create reward popup");
         }
     }
 

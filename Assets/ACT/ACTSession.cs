@@ -361,13 +361,13 @@ public class ACTSession : MonoBehaviour
         catch (Exception ex)
         {
             Debug.LogError(ex);
-            Notification.Instance.Show("Web request error: " + ex.Message);
+            Notification.Show("Web request error: " + ex.Message);
             return false;
         }
 
         if (res.Item1 != 200)
         {
-            Notification.Instance.Show("Server error: " + res.Item2);
+            Notification.Show("Server error: " + res.Item2);
             return false;
         }
 

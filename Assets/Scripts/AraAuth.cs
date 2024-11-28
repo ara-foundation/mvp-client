@@ -175,7 +175,7 @@ public class AraAuth : MonoBehaviour
 
     public void RequireLogin()
     {
-        Notification.Instance.Show("Please Login First");
+        Notification.Show("Please Login First");
         HighlightAvatar();
     }
 
@@ -299,7 +299,7 @@ public class AraAuth : MonoBehaviour
         var foundUserParams = UserParams.Load(SignupUsername.text);
         if (foundUserParams != null)
         {
-            Notification.Instance.Show($"User already signed up. login as '{SignupUsername.text}'");
+            Notification.Show($"User already signed up. login as '{SignupUsername.text}'");
             return;
         }
 
@@ -330,7 +330,7 @@ public class AraAuth : MonoBehaviour
 
             await LinkWallet();
 
-            Notification.Instance.Show("Successfully signed up!");
+            Notification.Show("Successfully signed up!");
 
             SignupModal.TurnOffSiblingsNow();
             SignupModal.TurnOff();
@@ -368,7 +368,7 @@ public class AraAuth : MonoBehaviour
             UserParams.Save(userParams);
             LoginText.text = UserParams.loginParams.username;
 
-            Notification.Instance.Show("Successfully logged in!");
+            Notification.Show("Successfully logged in!");
 
             SignupModal.TurnOffSiblingsNow();
             SignupModal.TurnOff();
@@ -411,7 +411,7 @@ public class AraAuth : MonoBehaviour
         var amount = BigInteger.Parse("100000000000000000000000");
         var StableCoin = await ThirdwebManager.Instance.GetContract(stableAddress, NetworkParams.networkId, NetworkParams.Erc20Abi);
 
-        Notification.Instance.Show($"transfer maintainer token to the metamask wallet...");
+        Notification.Show($"transfer maintainer token to the metamask wallet...");
 
         try
         {
@@ -423,11 +423,11 @@ public class AraAuth : MonoBehaviour
             }
 
             var receipt = await Maydone_NewPlan.Send(transaction);
-            Notification.Instance.Show($"Transfer tx: ${receipt}; Now minting your ownership tokens...");
+            Notification.Show($"Transfer tx: ${receipt}; Now minting your ownership tokens...");
         }
         catch (Exception ex)
         {
-            Notification.Instance.Show(ex.Message);
+            Notification.Show(ex.Message);
             return;
         }
 
@@ -445,13 +445,13 @@ public class AraAuth : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Notification.Show($"Error: web client exception {ex.Message}");
             Debug.LogError(ex);
             return null;
         }
         if (res.Item1 != 200)
         {
-            Notification.Instance.Show($"Error: {res.Item2}");
+            Notification.Show($"Error: {res.Item2}");
             return null;
         }
 
@@ -463,7 +463,7 @@ public class AraAuth : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError(e);
-            Notification.Instance.Show($"Error: deserialization exception {e.Message}");
+            Notification.Show($"Error: deserialization exception {e.Message}");
             return null;
         }
 
@@ -489,13 +489,13 @@ public class AraAuth : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Notification.Show($"Error: web client exception {ex.Message}");
             Debug.LogError(ex);
             return null;
         }
         if (res.Item1 != 200)
         {
-            Notification.Instance.Show($"Error: {res.Item2}");
+            Notification.Show($"Error: {res.Item2}");
         }
 
         CreateSessionToken result;
@@ -506,7 +506,7 @@ public class AraAuth : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError(e);
-            Notification.Instance.Show($"Error: deserialization exception {e.Message}");
+            Notification.Show($"Error: deserialization exception {e.Message}");
             return null;
         }
 
@@ -544,13 +544,13 @@ public class AraAuth : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Notification.Show($"Error: web client exception {ex.Message}");
             Debug.LogError(ex);
             return null;
         }
         if (res.Item1 != 200)
         {
-            Notification.Instance.Show($"Error: {res.Item2}");
+            Notification.Show($"Error: {res.Item2}");
             return null;
         }
 
@@ -562,7 +562,7 @@ public class AraAuth : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError(e);
-            Notification.Instance.Show($"Error: deserialization exception {e.Message}");
+            Notification.Show($"Error: deserialization exception {e.Message}");
             return null;
         }
 
@@ -578,7 +578,7 @@ public class AraAuth : MonoBehaviour
         }
 
         if (!UserParams.IsTokenActive()) {
-            Notification.Instance.Show("Session expired, auto log in...");
+            Notification.Show("Session expired, auto log in...");
             UserParams = await Login(UserParams);
             if (UserParams == null)
             {

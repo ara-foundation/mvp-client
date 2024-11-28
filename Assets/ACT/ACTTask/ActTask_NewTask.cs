@@ -143,7 +143,7 @@ public class ActTask_NewTask : MonoBehaviour
     {
         if (string.IsNullOrEmpty(TasksInput.text))
         {
-            Notification.Instance.Show("Task body is empty");
+            Notification.Show("Task body is empty");
             return;
         }
 

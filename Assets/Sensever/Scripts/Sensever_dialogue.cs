@@ -59,7 +59,7 @@ public class Sensever_dialogue : MonoBehaviour
     {
         if (TutorialTexts == null || TutorialTexts.Count == 0)
         {
-            Notification.Instance.Show("No tutorial was set to start");
+            Notification.Show("No tutorial was set to start");
             return;
         }
         // Force Update is called here, to ensure that end call receives the callback about previous event.

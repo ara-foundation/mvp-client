@@ -287,7 +287,7 @@ public class Maydone : MonoBehaviour
         TopBarMaydone.TurnOn();
         if (MaydoneNewPlan == null)
         {
-            Notification.Instance.Show("Internal Error: Stupid Medet forgive him for his mistake, he is a human after all");
+            Notification.Show("Internal Error: Stupid Medet forgive him for his mistake, he is a human after all");
             return;
         }
 

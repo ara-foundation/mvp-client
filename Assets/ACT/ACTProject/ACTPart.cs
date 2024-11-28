@@ -268,7 +268,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     {
         if (Edit == null)
         {
-            Notification.Instance.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
+            Notification.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
             return;
         }
 
@@ -281,7 +281,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     {
         if (Edit == null)
         {
-            Notification.Instance.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
+            Notification.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
             return;
         }
 
@@ -293,7 +293,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     {
         if (Edit == null)
         {
-            Notification.Instance.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
+            Notification.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
             return;
         }
 
@@ -305,7 +305,7 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
     {
         if (Edit == null)
         {
-            Notification.Instance.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
+            Notification.Show("ACTPart_edit not set. Are you on Line since lines dont have edit yet");
             return;
         }
 
@@ -372,17 +372,17 @@ public class ACTPart : EditorBaseBehaviour, IStateReactor, ACTPart_interface
         }
         catch (Exception ex)
         {
-            Notification.Instance.Show($"Error to save model: client exception {ex.Message}");
+            Notification.Show($"Error to save model: client exception {ex.Message}");
             Debug.LogError(ex);
             return Tuple.Create(false, false);
         }
         if (res.Item1 != 200)
         {
-            Notification.Instance.Show($"Error to save model: {res.Item2}");
+            Notification.Show($"Error to save model: {res.Item2}");
             return Tuple.Create(false, false);
         }
 
-        Notification.Instance.Show($"Part was saved successfully!");
+        Notification.Show($"Part was saved successfully!");
 
         SaveModelResult result;
         try

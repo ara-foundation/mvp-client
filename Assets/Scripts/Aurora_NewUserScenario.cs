@@ -82,7 +82,7 @@ public class Aurora_NewUserScenario : MonoBehaviour
         var error = Drawer.Validate();
         if (!string.IsNullOrEmpty(error))
         {
-            Notification.Instance.Show("Error: " + error);
+            Notification.Show("Error: " + error);
             return;
         }
         if (!AraAuth.Instance.IsLoggedIn(AraAuth.Instance.UserParams))
@@ -109,19 +109,19 @@ public class Aurora_NewUserScenario : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Notification.Show($"Error: web client exception {ex.Message}");
             Debug.LogError(ex);
             PostButton.interactable = true;
             return;
         }
         if (res.Item1 != 200)
         {
-            Notification.Instance.Show($"Error: {res.Item2}");
+            Notification.Show($"Error: {res.Item2}");
             PostButton.interactable = true;
             return;
         }
         PostButton.interactable = true;
-        Notification.Instance.Show("User Scenario was added, wait until someone starts a plan");
+        Notification.Show("User Scenario was added, wait until someone starts a plan");
         Hide();
         Aurora.Instance.ResetNewScenarioMode();
         await Aurora.Instance.ShowUserScenarios();
@@ -225,13 +225,13 @@ public class Aurora_NewUserScenario : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Notification.Instance.Show($"Error: web client exception {ex.Message}");
+            Notification.Show($"Error: web client exception {ex.Message}");
             Debug.LogError(ex);
             return null;
         }
         if (res.Item1 != 200)
         {
-            Notification.Instance.Show($"Error: {res.Item2}");
+            Notification.Show($"Error: {res.Item2}");
             return null;
         }
 
@@ -241,7 +241,7 @@ public class Aurora_NewUserScenario : MonoBehaviour
             result = JsonConvert.DeserializeObject<SenseverScenarioResponse>(res.Item2);
             if (!result.correct)
             {
-                Notification.Instance.Show("Sensever server returned unrecognized data. So sorry for my mistake");
+                Notification.Show("Sensever server returned unrecognized data. So sorry for my mistake");
                 return null;
             }
 
@@ -250,7 +250,7 @@ public class Aurora_NewUserScenario : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError(e);
-            Notification.Instance.Show($"Error: deserialization exception {e.Message}");
+            Notification.Show($"Error: deserialization exception {e.Message}");
             return null;
         }
     }

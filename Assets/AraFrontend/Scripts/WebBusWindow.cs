@@ -130,7 +130,7 @@ public class WebBusWindow : MonoBehaviour
 
     public bool OnUseTransfer(DIOSTransfer transfer)
     {
-        Notification.Instance.Show("Ara didn't implement use yet. :(");
+        Notification.Show("Ara didn't implement use yet. :(");
         return false;
     }
 
@@ -149,13 +149,13 @@ public class WebBusWindow : MonoBehaviour
         }
         catch (Exception ex)
         {
-            Notification.Instance.Show($"Error to fetch transfers: client exception {ex.Message}");
+            Notification.Show($"Error to fetch transfers: client exception {ex.Message}");
             Debug.LogError(ex);
             return incorrectResult;
         }
         if (res.Item1 != 200)
         {
-            Notification.Instance.Show($"Error to fetch transfers http code ({res.Item1}): {res.Item2}");
+            Notification.Show($"Error to fetch transfers http code ({res.Item1}): {res.Item2}");
             return incorrectResult;
         }
 

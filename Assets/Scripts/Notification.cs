@@ -8,7 +8,10 @@ public class Notification : MonoBehaviour
 {
     private static Notification _instance;
 
-    public static Notification Instance
+    [SerializeField] private LeanPulse LeanPulse;
+    [SerializeField] private Text Message;
+
+    public static Notification GetInstance
     {
         get
         {
@@ -20,8 +23,20 @@ public class Notification : MonoBehaviour
         }
     }
 
-    [SerializeField] private LeanPulse LeanPulse;
-    [SerializeField] private Text Message;
+    public static void Show(string message, bool debug = true)
+    {
+        var i = GetInstance;
+        if (i != null)
+        {
+            i.Show(message);
+        } else
+        {
+            if (debug)
+            {
+                Debug.LogWarning(message);
+            }
+        }
+    }
 
     public void Show(string message)
     {

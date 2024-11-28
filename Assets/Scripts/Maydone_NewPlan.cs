@@ -114,7 +114,7 @@ public class Maydone_NewPlan : MonoBehaviour
             }
         }
 
-        Notification.Instance.Show("Project was added. Ask investors to join");
+        Notification.Show("Project was added. Ask investors to join");
         EnableDeploy();
         Hide();
         Maydone.Instance.ResetNewPlanMode();
@@ -268,16 +268,16 @@ public class Maydone_NewPlan : MonoBehaviour
         var balance = await AraAuth.Instance.GetBalance();
         if (balance <= 0)
         {
-            Notification.Instance.Show($"No native token to pay for transaction. Top up your address {this.leader}");
+            Notification.Show($"No native token to pay for transaction. Top up your address {this.leader}");
             EnableDeploy();
             return;
         }
-        Notification.Instance.Show($"Balance: {balance}");
+        Notification.Show($"Balance: {balance}");
 
         var error = Plan.Validate();
         if (!string.IsNullOrEmpty(error))
         {
-            Notification.Instance.Show("Error: " + error);
+            Notification.Show("Error: " + error);
             EnableDeploy();
             return;
         }
@@ -351,12 +351,12 @@ public class Maydone_NewPlan : MonoBehaviour
 
             var receipt = await Maydone_NewPlan.Send(transaction);
         
-            Notification.Instance.Show($"Transaction: {receipt} deployed, waiting for a result");
-            Notification.Instance.Show($"Don't close the client please!");
+            Notification.Show($"Transaction: {receipt} deployed, waiting for a result");
+            Notification.Show($"Don't close the client please!");
         } catch (Exception ex)
         {
             Debug.LogError(ex);
-            Notification.Instance.Show($"Failed to send transaction: {ex}");
+            Notification.Show($"Failed to send transaction: {ex}");
             EnableDeploy();
             return;
         }
