@@ -67,7 +67,6 @@ public class ACTLevelScene : EditorBaseBehaviour
     public ActivityGroup ActivityGroup;
 
     public GameObject PartControllerPrefab;
-    [SerializeField] public LeanWindow LoadingSceneModal;
     [SerializeField] private LeanWindow PrimitivesWindow;
     [SerializeField] private GameObject BottomMenuPlane;
     [SerializeField] private GameObject LinePrefab;
