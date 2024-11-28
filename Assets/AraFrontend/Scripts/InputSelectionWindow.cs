@@ -64,7 +64,6 @@ public class InputSelectionWindow : MonoBehaviour
     {
         if (ifOn && !Window.On)
         {
-            Debug.Log("Window is not open, but received a signal to close it");
             return;
         }
         Window.TurnOff();

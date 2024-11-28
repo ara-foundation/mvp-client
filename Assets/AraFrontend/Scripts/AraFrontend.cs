@@ -23,12 +23,15 @@ public class AraFrontend : MonoBehaviour
 
     [SerializeField] private WebBusWindow WebBusWindow;
 
-    [Header("Selected Item")]
+    [Header("Menu Elements")]
     [Space(20)]
     [SerializeField] private SelectedItem InputSelectedItem;
     [SerializeField] private SelectedItem OutputSelectedItem;
     [SerializeField] private SelectedItem TimerSelectedItem;
 
+    [Header("Draggable / Selectable")]
+    [Space(20)]
+    [SerializeField] private LeanWindow SelectLayer;
     [Serializable]
     public enum ActionType
     {
@@ -79,6 +82,7 @@ public class AraFrontend : MonoBehaviour
         InputSelectedItem.Hide();
         OutputSelectedItem.Hide();
         TimerSelectedItem.Hide();
+        SelectLayer.TurnOff();
     }
 
     // Update is called once per frame
@@ -227,6 +231,8 @@ public class AraFrontend : MonoBehaviour
         if (!select)
         {
             SelectionWindow.TurnOff(ifOn: true);
+            WebBusWindow.Instance.HideWindow();
+            return;
         }
         if (currentRaysastResults == null || currentRaysastResults.Count == 0) {
             WebBusWindow.Instance.ShowWindow(loadData: true);
@@ -252,6 +258,7 @@ public class AraFrontend : MonoBehaviour
         if (!select)
         {
             SelectionWindow.TurnOff(ifOn: true);
+            WebBusWindow.Instance.HideWindow();
             return;
         }
         if (currentRaysastResults == null || currentRaysastResults.Count == 0)
@@ -308,10 +315,6 @@ public class AraFrontend : MonoBehaviour
 
     public void OnSelect(bool select)
     {
-        if (!select)
-        {
-            return;
-        }
-        Notification.Show("Selection not invocable yet");
+        SelectLayer.Set(select);
     }
 }
