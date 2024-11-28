@@ -33,7 +33,7 @@ public class Notification : MonoBehaviour
         {
             if (debug)
             {
-                Debug.LogWarning(message);
+                Debug.LogError(message);
             }
         }
     }

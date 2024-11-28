@@ -27,7 +27,6 @@ public class AraFrontend : MonoBehaviour
     [Space(20)]
     [SerializeField] private SelectedItem InputSelectedItem;
     [SerializeField] private SelectedItem OutputSelectedItem;
-    [SerializeField] private GameObject OutputPlaceholder;
     [SerializeField] private SelectedItem TimerSelectedItem;
 
     [Serializable]
@@ -79,7 +78,6 @@ public class AraFrontend : MonoBehaviour
 
         InputSelectedItem.Hide();
         OutputSelectedItem.Hide();
-        OutputPlaceholder.SetActive(true);
         TimerSelectedItem.Hide();
     }
 
@@ -178,7 +176,6 @@ public class AraFrontend : MonoBehaviour
             }
         } else if (actionType == ActionType.Output)
         {
-            OutputPlaceholder.SetActive(false);
             OutputSelectedItem.Show(metaData);
 
             if (InputSelectedItem.IsShowing())
@@ -203,7 +200,6 @@ public class AraFrontend : MonoBehaviour
     public void OnDeselectOutputItem(ProjectItemMetaData metaData)
     {
         OutputSelectedItem.Hide();
-        OutputPlaceholder.SetActive(false);
     }
 
     private void OnDeselectTimerItem(ProjectItemMetaData metaData)
@@ -290,5 +286,32 @@ public class AraFrontend : MonoBehaviour
         {
             SelectionWindow.TurnOn(selected: SelectedData(), ActionType.Timer);
         }
+    }
+
+    public void OnMemory(bool select)
+    {
+        if (!select)
+        {
+            return;
+        }
+        Notification.Show("Memory is not invocable yet");
+    }
+
+    public void OnSensever(bool select)
+    {
+        if (!select)
+        {
+            return;
+        }
+        Notification.Show("Sensever is not invocable");
+    }
+
+    public void OnSelect(bool select)
+    {
+        if (!select)
+        {
+            return;
+        }
+        Notification.Show("Selection not invocable yet");
     }
 }

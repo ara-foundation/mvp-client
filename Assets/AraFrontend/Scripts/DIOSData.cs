@@ -42,7 +42,6 @@ public class DIOSData : MonoBehaviour
         Auth = 21,
         Notification = 22,
         Zero = 12, // Anything unknown
-
     }
 
     [SerializeField] public List<Type> DataTypes;
@@ -55,7 +54,7 @@ public class DIOSData : MonoBehaviour
     /// <param name="gameObject"></param>
     /// <param name="types"></param>
     /// <returns></returns>
-    public static string TypeAndName(GameObject gameObject, Type dataType)
+    public static string TypeAndName(GameObject gameObject, Type dataType, bool cache = true)
     {
         var name = gameObject.name;
         var subType = "";
