@@ -58,17 +58,20 @@ public class DIOSData : MonoBehaviour
     {
         var name = gameObject.name;
         var subType = "";
-        
-        var found = gameObject.TryGetComponent<DIOSData>(out var data);
-        if (found)
+
+        if (cache)
         {
-            if (data.MainTarget != null)
+            var found = gameObject.TryGetComponent<DIOSData>(out var data);
+            if (found)
             {
-                name = data.MainTarget.name;
-            }
-            if (!string.IsNullOrEmpty(data.Payload))
-            {
-                subType = $"({data.Payload})";
+                if (data.MainTarget != null)
+                {
+                    name = data.MainTarget.name;
+                }
+                if (!string.IsNullOrEmpty(data.Payload))
+                {
+                    subType = $"({data.Payload})";
+                }
             }
         }
         return $"{dataType}{subType}={name}";
@@ -120,22 +123,24 @@ public class DIOSData : MonoBehaviour
     /// <param name="gameObject"></param>
     /// <param name="dataType"></param>
     /// <returns></returns>
-
-    public static GameObject MainGameObject(GameObject gameObject, Type dataType)
+    public static GameObject MainGameObject(GameObject gameObject, Type dataType, bool cache = true)
     {
         if (dataType == Type.NoData || dataType == Type.Zero)
         {
             return null;
         }
         // Given explicitly
-        var found = gameObject.TryGetComponent<DIOSData>(out var diosData);
-        if (found)
+        if (cache)
         {
-            if (diosData.MainTarget != null)
+            var found = gameObject.TryGetComponent<DIOSData>(out var diosData);
+            if (found)
             {
-                return diosData.MainTarget.gameObject;
+                if (diosData.MainTarget != null)
+                {
+                    return diosData.MainTarget.gameObject;
+                }
+                return gameObject;
             }
-            return gameObject;
         }
 
         var types = new List<Type>();
@@ -170,16 +175,22 @@ public class DIOSData : MonoBehaviour
 
     /// <summary>
     /// Returns a data type of the game object by detecting it's data
+    /// 
+    /// Starting from the smallest object to the biggest.
     /// </summary>
     /// <param name="gameObject"></param>
     /// <returns></returns>
-    public static List<Type> GameObjectDataType(GameObject gameObject)
+    public static List<Type> GameObjectDataType(GameObject gameObject, bool cache = true)
     {
         // Given explicitly
-        var found = gameObject.TryGetComponent<DIOSData>(out var diosData);
-        if (found)
+        if (cache)
         {
-            return diosData.DataTypes;
+            var found = gameObject.TryGetComponent<DIOSData>(out var diosData);
+            if (found)
+            {
+                Debug.Log($"{gameObject.name} is it has a dios data type");
+                return diosData.DataTypes;
+            }
         }
 
         if (gameObject.TryGetComponent<LeanWindow>(out _))
@@ -251,6 +262,74 @@ public class DIOSData : MonoBehaviour
 
         return types;
     }
+
+    /// <summary>
+    /// Get the payload from gameobject by its data type
+    /// </summary>
+    /// <param name="gameObject"></param>
+    /// <param name="dataType"></param>
+    /// <param name="cache"></param>
+    /// <returns></returns>
+    public static string AutoPayload(GameObject gameObject, Type dataType, bool cache = true)
+    {
+        if (dataType == Type.NoData || dataType == Type.Zero)
+        {
+            return "";
+        }
+        // Given explicitly
+        if (cache)
+        {
+            var found = gameObject.TryGetComponent<DIOSData>(out var diosData);
+            if (found)
+            {
+                return diosData.Payload;
+            }
+            return "";
+        }
+
+        var types = new List<Type>();
+
+        if (dataType == Type.User)
+        {
+            Debug.LogWarning($"Ara must be logged in");
+            return AraAuth.Instance.UserParams.loginParams.username;
+        }
+
+        if (dataType == Type.Text)
+        {
+            var found = gameObject.TryGetComponent<TextMeshProUGUI>(out var proText);
+            if (found)
+            {
+                return proText.text;
+            }
+
+            found = gameObject.TryGetComponent<Text>(out var text);
+            if (found)
+            {
+                return text.text;
+            }
+            return "not found";
+        }
+
+        if (dataType == Type.InputField)
+        {
+            var found = gameObject.TryGetComponent<TMP_InputField>(out var proInput);
+            if (found)
+            {
+                return proInput.text;
+            }
+
+            found = gameObject.TryGetComponent<Text>(out var input);
+            if (found)
+            {
+                return input.text;
+            }
+            return "not found";
+        }
+
+        return $"No payload implemented for {dataType}";
+    }
+
 
     #endregion forEachDataType
 

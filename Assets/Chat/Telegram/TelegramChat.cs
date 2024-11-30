@@ -209,6 +209,7 @@ public class TelegramChat : MonoBehaviour
         }
 
         ChatsTitle.text = $"Chats ({dialogs.dialogs.Length})";
+        var limit = 11;
         foreach (var dialog in dialogs.dialogs)
         {
             switch (dialogs.UserOrChat(dialog))
@@ -222,6 +223,11 @@ public class TelegramChat : MonoBehaviour
                     chatItem.Show(chat, ChatsActivityGroup, dialog.TopMessage);
                     _chatItems.Add(chatItem);
                     break;
+            }
+            limit--;
+            if (limit <= 0)
+            {
+                break;
             }
         }
     }

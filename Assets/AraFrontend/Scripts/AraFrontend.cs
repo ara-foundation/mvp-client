@@ -13,6 +13,7 @@ using UnityEngine.UI;
 public class AraFrontend : MonoBehaviour
 {
     public Camera MainCamera;
+    public Camera AraFrontendCamera;
     private static AraFrontend _instance;
     RaycastHit hit;
     public LayerMask IgnoreMask;
@@ -31,7 +32,9 @@ public class AraFrontend : MonoBehaviour
 
     [Header("Draggable / Selectable")]
     [Space(20)]
+    [SerializeField] private Canvas DragCanvas;
     [SerializeField] private LeanWindow SelectLayer;
+
     [Serializable]
     public enum ActionType
     {
@@ -71,6 +74,15 @@ public class AraFrontend : MonoBehaviour
             }
             return _instance;
         }
+    }
+
+    public Transform DragEnd()
+    {
+        if (DragCanvas == null)
+        {
+            return null;
+        }
+        return DragCanvas.transform;
     }
 
     // Start is called before the first frame update
@@ -315,6 +327,6 @@ public class AraFrontend : MonoBehaviour
 
     public void OnSelect(bool select)
     {
-        SelectLayer.Set(select);
+        DIOSObjectRegistry.Selectable(select);
     }
 }
