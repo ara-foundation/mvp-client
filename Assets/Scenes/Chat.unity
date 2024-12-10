@@ -872,8 +872,8 @@ CanvasGroup:
   m_GameObject: {fileID: 78301297}
   m_Enabled: 1
   m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 1
 --- !u!114 &78301301
 MonoBehaviour:
@@ -940,7 +940,7 @@ MonoBehaviour:
   onNonInteractable:
     m_PersistentCalls:
       m_Calls: []
-  expectedInteractable: 1
+  expectedInteractable: 0
   target: {fileID: 0}
   horizontal: 1
   vertical: 1
@@ -1488,8 +1488,8 @@ CanvasGroup:
   m_GameObject: {fileID: 139697368}
   m_Enabled: 1
   m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 1
 --- !u!114 &139697372
 MonoBehaviour:
@@ -1556,7 +1556,7 @@ MonoBehaviour:
   onNonInteractable:
     m_PersistentCalls:
       m_Calls: []
-  expectedInteractable: 1
+  expectedInteractable: 0
   target: {fileID: 0}
   horizontal: 1
   vertical: 1
@@ -1941,7 +1941,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7886620292761969113, guid: cd448739479a74745a776c0b188fd851, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 182.56
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7886620292761969113, guid: cd448739479a74745a776c0b188fd851, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2354,7 +2354,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6232570401597176853, guid: 3b1ed66d98b5c654fb2760c0ac0a0c86, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -309886.94
+      value: -378983.28
       objectReference: {fileID: 0}
     - target: {fileID: 7238952020282477586, guid: 3b1ed66d98b5c654fb2760c0ac0a0c86, type: 3}
       propertyPath: m_AnchorMax.x
@@ -3276,8 +3276,8 @@ CanvasGroup:
   m_GameObject: {fileID: 268462214}
   m_Enabled: 1
   m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 1
 --- !u!114 &268462218
 MonoBehaviour:
@@ -3344,7 +3344,7 @@ MonoBehaviour:
   onNonInteractable:
     m_PersistentCalls:
       m_Calls: []
-  expectedInteractable: 1
+  expectedInteractable: 0
   target: {fileID: 0}
   horizontal: 1
   vertical: 1
@@ -4113,7 +4113,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 125.15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_SizeDelta.y
@@ -4121,7 +4121,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 155.15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -4947,7 +4947,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 125.15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_SizeDelta.y
@@ -4955,7 +4955,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 155.15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -5652,8 +5652,8 @@ CanvasGroup:
   m_GameObject: {fileID: 453284710}
   m_Enabled: 1
   m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 1
 --- !u!114 &453284714
 MonoBehaviour:
@@ -5720,7 +5720,7 @@ MonoBehaviour:
   onNonInteractable:
     m_PersistentCalls:
       m_Calls: []
-  expectedInteractable: 1
+  expectedInteractable: 0
   target: {fileID: 0}
   horizontal: 1
   vertical: 1
@@ -6373,7 +6373,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1509811211}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.9441667
+  m_Size: 0.65916663
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -6510,7 +6510,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 125.15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_SizeDelta.y
@@ -6518,7 +6518,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 155.15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -6910,8 +6910,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1947185466}
   m_HandleRect: {fileID: 1947185465}
   m_Direction: 2
-  m_Value: -0.000000056214223
-  m_Size: 0.59159845
+  m_Value: 0
+  m_Size: 0.38577273
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -7180,8 +7180,8 @@ CanvasGroup:
   m_GameObject: {fileID: 632629267}
   m_Enabled: 1
   m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 1
 --- !u!114 &632629271
 MonoBehaviour:
@@ -7248,7 +7248,7 @@ MonoBehaviour:
   onNonInteractable:
     m_PersistentCalls:
       m_Calls: []
-  expectedInteractable: 1
+  expectedInteractable: 0
   target: {fileID: 0}
   horizontal: 1
   vertical: 1
@@ -11942,7 +11942,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 125.15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_SizeDelta.y
@@ -11950,7 +11950,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 155.15
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4315090896356297341, guid: b1b4b374e7e3dff4a836da05d8e1ac94, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -16440,8 +16440,8 @@ CanvasGroup:
   m_GameObject: {fileID: 1740003540}
   m_Enabled: 1
   m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 1
 --- !u!114 &1740003544
 MonoBehaviour:
@@ -16508,7 +16508,7 @@ MonoBehaviour:
   onNonInteractable:
     m_PersistentCalls:
       m_Calls: []
-  expectedInteractable: 1
+  expectedInteractable: 0
   target: {fileID: 0}
   horizontal: 1
   vertical: 1
@@ -19737,8 +19737,8 @@ CanvasGroup:
   m_GameObject: {fileID: 2067849677}
   m_Enabled: 1
   m_Alpha: 0
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 1
 --- !u!114 &2067849681
 MonoBehaviour:
@@ -19805,7 +19805,7 @@ MonoBehaviour:
   onNonInteractable:
     m_PersistentCalls:
       m_Calls: []
-  expectedInteractable: 1
+  expectedInteractable: 0
   target: {fileID: 0}
   horizontal: 1
   vertical: 1
@@ -20639,10 +20639,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1615547325}
     m_Modifications:
-    - target: {fileID: 9007229638195838, guid: 56a0d3fb5db67bc4693b871ca8e78bc7, type: 3}
-      propertyPath: m_Interactable
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7375555871307869617, guid: 56a0d3fb5db67bc4693b871ca8e78bc7, type: 3}
       propertyPath: m_Name
       value: Chat Item
